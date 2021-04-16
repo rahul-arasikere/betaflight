@@ -44,6 +44,11 @@ TARGET_MCU := STM32G4
 else ifeq ($(TARGET),$(filter $(TARGET), $(H7_TARGETS)))
 TARGET_MCU := STM32H7
 
+else ifeq ($(TARGET),$(filter $(TARGET), $(LINUX_TARGETS)))
+TARGET_MCU := LINUX
+SIMULATOR_BUILD = yes
+
+
 else ifeq ($(TARGET),$(filter $(TARGET), $(SITL_TARGETS)))
 TARGET_MCU := SITL
 SIMULATOR_BUILD = yes
