@@ -42,7 +42,7 @@
 #include "drivers/timer_def.h"
 const timerHardware_t timerHardware[1]; // unused
 
-#include "drivers/accgyro/accgyro_fake.h"
+#include "drivers/accgyro/accgyro_iio.h"
 #include "flight/imu.h"
 
 #include "config/feature.h"
@@ -55,7 +55,7 @@ const timerHardware_t timerHardware[1]; // unused
 #include "rx/rx.h"
 
 #include "dyad.h"
-#include "target/SITL/udplink.h"
+#include "target/LINUX/udplink.h"
 
 uint32_t SystemCoreClock;
 
