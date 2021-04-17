@@ -28,7 +28,7 @@
 #include "common/sensor_alignment.h"
 #include "common/sensor_alignment_impl.h"
 
-void buildRotationMatrixFromAlignment(const sensorAlignment_t* sensorAlignment, fp_rotationMatrix_t* rm)
+void buildRotationMatrixFromAlignment(const sensorAlignment_t *sensorAlignment, fp_rotationMatrix_t *rm)
 {
     fp_angles_t rotationAngles;
     rotationAngles.angles.roll  = DECIDEGREES_TO_RADIANS(sensorAlignment->roll);
@@ -39,7 +39,7 @@ void buildRotationMatrixFromAlignment(const sensorAlignment_t* sensorAlignment, 
 }
 
 
-void buildAlignmentFromStandardAlignment(sensorAlignment_t* sensorAlignment, sensor_align_e alignment)
+void buildAlignmentFromStandardAlignment(sensorAlignment_t *sensorAlignment, sensor_align_e alignment)
 {
     if (alignment == ALIGN_CUSTOM || alignment == ALIGN_DEFAULT) {
         return;

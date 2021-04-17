@@ -73,8 +73,7 @@ static const void *cmsx_Failsafe_onExit(displayPort_t *pDisp, const OSD_Entry *s
     return NULL;
 }
 
-static const OSD_Entry cmsx_menuFailsafeEntries[] =
-{
+static const OSD_Entry cmsx_menuFailsafeEntries[] = {
     { "-- FAILSAFE --", OME_Label, NULL, NULL, 0},
 
     { "PROCEDURE",        OME_TAB,    NULL, &(OSD_TAB_t)    { &failsafeConfig_failsafe_procedure, FAILSAFE_PROCEDURE_COUNT - 1, failsafeProcedureNames }, REBOOT_REQUIRED },

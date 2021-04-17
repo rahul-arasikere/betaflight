@@ -123,12 +123,12 @@ int sbufBytesRemaining(sbuf_t *buf)
     return buf->end - buf->ptr;
 }
 
-uint8_t* sbufPtr(sbuf_t *buf)
+uint8_t *sbufPtr(sbuf_t *buf)
 {
     return buf->ptr;
 }
 
-const uint8_t* sbufConstPtr(const sbuf_t *buf)
+const uint8_t *sbufConstPtr(const sbuf_t *buf)
 {
     return buf->ptr;
 }

@@ -164,7 +164,7 @@ static void ppmResetDevice(void)
     ppmDev.overflowed   = false;
 }
 
-static void ppmOverflowCallback(timerOvrHandlerRec_t* cbRec, captureCompare_t capture)
+static void ppmOverflowCallback(timerOvrHandlerRec_t *cbRec, captureCompare_t capture)
 {
     UNUSED(cbRec);
     ppmISREvent(SOURCE_OVERFLOW, capture);
@@ -175,7 +175,7 @@ static void ppmOverflowCallback(timerOvrHandlerRec_t* cbRec, captureCompare_t ca
     }
 }
 
-static void ppmEdgeCallback(timerCCHandlerRec_t* cbRec, captureCompare_t capture)
+static void ppmEdgeCallback(timerCCHandlerRec_t *cbRec, captureCompare_t capture)
 {
     UNUSED(cbRec);
     ppmISREvent(SOURCE_EDGE, capture);
@@ -278,7 +278,7 @@ bool isPWMDataBeingReceived(void)
     return false;
 }
 
-static void pwmOverflowCallback(timerOvrHandlerRec_t* cbRec, captureCompare_t capture)
+static void pwmOverflowCallback(timerOvrHandlerRec_t *cbRec, captureCompare_t capture)
 {
     UNUSED(capture);
     pwmInputPort_t *pwmInputPort = container_of(cbRec, pwmInputPort_t, overflowCb);
@@ -324,7 +324,7 @@ static void pwmEdgeCallback(timerCCHandlerRec_t *cbRec, captureCompare_t capture
 
 void pwmICConfig(TIM_TypeDef *tim, uint8_t channel, uint16_t polarity)
 {
-    TIM_HandleTypeDef* Handle = timerFindTimerHandle(tim);
+    TIM_HandleTypeDef *Handle = timerFindTimerHandle(tim);
     if (Handle == NULL) return;
 
     TIM_IC_InitTypeDef TIM_ICInitStructure;
@@ -340,7 +340,7 @@ void pwmICConfig(TIM_TypeDef *tim, uint8_t channel, uint16_t polarity)
     }
 
     HAL_TIM_IC_ConfigChannel(Handle, &TIM_ICInitStructure, channel);
-    HAL_TIM_IC_Start_IT(Handle,channel);
+    HAL_TIM_IC_Start_IT(Handle, channel);
 }
 #else
 void pwmICConfig(TIM_TypeDef *tim, uint8_t channel, uint16_t polarity)

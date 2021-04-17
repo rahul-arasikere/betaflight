@@ -97,7 +97,8 @@ uint32_t dmaFlag_IT_TCIF(const dmaResource_t *stream)
     return 0;
 }
 
-void dmaSetHandler(dmaIdentifier_e identifier, dmaCallbackHandlerFuncPtr callback, uint32_t priority, uint32_t userParam)
+void dmaSetHandler(dmaIdentifier_e identifier, dmaCallbackHandlerFuncPtr callback, uint32_t priority,
+                   uint32_t userParam)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
 
@@ -120,7 +121,7 @@ const resourceOwner_t *dmaGetOwner(dmaIdentifier_e identifier)
     return &dmaDescriptors[DMA_IDENTIFIER_TO_INDEX(identifier)].owner;
 }
 
-dmaIdentifier_e dmaGetIdentifier(const dmaResource_t* instance)
+dmaIdentifier_e dmaGetIdentifier(const dmaResource_t *instance)
 {
     for (int i = 0; i < DMA_LAST_HANDLER; i++) {
         if (dmaDescriptors[i].ref == instance) {
@@ -130,7 +131,7 @@ dmaIdentifier_e dmaGetIdentifier(const dmaResource_t* instance)
     return 0;
 }
 
-dmaChannelDescriptor_t* dmaGetDescriptor(const dmaResource_t* instance)
+dmaChannelDescriptor_t *dmaGetDescriptor(const dmaResource_t *instance)
 {
     for (int i = 0; i < DMA_LAST_HANDLER; i++) {
         if (dmaDescriptors[i].ref == instance) {
@@ -140,18 +141,18 @@ dmaChannelDescriptor_t* dmaGetDescriptor(const dmaResource_t* instance)
     return NULL;
 }
 
-dmaResource_t* dmaGetRefByIdentifier(const dmaIdentifier_e identifier)
+dmaResource_t *dmaGetRefByIdentifier(const dmaIdentifier_e identifier)
 {
     return dmaDescriptors[DMA_IDENTIFIER_TO_INDEX(identifier)].ref;
 }
 
-dmaChannelDescriptor_t* dmaGetDescriptorByIdentifier(const dmaIdentifier_e identifier)
+dmaChannelDescriptor_t *dmaGetDescriptorByIdentifier(const dmaIdentifier_e identifier)
 {
     return &dmaDescriptors[DMA_IDENTIFIER_TO_INDEX(identifier)];
 }
 
 uint32_t dmaGetChannel(const uint8_t channel)
 {
-    return ((uint32_t)channel*2)<<24;
+    return ((uint32_t)channel * 2) << 24;
 }
 #endif

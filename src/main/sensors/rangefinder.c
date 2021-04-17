@@ -72,59 +72,59 @@ rangefinder_t rangefinder;
 PG_REGISTER_WITH_RESET_TEMPLATE(rangefinderConfig_t, rangefinderConfig, PG_RANGEFINDER_CONFIG, 0);
 
 PG_RESET_TEMPLATE(rangefinderConfig_t, rangefinderConfig,
-    .rangefinder_hardware = RANGEFINDER_NONE,
-);
+                  .rangefinder_hardware = RANGEFINDER_NONE,
+                 );
 
 #ifdef USE_RANGEFINDER_HCSR04
 PG_REGISTER_WITH_RESET_TEMPLATE(sonarConfig_t, sonarConfig, PG_SONAR_CONFIG, 1);
 
 PG_RESET_TEMPLATE(sonarConfig_t, sonarConfig,
-    .triggerTag = IO_TAG(RANGEFINDER_HCSR04_TRIGGER_PIN),
-    .echoTag = IO_TAG(RANGEFINDER_HCSR04_ECHO_PIN),
-);
+                  .triggerTag = IO_TAG(RANGEFINDER_HCSR04_TRIGGER_PIN),
+                  .echoTag = IO_TAG(RANGEFINDER_HCSR04_ECHO_PIN),
+                 );
 #endif
 
 /*
  * Detect which rangefinder is present
  */
-static bool rangefinderDetect(rangefinderDev_t * dev, uint8_t rangefinderHardwareToUse)
+static bool rangefinderDetect(rangefinderDev_t *dev, uint8_t rangefinderHardwareToUse)
 {
     rangefinderType_e rangefinderHardware = RANGEFINDER_NONE;
     requestedSensors[SENSOR_INDEX_RANGEFINDER] = rangefinderHardwareToUse;
 
     switch (rangefinderHardwareToUse) {
-        case RANGEFINDER_HCSR04:
+    case RANGEFINDER_HCSR04:
 #ifdef USE_RANGEFINDER_HCSR04
-            {
-                if (hcsr04Detect(dev, sonarConfig())) {   // FIXME: Do actual detection if HC-SR04 is plugged in
-                    rangefinderHardware = RANGEFINDER_HCSR04;
-                    rescheduleTask(TASK_RANGEFINDER, TASK_PERIOD_MS(RANGEFINDER_HCSR04_TASK_PERIOD_MS));
-                }
-            }
+    {
+        if (hcsr04Detect(dev, sonarConfig())) {   // FIXME: Do actual detection if HC-SR04 is plugged in
+            rangefinderHardware = RANGEFINDER_HCSR04;
+            rescheduleTask(TASK_RANGEFINDER, TASK_PERIOD_MS(RANGEFINDER_HCSR04_TASK_PERIOD_MS));
+        }
+    }
 #endif
-            break;
+    break;
 
-        case RANGEFINDER_TFMINI:
+    case RANGEFINDER_TFMINI:
 #if defined(USE_RANGEFINDER_TF)
-            if (lidarTFminiDetect(dev)) {
-                rangefinderHardware = RANGEFINDER_TFMINI;
-                rescheduleTask(TASK_RANGEFINDER, TASK_PERIOD_MS(RANGEFINDER_TF_TASK_PERIOD_MS));
-            }
+        if (lidarTFminiDetect(dev)) {
+            rangefinderHardware = RANGEFINDER_TFMINI;
+            rescheduleTask(TASK_RANGEFINDER, TASK_PERIOD_MS(RANGEFINDER_TF_TASK_PERIOD_MS));
+        }
 #endif
-            break;
+        break;
 
-        case RANGEFINDER_TF02:
+    case RANGEFINDER_TF02:
 #if defined(USE_RANGEFINDER_TF)
-            if (lidarTF02Detect(dev)) {
-                rangefinderHardware = RANGEFINDER_TF02;
-                rescheduleTask(TASK_RANGEFINDER, TASK_PERIOD_MS(RANGEFINDER_TF_TASK_PERIOD_MS));
-            }
+        if (lidarTF02Detect(dev)) {
+            rangefinderHardware = RANGEFINDER_TF02;
+            rescheduleTask(TASK_RANGEFINDER, TASK_PERIOD_MS(RANGEFINDER_TF_TASK_PERIOD_MS));
+        }
 #endif
-            break;
+        break;
 
-        case RANGEFINDER_NONE:
-            rangefinderHardware = RANGEFINDER_NONE;
-            break;
+    case RANGEFINDER_NONE:
+        rangefinderHardware = RANGEFINDER_NONE;
+        break;
     }
 
     if (rangefinderHardware == RANGEFINDER_NONE) {
@@ -169,7 +169,7 @@ bool rangefinderInit(void)
 
 static int32_t applyMedianFilter(int32_t newReading)
 {
-    #define DISTANCE_SAMPLES_MEDIAN 5
+#define DISTANCE_SAMPLES_MEDIAN 5
     static int32_t filterSamples[DISTANCE_SAMPLES_MEDIAN];
     static int filterSampleIndex = 0;
     static bool medianFilterReady = false;
@@ -185,8 +185,9 @@ static int32_t applyMedianFilter(int32_t newReading)
     return medianFilterReady ? quickMedianFilter5(filterSamples) : newReading;
 }
 
-static int16_t computePseudoSnr(int32_t newReading) {
-    #define SNR_SAMPLES 5
+static int16_t computePseudoSnr(int32_t newReading)
+{
+#define SNR_SAMPLES 5
     static int16_t snrSamples[SNR_SAMPLES];
     static uint8_t snrSampleIndex = 0;
     static int32_t previousReading = RANGEFINDER_OUT_OF_RANGE;
@@ -225,7 +226,8 @@ void rangefinderUpdate(void)
     }
 }
 
-bool isSurfaceAltitudeValid() {
+bool isSurfaceAltitudeValid()
+{
 
     /*
      * Preconditions: raw and calculated altidude > 0
@@ -272,8 +274,7 @@ bool rangefinderProcess(float cosTiltAngle)
         } else if (distance == RANGEFINDER_OUT_OF_RANGE) {
             rangefinder.lastValidResponseTimeMs = millis();
             rangefinder.rawAltitude = RANGEFINDER_OUT_OF_RANGE;
-        }
-        else {
+        } else {
             // Invalid response / hardware failure
             rangefinder.rawAltitude = RANGEFINDER_HARDWARE_FAILURE;
         }
@@ -299,8 +300,7 @@ bool rangefinderProcess(float cosTiltAngle)
         DEBUG_SET(DEBUG_RANGEFINDER_QUALITY, 2, rangefinder.dynamicDistanceThreshold);
         DEBUG_SET(DEBUG_RANGEFINDER_QUALITY, 3, isSurfaceAltitudeValid());
 
-    }
-    else {
+    } else {
         // Bad configuration
         rangefinder.rawAltitude = RANGEFINDER_OUT_OF_RANGE;
     }
@@ -332,7 +332,8 @@ int32_t rangefinderGetLatestAltitude(void)
     return rangefinder.calculatedAltitude;
 }
 
-int32_t rangefinderGetLatestRawAltitude(void) {
+int32_t rangefinderGetLatestRawAltitude(void)
+{
     return rangefinder.rawAltitude;
 }
 

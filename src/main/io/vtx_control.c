@@ -52,8 +52,8 @@ PG_REGISTER_WITH_RESET_TEMPLATE(vtxConfig_t, vtxConfig, PG_VTX_CONFIG, 1);
 
 PG_RESET_TEMPLATE(vtxConfig_t, vtxConfig,
 //    .vtxChannelActivationConditions = { 0 },
-    .halfDuplex = true
-);
+                  .halfDuplex = true
+                 );
 
 static uint8_t locked = 0;
 
@@ -114,7 +114,8 @@ void vtxUpdateActivatedChannel(void)
         static uint8_t lastIndex = -1;
 
         for (uint8_t index = 0; index < MAX_CHANNEL_ACTIVATION_CONDITION_COUNT; index++) {
-            const vtxChannelActivationCondition_t *vtxChannelActivationCondition = &vtxConfig()->vtxChannelActivationConditions[index];
+            const vtxChannelActivationCondition_t *vtxChannelActivationCondition =
+                &vtxConfig()->vtxChannelActivationConditions[index];
 
             if (isRangeActive(vtxChannelActivationCondition->auxChannelIndex, &vtxChannelActivationCondition->range)
                 && index != lastIndex) {

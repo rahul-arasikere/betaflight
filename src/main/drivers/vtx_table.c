@@ -41,14 +41,14 @@
 int            vtxTableBandCount;
 int            vtxTableChannelCount;
 uint16_t       vtxTableFrequency[VTX_TABLE_MAX_BANDS][VTX_TABLE_MAX_CHANNELS];
-const char *   vtxTableBandNames[VTX_TABLE_MAX_BANDS + 1];
+const char    *vtxTableBandNames[VTX_TABLE_MAX_BANDS + 1];
 char           vtxTableBandLetters[VTX_TABLE_MAX_BANDS + 1];
-const char *   vtxTableChannelNames[VTX_TABLE_MAX_CHANNELS + 1];
+const char    *vtxTableChannelNames[VTX_TABLE_MAX_CHANNELS + 1];
 bool           vtxTableIsFactoryBand[VTX_TABLE_MAX_BANDS];
 
 int            vtxTablePowerLevels;
 uint16_t       vtxTablePowerValues[VTX_TABLE_MAX_POWER_LEVELS];
-const char *   vtxTablePowerLabels[VTX_TABLE_MAX_POWER_LEVELS + 1];
+const char    *vtxTablePowerLabels[VTX_TABLE_MAX_POWER_LEVELS + 1];
 
 #else
 
@@ -61,22 +61,22 @@ uint16_t       vtxTableFrequency[VTX_TABLE_MAX_BANDS][VTX_TABLE_MAX_CHANNELS] = 
     { 5740, 5760, 5780, 5800, 5820, 5840, 5860, 5880 }, // FatShark
     { 5658, 5695, 5732, 5769, 5806, 5843, 5880, 5917 }, // RaceBand
 };
-const char *   vtxTableBandNames[VTX_TABLE_MAX_BANDS + 1] = {
-        "--------",
-        "BOSCAM A",
-        "BOSCAM B",
-        "BOSCAM E",
-        "FATSHARK",
-        "RACEBAND",
+const char    *vtxTableBandNames[VTX_TABLE_MAX_BANDS + 1] = {
+    "--------",
+    "BOSCAM A",
+    "BOSCAM B",
+    "BOSCAM E",
+    "FATSHARK",
+    "RACEBAND",
 };
 char           vtxTableBandLetters[VTX_TABLE_MAX_BANDS + 1] = "-ABEFR";
-const char *   vtxTableChannelNames[VTX_TABLE_MAX_CHANNELS + 1] = {
-        "-", "1", "2", "3", "4", "5", "6", "7", "8",
+const char    *vtxTableChannelNames[VTX_TABLE_MAX_CHANNELS + 1] = {
+    "-", "1", "2", "3", "4", "5", "6", "7", "8",
 };
 bool           vtxTableIsFactoryBand[VTX_TABLE_MAX_BANDS];
 int            vtxTablePowerLevels;
 uint16_t       vtxTablePowerValues[VTX_TABLE_MAX_POWER_LEVELS];
-const char *   vtxTablePowerLabels[VTX_TABLE_MAX_POWER_LEVELS + 1];
+const char    *vtxTablePowerLabels[VTX_TABLE_MAX_POWER_LEVELS + 1];
 #endif
 
 void vtxTableInit(void)
@@ -127,7 +127,7 @@ void vtxTableInit(void)
 #ifndef USE_VTX_TABLE
 void vtxTableSetFactoryBands(bool isFactory)
 {
-    for(int i = 0;i < VTX_TABLE_MAX_BANDS; i++) {
+    for (int i = 0; i < VTX_TABLE_MAX_BANDS; i++) {
         vtxTableIsFactoryBand[i] = isFactory;
     }
 }

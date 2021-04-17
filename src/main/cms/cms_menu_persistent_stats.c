@@ -79,8 +79,7 @@ static const void *cmsx_ResetStats(displayPort_t *pDisplay, const void *ptr)
     return NULL;
 }
 
-static const OSD_Entry cmsx_menuPersistentStatsEntries[] =
-{
+static const OSD_Entry cmsx_menuPersistentStatsEntries[] = {
     {"-- PERSISTENT STATS --", OME_Label, NULL, NULL, 0},
     {"FLIGHTS", OME_UINT32, NULL, &(OSD_UINT32_t){ &stats_total_flights, 0, UINT32_MAX, 1}, 0},
     {"TIME(sec)", OME_UINT32, NULL, &(OSD_UINT32_t){ &stats_total_time_s, 0, UINT32_MAX, 1}, 0},

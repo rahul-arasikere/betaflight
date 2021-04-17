@@ -115,9 +115,9 @@ bool i2cWrite(I2CDevice device, uint8_t addr_, uint8_t reg_, uint8_t data)
     HAL_StatusTypeDef status;
 
     if (reg_ == 0xFF)
-        status = HAL_I2C_Master_Transmit(pHandle ,addr_ << 1, &data, 1, I2C_TIMEOUT_SYS_TICKS);
+        status = HAL_I2C_Master_Transmit(pHandle, addr_ << 1, &data, 1, I2C_TIMEOUT_SYS_TICKS);
     else
-        status = HAL_I2C_Mem_Write(pHandle ,addr_ << 1, reg_, I2C_MEMADD_SIZE_8BIT, &data, 1, I2C_TIMEOUT_SYS_TICKS);
+        status = HAL_I2C_Mem_Write(pHandle, addr_ << 1, reg_, I2C_MEMADD_SIZE_8BIT, &data, 1, I2C_TIMEOUT_SYS_TICKS);
 
     if (status != HAL_OK)
         return i2cHandleHardwareFailure(device);
@@ -140,14 +140,13 @@ bool i2cWriteBuffer(I2CDevice device, uint8_t addr_, uint8_t reg_, uint8_t len_,
 
     HAL_StatusTypeDef status;
 
-    status = HAL_I2C_Mem_Write_IT(pHandle ,addr_ << 1, reg_, I2C_MEMADD_SIZE_8BIT,data, len_);
+    status = HAL_I2C_Mem_Write_IT(pHandle, addr_ << 1, reg_, I2C_MEMADD_SIZE_8BIT, data, len_);
 
     if (status == HAL_BUSY) {
         return false;
     }
 
-    if (status != HAL_OK)
-    {
+    if (status != HAL_OK) {
         return i2cHandleHardwareFailure(device);
     }
 
@@ -155,7 +154,7 @@ bool i2cWriteBuffer(I2CDevice device, uint8_t addr_, uint8_t reg_, uint8_t len_,
 }
 
 // Blocking read
-bool i2cRead(I2CDevice device, uint8_t addr_, uint8_t reg_, uint8_t len, uint8_t* buf)
+bool i2cRead(I2CDevice device, uint8_t addr_, uint8_t reg_, uint8_t len, uint8_t *buf)
 {
     if (device == I2CINVALID || device > I2CDEV_COUNT) {
         return false;
@@ -170,9 +169,9 @@ bool i2cRead(I2CDevice device, uint8_t addr_, uint8_t reg_, uint8_t len, uint8_t
     HAL_StatusTypeDef status;
 
     if (reg_ == 0xFF)
-        status = HAL_I2C_Master_Receive(pHandle ,addr_ << 1, buf, len, I2C_TIMEOUT_SYS_TICKS);
+        status = HAL_I2C_Master_Receive(pHandle, addr_ << 1, buf, len, I2C_TIMEOUT_SYS_TICKS);
     else
-        status = HAL_I2C_Mem_Read(pHandle, addr_ << 1, reg_, I2C_MEMADD_SIZE_8BIT,buf, len, I2C_TIMEOUT_SYS_TICKS);
+        status = HAL_I2C_Mem_Read(pHandle, addr_ << 1, reg_, I2C_MEMADD_SIZE_8BIT, buf, len, I2C_TIMEOUT_SYS_TICKS);
 
     if (status != HAL_OK) {
         return i2cHandleHardwareFailure(device);
@@ -182,7 +181,7 @@ bool i2cRead(I2CDevice device, uint8_t addr_, uint8_t reg_, uint8_t len, uint8_t
 }
 
 // Non-blocking read
-bool i2cReadBuffer(I2CDevice device, uint8_t addr_, uint8_t reg_, uint8_t len, uint8_t* buf)
+bool i2cReadBuffer(I2CDevice device, uint8_t addr_, uint8_t reg_, uint8_t len, uint8_t *buf)
 {
     if (device == I2CINVALID || device > I2CDEV_COUNT) {
         return false;
@@ -196,7 +195,7 @@ bool i2cReadBuffer(I2CDevice device, uint8_t addr_, uint8_t reg_, uint8_t len, u
 
     HAL_StatusTypeDef status;
 
-    status = HAL_I2C_Mem_Read_IT(pHandle, addr_ << 1, reg_, I2C_MEMADD_SIZE_8BIT,buf, len);
+    status = HAL_I2C_Mem_Read_IT(pHandle, addr_ << 1, reg_, I2C_MEMADD_SIZE_8BIT, buf, len);
 
     if (status == HAL_BUSY) {
         return false;
@@ -217,10 +216,8 @@ bool i2cBusy(I2CDevice device, bool *error)
         *error = pHandle->ErrorCode;
     }
 
-    if (pHandle->State == HAL_I2C_STATE_READY)
-    {
-        if (__HAL_I2C_GET_FLAG(pHandle, I2C_FLAG_BUSY) == SET)
-        {
+    if (pHandle->State == HAL_I2C_STATE_READY) {
+        if (__HAL_I2C_GET_FLAG(pHandle, I2C_FLAG_BUSY) == SET) {
             return true;
         }
 

@@ -386,7 +386,7 @@ static const void *saCmsConfigOpmodelByGvar(displayPort_t *pDisp, const void *se
 }
 
 #ifdef USE_EXTENDED_CMS_MENUS
-static const char * const saCmsDeviceStatusNames[] = {
+static const char *const saCmsDeviceStatusNames[] = {
     "OFFL",
     "ONL V1",
     "ONL V2",
@@ -442,24 +442,24 @@ static void saCmsInitNames(void)
 
 static OSD_UINT16_t saCmsEntFreqRef = { &saCmsFreqRef, 5600, 5900, 0 };
 
-static const char * const saCmsOpmodelNames[] = {
+static const char *const saCmsOpmodelNames[] = {
     "----",
     "FREE",
     "RACE",
 };
 
-static const char * const saCmsFselModeNames[] = {
+static const char *const saCmsFselModeNames[] = {
     "CHAN",
     "USER"
 };
 
-static const char * const saCmsPitFModeNames[] = {
+static const char *const saCmsPitFModeNames[] = {
     "---",
     "PIR",
     "POR"
 };
 
-static const char * const saCmsPitNames[] = {
+static const char *const saCmsPitNames[] = {
     "---",
     "OFF",
     "ON ",
@@ -616,8 +616,7 @@ static const OSD_Entry saCmsMenuPORFreqEntries[] = {
     { NULL,           OME_END,     NULL,             NULL,                                                 0 }
 };
 
-static CMS_Menu saCmsMenuPORFreq =
-{
+static CMS_Menu saCmsMenuPORFreq = {
 #ifdef CMS_MENU_DEBUG
     .GUARD_text = "XSAPOR",
     .GUARD_type = OME_MENU,
@@ -639,8 +638,7 @@ static const OSD_Entry saCmsMenuUserFreqEntries[] = {
     { NULL,            OME_END,     NULL,             NULL,                                                0 }
 };
 
-static CMS_Menu saCmsMenuUserFreq =
-{
+static CMS_Menu saCmsMenuUserFreq = {
 #ifdef CMS_MENU_DEBUG
     .GUARD_text = "XSAUFQ",
     .GUARD_type = OME_MENU,
@@ -713,8 +711,7 @@ static const OSD_Entry saCmsMenuFreqModeEntries[] = {
     { NULL, OME_END, NULL, NULL, 0 }
 };
 
-static const OSD_Entry saCmsMenuChanModeEntries[] =
-{
+static const OSD_Entry saCmsMenuChanModeEntries[] = {
     { "- SMARTAUDIO -", OME_Label, NULL, NULL, 0 },
 
     { "",       OME_Label,   NULL,                   saCmsStatusString,  DYNAMIC },
@@ -730,8 +727,7 @@ static const OSD_Entry saCmsMenuChanModeEntries[] =
     { NULL,     OME_END, NULL, NULL, 0 }
 };
 
-static const OSD_Entry saCmsMenuOfflineEntries[] =
-{
+static const OSD_Entry saCmsMenuOfflineEntries[] = {
     { "- VTX SMARTAUDIO -", OME_Label, NULL, NULL, 0 },
 
     { "",      OME_Label,   NULL,          saCmsStatusString, DYNAMIC },

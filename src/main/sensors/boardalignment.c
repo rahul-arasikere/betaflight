@@ -69,7 +69,7 @@ static FAST_CODE void alignBoard(float *vec)
     applyRotation(vec, &boardRotation);
 }
 
-FAST_CODE_NOINLINE void alignSensorViaMatrix(float *dest, fp_rotationMatrix_t* sensorRotationMatrix)
+FAST_CODE_NOINLINE void alignSensorViaMatrix(float *dest, fp_rotationMatrix_t *sensorRotationMatrix)
 {
     applyRotation(dest, sensorRotationMatrix);
 

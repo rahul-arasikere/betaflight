@@ -41,8 +41,7 @@
 #include "drivers/nvic.h"
 #include "drivers/sdio.h"
 
-typedef struct SD_Handle_s
-{
+typedef struct SD_Handle_s {
     uint32_t          CSD[4];           // SD card specific data table
     uint32_t          CID[4];           // SD card identification number table
     volatile uint32_t RXCplt;          // SD RX Complete is equal 0 when no transfer
@@ -159,7 +158,7 @@ void sdioPinConfigure(void)
 
 #define IOCFG_SDMMC       IO_CONFIG(GPIO_MODE_AF_PP, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_NOPULL)
 
-void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
+void HAL_SD_MspInit(SD_HandleTypeDef *hsd)
 {
     UNUSED(hsd);
 
@@ -186,7 +185,7 @@ void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
     IOConfigGPIOAF(cmd, IOCFG_SDMMC, sdioPin[SDIO_PIN_CMD].af);
     IOConfigGPIOAF(d0, IOCFG_SDMMC, sdioPin[SDIO_PIN_D0].af);
 
-    if(is4BitWidth) {
+    if (is4BitWidth) {
         IOConfigGPIOAF(d1, IOCFG_SDMMC, sdioPin[SDIO_PIN_D1].af);
         IOConfigGPIOAF(d2, IOCFG_SDMMC, sdioPin[SDIO_PIN_D2].af);
         IOConfigGPIOAF(d3, IOCFG_SDMMC, sdioPin[SDIO_PIN_D3].af);
@@ -227,7 +226,7 @@ void SDIO_GPIO_Init(void)
     IOHi(d0);
     IOConfigGPIO(d0, IOCFG_OUT_PP);
 
-    if(is4BitWidth) {
+    if (is4BitWidth) {
         IOHi(d1);
         IOHi(d2);
         IOHi(d3);
@@ -270,7 +269,8 @@ SD_Error_t SD_Init(void)
         hsd1.Init.BusWide = SDMMC_BUS_WIDE_1B; // FIXME untested
     }
     hsd1.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_ENABLE;
-    hsd1.Init.ClockDiv = 1; // 200Mhz / (2 * 1 ) = 100Mhz, used for "UltraHigh speed SD card" only, see   HAL_SD_ConfigWideBusOperation, SDMMC_HSpeed_CLK_DIV, SDMMC_NSpeed_CLK_DIV
+    hsd1.Init.ClockDiv =
+        1; // 200Mhz / (2 * 1 ) = 100Mhz, used for "UltraHigh speed SD card" only, see   HAL_SD_ConfigWideBusOperation, SDMMC_HSpeed_CLK_DIV, SDMMC_NSpeed_CLK_DIV
 
     status = HAL_SD_Init(&hsd1); // Will call HAL_SD_MspInit
 
@@ -278,7 +278,7 @@ SD_Error_t SD_Init(void)
         return SD_ERROR;
     }
 
-    switch(hsd1.SdCard.CardType) {
+    switch (hsd1.SdCard.CardType) {
     case CARD_SDSC:
         switch (hsd1.SdCard.CardVersion) {
         case CARD_V1_X:
@@ -300,10 +300,10 @@ SD_Error_t SD_Init(void)
         return SD_ERROR;
     }
 
-    STATIC_ASSERT(sizeof(SD_Handle.CSD) == sizeof(hsd1.CSD), hal-csd-size-error);
+    STATIC_ASSERT(sizeof(SD_Handle.CSD) == sizeof(hsd1.CSD), hal - csd - size - error);
     memcpy(&SD_Handle.CSD, &hsd1.CSD, sizeof(SD_Handle.CSD));
 
-    STATIC_ASSERT(sizeof(SD_Handle.CID) == sizeof(hsd1.CID), hal-cid-size-error);
+    STATIC_ASSERT(sizeof(SD_Handle.CID) == sizeof(hsd1.CID), hal - cid - size - error);
     memcpy(&SD_Handle.CID, &hsd1.CID, sizeof(SD_Handle.CID));
 
     return SD_OK;
@@ -352,7 +352,7 @@ SD_Error_t SD_GetCardInfo(void)
     SD_CardInfo.SD_csd.DSRImpl         = (uint8_t)((Temp & 0x10) >> 4);
     SD_CardInfo.SD_csd.Reserved2       = 0; /*!< Reserved */
 
-    if((SD_CardType == SD_STD_CAPACITY_V1_1) || (SD_CardType == SD_STD_CAPACITY_V2_0)) {
+    if ((SD_CardType == SD_STD_CAPACITY_V1_1) || (SD_CardType == SD_STD_CAPACITY_V2_0)) {
         SD_CardInfo.SD_csd.DeviceSize = (Temp & 0x03) << 10;
 
         // Byte 7
@@ -380,7 +380,7 @@ SD_Error_t SD_GetCardInfo(void)
         SD_CardInfo.CardCapacity *= (1 << (SD_CardInfo.SD_csd.DeviceSizeMul + 2));
         SD_CardInfo.CardBlockSize = 1 << (SD_CardInfo.SD_csd.RdBlockLen);
         SD_CardInfo.CardCapacity = SD_CardInfo.CardCapacity * SD_CardInfo.CardBlockSize / 512; // In 512 byte blocks
-    } else if(SD_CardType == SD_HIGH_CAPACITY) {
+    } else if (SD_CardType == SD_HIGH_CAPACITY) {
         // Byte 7
         Temp = (uint8_t)(SD_Handle.CSD[1] & 0x000000FF);
         SD_CardInfo.SD_csd.DeviceSize = (Temp & 0x3F) << 16;
@@ -510,12 +510,14 @@ SD_Error_t SD_GetCardInfo(void)
     return ErrorState;
 }
 
-SD_Error_t SD_CheckWrite(void) {
+SD_Error_t SD_CheckWrite(void)
+{
     if (SD_Handle.TXCplt != 0) return SD_BUSY;
     return SD_OK;
 }
 
-SD_Error_t SD_CheckRead(void) {
+SD_Error_t SD_CheckRead(void)
+{
     if (SD_Handle.RXCplt != 0) return SD_BUSY;
     return SD_OK;
 }
@@ -606,7 +608,8 @@ void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd)
        adjust the address and the D-Cache size to invalidate accordingly.
      */
     uint32_t alignedAddr = (uint32_t)sdReadParameters.buffer &  ~0x1F;
-    SCB_InvalidateDCache_by_Addr((uint32_t*)alignedAddr, sdReadParameters.NumberOfBlocks * sdReadParameters.BlockSize + ((uint32_t)sdReadParameters.buffer - alignedAddr));
+    SCB_InvalidateDCache_by_Addr((uint32_t *)alignedAddr,
+                                 sdReadParameters.NumberOfBlocks * sdReadParameters.BlockSize + ((uint32_t)sdReadParameters.buffer - alignedAddr));
 }
 
 void HAL_SD_AbortCallback(SD_HandleTypeDef *hsd)

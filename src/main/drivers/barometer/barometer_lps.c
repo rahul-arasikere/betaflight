@@ -271,7 +271,8 @@ bool lpsDetect(baroDev_t *baro)
     IOConfigGPIO(busdev->busdev_u.spi.csnPin, IOCFG_OUT_PP);
     IOHi(busdev->busdev_u.spi.csnPin); // Disable
 #ifdef USE_SPI_TRANSACTION
-    spiBusTransactionInit(busdev, SPI_MODE3_POL_HIGH_EDGE_2ND, spiCalculateDivider(LPS_MAX_SPI_CLK_HZ)); // Baro can work only on up to 10Mhz SPI bus
+    spiBusTransactionInit(busdev, SPI_MODE3_POL_HIGH_EDGE_2ND,
+                          spiCalculateDivider(LPS_MAX_SPI_CLK_HZ)); // Baro can work only on up to 10Mhz SPI bus
 #else
     spiBusSetDivisor(busdev, spiCalculateDivider(LPS_MAX_SPI_CLK_HZ)); // Baro can work only on up to 10Mhz SPI bus
 #endif
@@ -285,9 +286,12 @@ bool lpsDetect(baroDev_t *baro)
     //Init, if writeVerify is false fallback to false on detect
     bool ret = false;
     lpsOff(busdev);
-    ret = lpsWriteVerify(busdev, LPS_CTRL2, (0x00 << 1)); if (ret != true) return false;
-    ret = lpsWriteVerify(busdev, LPS_RES_CONF, (LPS_AVT_64 | LPS_AVP_512)); if (ret != true) return false;
-    ret = lpsWriteVerify(busdev, LPS_CTRL4, 0x01); if (ret != true) return false;
+    ret = lpsWriteVerify(busdev, LPS_CTRL2, (0x00 << 1));
+    if (ret != true) return false;
+    ret = lpsWriteVerify(busdev, LPS_RES_CONF, (LPS_AVT_64 | LPS_AVP_512));
+    if (ret != true) return false;
+    ret = lpsWriteVerify(busdev, LPS_CTRL4, 0x01);
+    if (ret != true) return false;
     lpsOn(busdev, (0x04 << 4) | (0x01 << 1) | (0x01 << 2) | (0x01 << 3));
 
     lpsReadCommand(busdev, LPS_CTRL1, &temp, 1);

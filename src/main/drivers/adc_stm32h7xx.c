@@ -72,7 +72,8 @@ const adcDevice_t adcHardware[ADCDEV_COUNT] = {
         .channel = DMA_REQUEST_ADC1,
 #endif
     },
-    { .ADCx = ADC2_INSTANCE,
+    {
+        .ADCx = ADC2_INSTANCE,
         .rccADC = RCC_AHB1(ADC12),
 #if !defined(USE_DMA_SPEC)
         .dmaResource = (dmaResource_t *)ADC2_DMA_STREAM,
@@ -186,7 +187,10 @@ static uint32_t adcRegularRankMap[] = {
 
 #undef RANK
 
-static void errorHandler(void) { while (1) { } }
+static void errorHandler(void)
+{
+    while (1) { }
+}
 
 // Note on sampling time.
 // Temperature sensor has minimum sample time of 9us.
@@ -224,19 +228,19 @@ void adcInitDevice(adcDevice_t *adcdev, int channelCount)
     }
 #endif
 
-    hadc->Init.Overrun                  = ADC_OVR_DATA_OVERWRITTEN;
+        hadc->Init.Overrun                  = ADC_OVR_DATA_OVERWRITTEN;
     hadc->Init.OversamplingMode         = DISABLE;
 
     // Initialize this ADC peripheral
 
     if (HAL_ADC_Init(hadc) != HAL_OK) {
-      errorHandler();
+        errorHandler();
     }
 
     // Execute calibration
 
     if (HAL_ADCEx_Calibration_Start(hadc, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED) != HAL_OK) {
-      errorHandler();
+        errorHandler();
     }
 }
 
@@ -325,7 +329,7 @@ void adcInit(const adcConfig_t *config)
             for (dev = 0; dev < ADCDEV_COUNT; dev++) {
                 if (!adcDevice[dev].ADCx
 #ifndef USE_DMA_SPEC
-                     || !adcDevice[dev].dmaResource
+                    || !adcDevice[dev].dmaResource
 #endif
                    ) {
                     // Instance not activated
@@ -371,7 +375,7 @@ void adcInit(const adcConfig_t *config)
 
         adc->ADCHandle.Instance = adc->ADCx;
 
-        if (HAL_ADC_DeInit(&adc->ADCHandle) != HAL_OK) { 
+        if (HAL_ADC_DeInit(&adc->ADCHandle) != HAL_OK) {
             // ADC de-initialization Error
             errorHandler();
         }
@@ -501,7 +505,8 @@ void adcInit(const adcConfig_t *config)
 
         // Start conversion in DMA mode
 
-        if (HAL_ADC_Start_DMA(&adc->ADCHandle, (uint32_t *)&adcConversionBuffer[dmaBufferIndex], BITCOUNT(adc->channelBits)) != HAL_OK) {
+        if (HAL_ADC_Start_DMA(&adc->ADCHandle, (uint32_t *)&adcConversionBuffer[dmaBufferIndex],
+                              BITCOUNT(adc->channelBits)) != HAL_OK) {
             errorHandler();
         }
 

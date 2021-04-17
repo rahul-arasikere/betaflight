@@ -63,24 +63,24 @@
 PG_REGISTER_WITH_RESET_TEMPLATE(telemetryConfig_t, telemetryConfig, PG_TELEMETRY_CONFIG, 5);
 
 PG_RESET_TEMPLATE(telemetryConfig_t, telemetryConfig,
-    .telemetry_inverted = false,
-    .halfDuplex = 1,
-    .gpsNoFixLatitude = 0,
-    .gpsNoFixLongitude = 0,
-    .frsky_coordinate_format = FRSKY_FORMAT_DMS,
-    .frsky_unit = UNIT_METRIC,
-    .frsky_vfas_precision = 0,
-    .hottAlarmSoundInterval = 5,
-    .pidValuesAsTelemetry = 0,
-    .report_cell_voltage = false,
-    .flysky_sensors = {
-            IBUS_SENSOR_TYPE_TEMPERATURE,
-            IBUS_SENSOR_TYPE_RPM_FLYSKY,
-            IBUS_SENSOR_TYPE_EXTERNAL_VOLTAGE
-    },
-    .disabledSensors = ESC_SENSOR_ALL | SENSOR_CAP_USED,
-    .mavlink_mah_as_heading_divisor = 0,
-);
+                  .telemetry_inverted = false,
+                  .halfDuplex = 1,
+                  .gpsNoFixLatitude = 0,
+                  .gpsNoFixLongitude = 0,
+                  .frsky_coordinate_format = FRSKY_FORMAT_DMS,
+                  .frsky_unit = UNIT_METRIC,
+                  .frsky_vfas_precision = 0,
+                  .hottAlarmSoundInterval = 5,
+                  .pidValuesAsTelemetry = 0,
+                  .report_cell_voltage = false,
+.flysky_sensors = {
+    IBUS_SENSOR_TYPE_TEMPERATURE,
+    IBUS_SENSOR_TYPE_RPM_FLYSKY,
+    IBUS_SENSOR_TYPE_EXTERNAL_VOLTAGE
+},
+.disabledSensors = ESC_SENSOR_ALL | SENSOR_CAP_USED,
+.mavlink_mah_as_heading_divisor = 0,
+                 );
 
 void telemetryInit(void)
 {
@@ -140,15 +140,16 @@ bool telemetryDetermineEnabledState(portSharing_e portSharing)
 
 bool telemetryCheckRxPortShared(const serialPortConfig_t *portConfig, const SerialRXType serialrxProvider)
 {
-    if (portConfig->functionMask & FUNCTION_RX_SERIAL && portConfig->functionMask & TELEMETRY_SHAREABLE_PORT_FUNCTIONS_MASK &&
+    if (portConfig->functionMask & FUNCTION_RX_SERIAL && portConfig->functionMask & TELEMETRY_SHAREABLE_PORT_FUNCTIONS_MASK
+        &&
         (serialrxProvider == SERIALRX_SPEKTRUM1024 ||
-        serialrxProvider == SERIALRX_SPEKTRUM2048 ||
-        serialrxProvider == SERIALRX_SBUS ||
-        serialrxProvider == SERIALRX_SUMD ||
-        serialrxProvider == SERIALRX_SUMH ||
-        serialrxProvider == SERIALRX_XBUS_MODE_B ||
-        serialrxProvider == SERIALRX_XBUS_MODE_B_RJ01 ||
-        serialrxProvider == SERIALRX_IBUS)) {
+         serialrxProvider == SERIALRX_SPEKTRUM2048 ||
+         serialrxProvider == SERIALRX_SBUS ||
+         serialrxProvider == SERIALRX_SUMD ||
+         serialrxProvider == SERIALRX_SUMH ||
+         serialrxProvider == SERIALRX_XBUS_MODE_B ||
+         serialrxProvider == SERIALRX_XBUS_MODE_B_RJ01 ||
+         serialrxProvider == SERIALRX_IBUS)) {
 
         return true;
     }

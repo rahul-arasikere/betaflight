@@ -127,7 +127,7 @@ uint8_t receivedPowerSnapshot;
 
 #define RX_TX_ADDR_LEN 5
 // set rxTxAddr to the bind address
-STATIC_UNIT_TESTED uint8_t rxTxAddr[RX_TX_ADDR_LEN] = {0x4b,0x5c,0x6d,0x7e,0x8f};
+STATIC_UNIT_TESTED uint8_t rxTxAddr[RX_TX_ADDR_LEN] = {0x4b, 0x5c, 0x6d, 0x7e, 0x8f};
 static uint32_t *rxSpiIdPtr;
 #define RX_TX_ADDR_4 0xD2 // rxTxAddr[4] always set to this value
 
@@ -148,7 +148,7 @@ STATIC_UNIT_TESTED bool inavCheckBindPacket(const uint8_t *payload)
     bool bindPacket = false;
     if (payload[0] == BIND_PAYLOAD0  && payload[1] == BIND_PAYLOAD1) {
         bindPacket = true;
-        if (protocolState ==STATE_BIND) {
+        if (protocolState == STATE_BIND) {
             rxTxAddr[0] = payload[2];
             rxTxAddr[1] = payload[3];
             rxTxAddr[2] = payload[4];
@@ -199,11 +199,11 @@ void inavNrf24SetRcDataFromPayload(uint16_t *rcData, const uint8_t *payload)
 
         // channels AUX2 to AUX7 use the deviation convention
         const uint8_t flags = payload[8];
-        rcData[RC_CHANNEL_FLIP]= (flags & FLAG_FLIP) ? PWM_RANGE_MAX : PWM_RANGE_MIN; // AUX2
-        rcData[RC_CHANNEL_PICTURE]= (flags & FLAG_PICTURE) ? PWM_RANGE_MAX : PWM_RANGE_MIN; // AUX3
-        rcData[RC_CHANNEL_VIDEO]= (flags & FLAG_VIDEO) ? PWM_RANGE_MAX : PWM_RANGE_MIN; // AUX4
-        rcData[RC_CHANNEL_HEADLESS]= (flags & FLAG_HEADLESS) ? PWM_RANGE_MAX : PWM_RANGE_MIN; //AUX5
-        rcData[RC_CHANNEL_RTH]= (flags & FLAG_RTH) ? PWM_RANGE_MAX : PWM_RANGE_MIN; // AUX6
+        rcData[RC_CHANNEL_FLIP] = (flags & FLAG_FLIP) ? PWM_RANGE_MAX : PWM_RANGE_MIN; // AUX2
+        rcData[RC_CHANNEL_PICTURE] = (flags & FLAG_PICTURE) ? PWM_RANGE_MAX : PWM_RANGE_MIN; // AUX3
+        rcData[RC_CHANNEL_VIDEO] = (flags & FLAG_VIDEO) ? PWM_RANGE_MAX : PWM_RANGE_MIN; // AUX4
+        rcData[RC_CHANNEL_HEADLESS] = (flags & FLAG_HEADLESS) ? PWM_RANGE_MAX : PWM_RANGE_MIN; //AUX5
+        rcData[RC_CHANNEL_RTH] = (flags & FLAG_RTH) ? PWM_RANGE_MAX : PWM_RANGE_MIN; // AUX6
 
         // channels AUX7 to AUX10 have 10 bit resolution
         lowBits = payload[13]; // least significant bits for AUX7 to AUX10
@@ -244,7 +244,7 @@ static void inavHopToNextChannel(void)
 STATIC_UNIT_TESTED void inavSetHoppingChannels(void)
 {
 #ifdef NO_RF_CHANNEL_HOPPING
-     // just stay on bind channel, useful for debugging
+    // just stay on bind channel, useful for debugging
     inavRfChannelCount = 1;
     inavRfChannels[0] = INAV_RF_BIND_CHANNEL;
 #else
@@ -377,7 +377,8 @@ static void inavNrf24Setup(rx_spi_protocol_e protocol, const uint32_t *rxSpiId, 
     UNUSED(rfChannelHoppingCount);
 
     // sets PWR_UP, EN_CRC, CRCO - 2 byte CRC, only get IRQ pin interrupt on RX_DR
-    NRF24L01_Initialize(BV(NRF24L01_00_CONFIG_EN_CRC) | BV(NRF24L01_00_CONFIG_CRCO) | BV(NRF24L01_00_CONFIG_MASK_MAX_RT) | BV(NRF24L01_00_CONFIG_MASK_TX_DS));
+    NRF24L01_Initialize(BV(NRF24L01_00_CONFIG_EN_CRC) | BV(NRF24L01_00_CONFIG_CRCO) | BV(
+                            NRF24L01_00_CONFIG_MASK_MAX_RT) | BV(NRF24L01_00_CONFIG_MASK_TX_DS));
 
 #ifdef USE_AUTO_ACKKNOWLEDGEMENT
     NRF24L01_WriteReg(NRF24L01_01_EN_AA, BV(NRF24L01_01_EN_AA_ENAA_P0)); // auto acknowledgment on P0
@@ -411,7 +412,7 @@ static void inavNrf24Setup(rx_spi_protocol_e protocol, const uint32_t *rxSpiId, 
         inavRfChannelIndex = 0;
         NRF24L01_SetChannel(INAV_RF_BIND_CHANNEL);
     } else {
-        rxSpiIdPtr = (uint32_t*)rxSpiId;
+        rxSpiIdPtr = (uint32_t *)rxSpiId;
         // use the rxTxAddr provided and go straight into DATA_STATE
         memcpy(rxTxAddr, rxSpiId, sizeof(uint32_t));
         rxTxAddr[4] = RX_TX_ADDR_4;
@@ -429,7 +430,8 @@ bool inavNrf24Init(const rxSpiConfig_t *rxSpiConfig, rxRuntimeState_t *rxRuntime
     UNUSED(extiConfig);
 
     rxRuntimeState->channelCount = RC_CHANNEL_COUNT_MAX;
-    inavNrf24Setup((rx_spi_protocol_e)rxSpiConfig->rx_spi_protocol, &rxSpiConfig->rx_spi_id, rxSpiConfig->rx_spi_rf_channel_count);
+    inavNrf24Setup((rx_spi_protocol_e)rxSpiConfig->rx_spi_protocol, &rxSpiConfig->rx_spi_id,
+                   rxSpiConfig->rx_spi_rf_channel_count);
 
     return true;
 }

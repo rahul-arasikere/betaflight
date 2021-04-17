@@ -36,8 +36,8 @@ mpuRegion_t mpuRegions[] = {
     {
         // DMA_RAM_R
         // DMA receive buffer in SRAM
-        .start      = (uint32_t)&dma_ram_r_start,
-        .end        = (uint32_t)&dma_ram_r_end,
+        .start      = (uint32_t) &dma_ram_r_start,
+        .end        = (uint32_t) &dma_ram_r_end,
         .size       = 0,  // Size determined by ".end"
         .perm       = MPU_REGION_FULL_ACCESS,
         .exec       = MPU_INSTRUCTION_ACCESS_ENABLE,
@@ -48,8 +48,8 @@ mpuRegion_t mpuRegions[] = {
     {
         // DMA_RAM_W
         // DMA transmit buffer in SRAM
-        .start      = (uint32_t)&dma_ram_w_start,
-        .end        = (uint32_t)&dma_ram_w_end,
+        .start      = (uint32_t) &dma_ram_w_start,
+        .end        = (uint32_t) &dma_ram_w_end,
         .size       = 0,  // Size determined by ".end"
         .perm       = MPU_REGION_FULL_ACCESS,
         .exec       = MPU_INSTRUCTION_ACCESS_ENABLE,
@@ -60,8 +60,8 @@ mpuRegion_t mpuRegions[] = {
     {
         // DMA_RAM_RW
         // DMA transmit and receive buffer in SRAM
-        .start      = (uint32_t)&dma_ram_rw_start,
-        .end        = (uint32_t)&dma_ram_rw_end,
+        .start      = (uint32_t) &dma_ram_rw_start,
+        .end        = (uint32_t) &dma_ram_rw_end,
         .size       = 0,  // Size determined by ".end"
         .perm       = MPU_REGION_FULL_ACCESS,
         .exec       = MPU_INSTRUCTION_ACCESS_ENABLE,

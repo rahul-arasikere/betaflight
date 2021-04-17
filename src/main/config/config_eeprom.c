@@ -97,7 +97,8 @@ bool loadEEPROMFromExternalFlash(void)
     bool success = false;
 
     do {
-        bytesRead = flashReadBytes(flashStartAddress + totalBytesRead, &eepromData[totalBytesRead], EEPROM_SIZE - totalBytesRead);
+        bytesRead = flashReadBytes(flashStartAddress + totalBytesRead, &eepromData[totalBytesRead],
+                                   EEPROM_SIZE - totalBytesRead);
         if (bytesRead > 0) {
             totalBytesRead += bytesRead;
             success = (totalBytesRead == EEPROM_SIZE);
@@ -237,7 +238,8 @@ bool loadEEPROMFromSDCard(void)
 #endif
 
 #ifdef CONFIG_IN_FILE
-void loadEEPROMFromFile(void) {
+void loadEEPROMFromFile(void)
+{
     FLASH_Unlock(); // load existing config file into eepromData
 }
 #endif

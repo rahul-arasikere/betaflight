@@ -91,8 +91,7 @@ static void nextChannel();
 static bool redpineRxPacketBind(uint8_t *packet);
 static bool isRedpineFast(void);
 
-const cc2500RegisterConfigElement_t cc2500RedPineBaseConfig[] =
-{
+const cc2500RegisterConfigElement_t cc2500RedPineBaseConfig[] = {
     { CC2500_02_IOCFG0, 0x01 },
     { CC2500_03_FIFOTHR, 0x07 },
     { CC2500_06_PKTLEN, REDPINE_PACKET_SIZE },
@@ -101,8 +100,7 @@ const cc2500RegisterConfigElement_t cc2500RedPineBaseConfig[] =
     { CC2500_09_ADDR, 0x00 }
 };
 
-const cc2500RegisterConfigElement_t cc2500RedPineFastConfig[] =
-{
+const cc2500RegisterConfigElement_t cc2500RedPineFastConfig[] = {
     { CC2500_0B_FSCTRL1, 0x0A },
     { CC2500_0C_FSCTRL0, 0x00 },
     { CC2500_0D_FREQ2, 0x5D },
@@ -134,8 +132,7 @@ const cc2500RegisterConfigElement_t cc2500RedPineFastConfig[] =
     { CC2500_3E_PATABLE, 0xFF }
 };
 
-const cc2500RegisterConfigElement_t cc2500RedPineConfig[] =
-{
+const cc2500RegisterConfigElement_t cc2500RedPineConfig[] = {
     { CC2500_0B_FSCTRL1, 0x06 },
     { CC2500_0C_FSCTRL0, 0x00 },
     { CC2500_0D_FREQ2, 0x5D },
@@ -195,75 +192,75 @@ rx_spi_received_e redpineSpiDataReceived(uint8_t *packet)
     rx_spi_received_e ret = RX_SPI_RECEIVED_NONE;
 
     switch (protocolState) {
-        case STATE_INIT:
-            if ((millis() - start_time) > 10) {
-                initialise();
+    case STATE_INIT:
+        if ((millis() - start_time) > 10) {
+            initialise();
 
-                protocolState = STATE_BIND;
-            }
+            protocolState = STATE_BIND;
+        }
 
-            break;
-        case STATE_BIND:
-            if (rxSpiCheckBindRequested(true) || rxCc2500SpiConfig()->autoBind) {
-                redpineFast = true;
-                initialise();
-                rxSpiLedOn();
+        break;
+    case STATE_BIND:
+        if (rxSpiCheckBindRequested(true) || rxCc2500SpiConfig()->autoBind) {
+            redpineFast = true;
+            initialise();
+            rxSpiLedOn();
+            initBindTuneRx();
+
+            protocolState = STATE_BIND_TUNING1;
+        } else {
+            protocolState = STATE_STARTING;
+        }
+
+        break;
+    case STATE_BIND_TUNING1:
+        if (tuneRx1(packet)) {
+            protocolState = STATE_BIND_TUNING2;
+        }
+        break;
+    case STATE_BIND_TUNING2:
+        if (tuneRx2(packet)) {
+            protocolState = STATE_BIND_TUNING3;
+        }
+        break;
+    case STATE_BIND_TUNING3:
+        if (tuneRx3(packet)) {
+            if (((int16_t)bindOffset_max - (int16_t)bindOffset_min) <= 10) {
                 initBindTuneRx();
-
-                protocolState = STATE_BIND_TUNING1;
+                protocolState = STATE_BIND_TUNING1;  // retry
             } else {
-                protocolState = STATE_STARTING;
-            }
+                rxCc2500SpiConfigMutable()->bindOffset = ((int16_t)bindOffset_max + (int16_t)bindOffset_min) / 2;
+                protocolState = STATE_BIND_COMPLETE;
+                cc2500Strobe(CC2500_SIDLE);
 
-            break;
-        case STATE_BIND_TUNING1:
-            if (tuneRx1(packet)) {
-                protocolState = STATE_BIND_TUNING2;
-            }
-            break;
-        case STATE_BIND_TUNING2:
-            if (tuneRx2(packet)) {
-                protocolState = STATE_BIND_TUNING3;
-            }
-            break;
-        case STATE_BIND_TUNING3:
-            if (tuneRx3(packet)) {
-                if (((int16_t)bindOffset_max - (int16_t)bindOffset_min) <= 10) {
-                    initBindTuneRx();
-                    protocolState = STATE_BIND_TUNING1;  // retry
-                } else {
-                    rxCc2500SpiConfigMutable()->bindOffset = ((int16_t)bindOffset_max + (int16_t)bindOffset_min) / 2;
-                    protocolState = STATE_BIND_COMPLETE;
-                    cc2500Strobe(CC2500_SIDLE);
-
-                    for (uint8_t i = 0; i < REDPINE_HOP_CHANNELS; i++) {
-                        if (rxCc2500SpiConfigMutable()->bindHopData[i] == 0) {
-                            protocolState = STATE_BIND_TUNING1;  // retry
-                            break;
-                        }
+                for (uint8_t i = 0; i < REDPINE_HOP_CHANNELS; i++) {
+                    if (rxCc2500SpiConfigMutable()->bindHopData[i] == 0) {
+                        protocolState = STATE_BIND_TUNING1;  // retry
+                        break;
                     }
                 }
             }
-            break;
-        case STATE_BIND_COMPLETE:
-            if (!rxCc2500SpiConfig()->autoBind) {
-                writeEEPROM();
-            } else {
-                uint8_t ctr = 80;
-                while (ctr--) {
-                    rxSpiLedToggle();
-                    delay(50);
-                }
+        }
+        break;
+    case STATE_BIND_COMPLETE:
+        if (!rxCc2500SpiConfig()->autoBind) {
+            writeEEPROM();
+        } else {
+            uint8_t ctr = 80;
+            while (ctr--) {
+                rxSpiLedToggle();
+                delay(50);
             }
+        }
 
-            ret = RX_SPI_RECEIVED_BIND;
-            protocolState = STATE_STARTING;
+        ret = RX_SPI_RECEIVED_BIND;
+        protocolState = STATE_STARTING;
 
-            break;
-        default:
-            ret = redpineHandlePacket(packet, &protocolState);
+        break;
+    default:
+        ret = redpineHandlePacket(packet, &protocolState);
 
-            break;
+        break;
     }
     DEBUG_SET(DEBUG_RX_FRSKY_SPI, 3, protocolState);
 
@@ -446,89 +443,89 @@ rx_spi_received_e redpineHandlePacket(uint8_t *const packet, uint8_t *const prot
     rx_spi_received_e ret = RX_SPI_RECEIVED_NONE;
 
     switch (*protocolState) {
-        case STATE_STARTING:
-            *protocolState = STATE_UPDATE;
+    case STATE_STARTING:
+        *protocolState = STATE_UPDATE;
+        nextChannel();
+        cc2500Strobe(CC2500_SRX);
+#ifdef USE_RX_CC2500_SPI_PA_LNA
+        cc2500TxDisable();
+#endif  // USE_RX_CC2500_SPI_PA_LNA
+        protocolTimerUs = micros();
+        break;
+    case STATE_UPDATE:
+        packetTimerUs = 0;
+        totalTimerUs = micros();
+
+        *protocolState = STATE_DATA;
+        if (rxSpiCheckBindRequested(false)) {
+            packetTimerUs = 0;
+            missingPackets = 0;
+            *protocolState = STATE_INIT;
+            break;
+        }
+
+        FALLTHROUGH;
+    // here FS code could be
+    case STATE_DATA:
+        if (rxSpiGetExtiState()) {
+            uint8_t ccLen = cc2500ReadReg(CC2500_3B_RXBYTES | CC2500_READ_BURST) & 0x7F;
+            if (ccLen == REDPINE_PACKET_SIZE_W_ADDONS) {
+                cc2500ReadFifo(packet, ccLen);
+
+                if ((packet[1] == rxCc2500SpiConfig()->bindTxId[0]) && (packet[2] == rxCc2500SpiConfig()->bindTxId[1])) {
+                    if (isRedpineFast()) {
+                        looptime = packet[CHANNEL_START + 7] * 100;
+                    } else {
+                        looptime = packet[CHANNEL_START + 7] * 1000;
+                    }
+                    DEBUG_SET(DEBUG_RX_FRSKY_SPI, 0, looptime);
+                    DEBUG_SET(DEBUG_RX_FRSKY_SPI, 1, packet[ccLen - 2]);
+
+                    packetTimerUs = micros() + looptime / 8;  // add a buffer on the packet time incase tx and  rx clocks are different
+                    totalTimerUs = micros();
+                    protocolTimerUs = micros();
+                    missingPackets = 0;
+                    DEBUG_SET(DEBUG_RX_FRSKY_SPI, 2, missingPackets);
+
+                    rxSpiLedOn();
+
+                    cc2500setRssiDbm(packet[ccLen - 2]);
+
+                    ret = RX_SPI_RECEIVED_DATA;
+                    nextChannel();
+                    cc2500Strobe(CC2500_SRX);
+                }
+            } else {
+                cc2500Strobe(CC2500_SFRX);
+            }
+        }
+
+        if (cmpTimeUs(micros(), totalTimerUs) > 50 * looptime) {
+            // out of sync with packets - do a complete resysnc
+            rxSpiLedToggle();
+            setRssiDirect(0, RSSI_SOURCE_RX_PROTOCOL);
             nextChannel();
             cc2500Strobe(CC2500_SRX);
-#ifdef USE_RX_CC2500_SPI_PA_LNA
-            cc2500TxDisable();
-#endif  // USE_RX_CC2500_SPI_PA_LNA
-            protocolTimerUs = micros();
-            break;
-        case STATE_UPDATE:
-            packetTimerUs = 0;
-            totalTimerUs = micros();
-
-            *protocolState = STATE_DATA;
-            if (rxSpiCheckBindRequested(false)) {
-                packetTimerUs = 0;
-                missingPackets = 0;
-                *protocolState = STATE_INIT;
-                break;
-            }
-
-            FALLTHROUGH;
-            // here FS code could be
-        case STATE_DATA:
-            if (rxSpiGetExtiState()) {
-                uint8_t ccLen = cc2500ReadReg(CC2500_3B_RXBYTES | CC2500_READ_BURST) & 0x7F;
-                if (ccLen == REDPINE_PACKET_SIZE_W_ADDONS) {
-                    cc2500ReadFifo(packet, ccLen);
-
-                    if ((packet[1] == rxCc2500SpiConfig()->bindTxId[0]) && (packet[2] == rxCc2500SpiConfig()->bindTxId[1])) {
-                        if (isRedpineFast()) {
-                            looptime = packet[CHANNEL_START + 7] * 100;
-                        } else {
-                            looptime = packet[CHANNEL_START + 7] * 1000;
-                        }
-                        DEBUG_SET(DEBUG_RX_FRSKY_SPI, 0, looptime);
-                        DEBUG_SET(DEBUG_RX_FRSKY_SPI, 1, packet[ccLen - 2]);
-
-                        packetTimerUs = micros() + looptime / 8;  // add a buffer on the packet time incase tx and  rx clocks are different
-                        totalTimerUs = micros();
-                        protocolTimerUs = micros();
-                        missingPackets = 0;
-                        DEBUG_SET(DEBUG_RX_FRSKY_SPI, 2, missingPackets);
-
-                        rxSpiLedOn();
-
-                        cc2500setRssiDbm(packet[ccLen - 2]);
-
-                        ret = RX_SPI_RECEIVED_DATA;
-                        nextChannel();
-                        cc2500Strobe(CC2500_SRX);
-                    }
-                } else {
-                    cc2500Strobe(CC2500_SFRX);
-                }
-            }
-
-            if (cmpTimeUs(micros(), totalTimerUs) > 50 * looptime) {
-                // out of sync with packets - do a complete resysnc
-                rxSpiLedToggle();
-                setRssiDirect(0, RSSI_SOURCE_RX_PROTOCOL);
-                nextChannel();
-                cc2500Strobe(CC2500_SRX);
-                *protocolState = STATE_UPDATE;
-            } else if ((cmpTimeUs(micros(), packetTimerUs) > looptime) && packetTimerUs) {
-                // missed a packet
-                packetTimerUs = micros();
-                nextChannel();
-                cc2500Strobe(CC2500_SRX);
-                missingPackets++;
-                DEBUG_SET(DEBUG_RX_FRSKY_SPI, 2, missingPackets);
+            *protocolState = STATE_UPDATE;
+        } else if ((cmpTimeUs(micros(), packetTimerUs) > looptime) && packetTimerUs) {
+            // missed a packet
+            packetTimerUs = micros();
+            nextChannel();
+            cc2500Strobe(CC2500_SRX);
+            missingPackets++;
+            DEBUG_SET(DEBUG_RX_FRSKY_SPI, 2, missingPackets);
 #if defined(USE_RX_CC2500_SPI_DIVERSITY)
-                if (missingPackets >= 2) {
-                    cc2500switchAntennae();
-                }
-#endif
-            } else if (cmpTimeUs(micros(), protocolTimerUs) > SWITCH_REDPINE_SPEED_US) {
-                switchRedpineMode();
-                looptime = DEFAULT_PACKET_TIME_US;
-                protocolTimerUs = micros();
-                *protocolState = STATE_INIT;
+            if (missingPackets >= 2) {
+                cc2500switchAntennae();
             }
-            break;
+#endif
+        } else if (cmpTimeUs(micros(), protocolTimerUs) > SWITCH_REDPINE_SPEED_US) {
+            switchRedpineMode();
+            looptime = DEFAULT_PACKET_TIME_US;
+            protocolTimerUs = micros();
+            *protocolState = STATE_INIT;
+        }
+        break;
     }
     return ret;
 }

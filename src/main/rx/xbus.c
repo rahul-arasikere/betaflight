@@ -117,10 +117,11 @@ static void xBusUnpackModeBFrame(uint8_t offsetBytes)
 {
     // Calculate the CRC of the incoming frame
     // Calculate on all bytes except the final two CRC bytes
-    const uint16_t inCrc = crc16_ccitt_update(0, (uint8_t*)&xBusFrame[offsetBytes], xBusFrameLength - 2);
+    const uint16_t inCrc = crc16_ccitt_update(0, (uint8_t *)&xBusFrame[offsetBytes], xBusFrameLength - 2);
 
     // Get the received CRC
-    const uint16_t crc = (((uint16_t)xBusFrame[offsetBytes + xBusFrameLength - 2]) << 8) + ((uint16_t)xBusFrame[offsetBytes + xBusFrameLength - 1]);
+    const uint16_t crc = (((uint16_t)xBusFrame[offsetBytes + xBusFrameLength - 2]) << 8) + ((
+                             uint16_t)xBusFrame[offsetBytes + xBusFrameLength - 1]);
 
     if (crc == inCrc) {
         // Unpack the data, we have a valid frame, only 12 channel unpack also when receive 16 channel
@@ -162,8 +163,7 @@ static void xBusUnpackRJ01Frame(void)
     //
     // Check we have correct length of message
     //
-    if (xBusFrame[1] != XBUS_RJ01_MESSAGE_LENGTH)
-    {
+    if (xBusFrame[1] != XBUS_RJ01_MESSAGE_LENGTH) {
         // Unknown package as length is not ok
         return;
     }
@@ -175,8 +175,7 @@ static void xBusUnpackRJ01Frame(void)
         outerCrc = xBusRj01CRC8(outerCrc, xBusFrame[i]);
     }
 
-    if (outerCrc != xBusFrame[xBusFrameLength - 1])
-    {
+    if (outerCrc != xBusFrame[xBusFrameLength - 1]) {
         // CRC does not match, skip this frame
         return;
     }
@@ -309,13 +308,13 @@ bool xBusInit(const rxConfig_t *rxConfig, rxRuntimeState_t *rxRuntimeState)
 #endif
 
     serialPort_t *xBusPort = openSerialPort(portConfig->identifier,
-        FUNCTION_RX_SERIAL,
-        xBusDataReceive,
-        NULL,
-        baudRate,
-        portShared ? MODE_RXTX : MODE_RX,
-        (rxConfig->serialrx_inverted ? SERIAL_INVERTED : 0) | (rxConfig->halfDuplex ? SERIAL_BIDIR : 0)
-        );
+                                            FUNCTION_RX_SERIAL,
+                                            xBusDataReceive,
+                                            NULL,
+                                            baudRate,
+                                            portShared ? MODE_RXTX : MODE_RX,
+                                            (rxConfig->serialrx_inverted ? SERIAL_INVERTED : 0) | (rxConfig->halfDuplex ? SERIAL_BIDIR : 0)
+                                           );
 
 #ifdef USE_TELEMETRY
     if (portShared) {

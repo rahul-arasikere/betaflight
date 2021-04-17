@@ -47,12 +47,12 @@
 PG_REGISTER_WITH_RESET_TEMPLATE(mixerConfig_t, mixerConfig, PG_MIXER_CONFIG, 0);
 
 PG_RESET_TEMPLATE(mixerConfig_t, mixerConfig,
-    .mixerMode = DEFAULT_MIXER,
-    .yaw_motors_reversed = false,
-    .crashflip_motor_percent = 0,
-    .crashflip_expo = 35,
-    .mixer_type = MIXER_LEGACY,
-);
+                  .mixerMode = DEFAULT_MIXER,
+                  .yaw_motors_reversed = false,
+                  .crashflip_motor_percent = 0,
+                  .crashflip_expo = 35,
+                  .mixer_type = MIXER_LEGACY,
+                 );
 
 PG_REGISTER_ARRAY(motorMixer_t, MAX_SUPPORTED_MOTORS, customMotorMixer, PG_MOTOR_MIXER, 0);
 
@@ -289,7 +289,8 @@ void initEscEndpoints(void)
         motorOutputLimit = currentPidProfile->motor_output_limit / 100.0f;
     }
 
-    motorInitEndpoints(motorConfig(), motorOutputLimit, &mixerRuntime.motorOutputLow, &mixerRuntime.motorOutputHigh, &mixerRuntime.disarmMotorOutput, &mixerRuntime.deadbandMotor3dHigh, &mixerRuntime.deadbandMotor3dLow);
+    motorInitEndpoints(motorConfig(), motorOutputLimit, &mixerRuntime.motorOutputLow, &mixerRuntime.motorOutputHigh,
+                       &mixerRuntime.disarmMotorOutput, &mixerRuntime.deadbandMotor3dHigh, &mixerRuntime.deadbandMotor3dLow);
     if (!mixerRuntime.feature3dEnabled && currentPidProfile->dyn_idle_min_rpm) {
         mixerRuntime.motorOutputLow = DSHOT_MIN_THROTTLE;
     }
@@ -344,7 +345,8 @@ static void mixerConfigureOutput(void)
 {
     mixerRuntime.motorCount = 0;
 
-    if (currentMixerMode == MIXER_CUSTOM || currentMixerMode == MIXER_CUSTOM_TRI || currentMixerMode == MIXER_CUSTOM_AIRPLANE) {
+    if (currentMixerMode == MIXER_CUSTOM || currentMixerMode == MIXER_CUSTOM_TRI
+        || currentMixerMode == MIXER_CUSTOM_AIRPLANE) {
         // load custom mixer into currentMixer
         for (int i = 0; i < MAX_SUPPORTED_MOTORS; i++) {
             // check if done

@@ -191,7 +191,8 @@ static uint8_t m25p16_readStatus(busDevice_t *bus)
 static bool m25p16_isReady(flashDevice_t *fdevice)
 {
     // If couldBeBusy is false, don't bother to poll the flash chip for its status
-    fdevice->couldBeBusy = fdevice->couldBeBusy && ((m25p16_readStatus(fdevice->io.handle.busdev) & M25P16_STATUS_FLAG_WRITE_IN_PROGRESS) != 0);
+    fdevice->couldBeBusy = fdevice->couldBeBusy
+                           && ((m25p16_readStatus(fdevice->io.handle.busdev) & M25P16_STATUS_FLAG_WRITE_IN_PROGRESS) != 0);
 
     return !fdevice->couldBeBusy;
 }
@@ -419,7 +420,7 @@ static int m25p16_readBytes(flashDevice_t *fdevice, uint32_t address, uint8_t *b
  *
  * Can be called before calling m25p16_init() (the result would have totalSize = 0).
  */
-static const flashGeometry_t* m25p16_getGeometry(flashDevice_t *fdevice)
+static const flashGeometry_t *m25p16_getGeometry(flashDevice_t *fdevice)
 {
     return &fdevice->geometry;
 }

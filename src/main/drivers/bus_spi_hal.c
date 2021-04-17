@@ -93,8 +93,7 @@ void spiInitDevice(SPIDevice device, bool leadingEdge)
     if (spi->leadingEdge) {
         spi->hspi.Init.CLKPolarity = SPI_POLARITY_LOW;
         spi->hspi.Init.CLKPhase = SPI_PHASE_1EDGE;
-    }
-    else {
+    } else {
         spi->hspi.Init.CLKPolarity = SPI_POLARITY_HIGH;
         spi->hspi.Init.CLKPhase = SPI_PHASE_2EDGE;
     }
@@ -118,7 +117,7 @@ uint8_t spiTransferByte(SPI_TypeDef *instance, uint8_t out)
 bool spiIsBusBusy(SPI_TypeDef *instance)
 {
     SPIDevice device = spiDeviceByInstance(instance);
-    if(spiDevice[device].hspi.State == HAL_SPI_STATE_BUSY)
+    if (spiDevice[device].hspi.State == HAL_SPI_STATE_BUSY)
         return true;
     else
         return false;
@@ -134,7 +133,7 @@ bool spiTransfer(SPI_TypeDef *instance, const uint8_t *out, uint8_t *in, int len
     if (!in) {
         // Tx only
         status = HAL_SPI_Transmit(&spiDevice[device].hspi, out, len, SPI_DEFAULT_TIMEOUT);
-    } else if(!out) {
+    } else if (!out) {
         // Rx only
         status = HAL_SPI_Receive(&spiDevice[device].hspi, in, len, SPI_DEFAULT_TIMEOUT);
     } else {
@@ -142,7 +141,7 @@ bool spiTransfer(SPI_TypeDef *instance, const uint8_t *out, uint8_t *in, int len
         status = HAL_SPI_TransmitReceive(&spiDevice[device].hspi, out, in, len, SPI_DEFAULT_TIMEOUT);
     }
 
-    if(status != HAL_OK) {
+    if (status != HAL_OK) {
         spiTimeoutUserCallback(instance);
     }
 
@@ -182,7 +181,7 @@ void spiSetDivisor(SPI_TypeDef *instance, uint16_t divisor)
 }
 
 #ifdef USE_DMA
-DMA_HandleTypeDef* dmaHandleByInstance(SPI_TypeDef *instance)
+DMA_HandleTypeDef *dmaHandleByInstance(SPI_TypeDef *instance)
 {
     return &spiDevice[spiDeviceByInstance(instance)].hdma;
 }
@@ -207,7 +206,7 @@ void SPI4_IRQHandler(void)
     HAL_SPI_IRQHandler(&spiDevice[SPIDEV_4].hspi);
 }
 
-void dmaSPIIRQHandler(dmaChannelDescriptor_t* descriptor)
+void dmaSPIIRQHandler(dmaChannelDescriptor_t *descriptor)
 {
     SPIDevice device = descriptor->userParam;
     if (device != SPIINVALID)

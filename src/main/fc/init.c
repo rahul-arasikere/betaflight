@@ -199,7 +199,7 @@ void processLoopback(void)
 #ifdef BUS_SWITCH_PIN
 void busSwitchInit(void)
 {
-static IO_t busSwitchResetPin        = IO_NONE;
+    static IO_t busSwitchResetPin        = IO_NONE;
 
     busSwitchResetPin = IOGetByTag(IO_TAG(BUS_SWITCH_PIN));
     IOInit(busSwitchResetPin, OWNER_SYSTEM, 0);
@@ -438,7 +438,8 @@ void init(void)
     initBoardInformation();
 #endif
 
-    if (!readSuccess || !isEEPROMVersionValid() || strncasecmp(systemConfig()->boardIdentifier, TARGET_BOARD_IDENTIFIER, sizeof(TARGET_BOARD_IDENTIFIER))) {
+    if (!readSuccess || !isEEPROMVersionValid()
+        || strncasecmp(systemConfig()->boardIdentifier, TARGET_BOARD_IDENTIFIER, sizeof(TARGET_BOARD_IDENTIFIER))) {
         resetEEPROM(false);
     }
 
@@ -578,13 +579,13 @@ void init(void)
 
 #if defined(AVOID_UART1_FOR_PWM_PPM)
     serialInit(featureIsEnabled(FEATURE_SOFTSERIAL),
-            featureIsEnabled(FEATURE_RX_PPM) || featureIsEnabled(FEATURE_RX_PARALLEL_PWM) ? SERIAL_PORT_USART1 : SERIAL_PORT_NONE);
+               featureIsEnabled(FEATURE_RX_PPM) || featureIsEnabled(FEATURE_RX_PARALLEL_PWM) ? SERIAL_PORT_USART1 : SERIAL_PORT_NONE);
 #elif defined(AVOID_UART2_FOR_PWM_PPM)
     serialInit(featureIsEnabled(FEATURE_SOFTSERIAL),
-            featureIsEnabled(FEATURE_RX_PPM) || featureIsEnabled(FEATURE_RX_PARALLEL_PWM) ? SERIAL_PORT_USART2 : SERIAL_PORT_NONE);
+               featureIsEnabled(FEATURE_RX_PPM) || featureIsEnabled(FEATURE_RX_PARALLEL_PWM) ? SERIAL_PORT_USART2 : SERIAL_PORT_NONE);
 #elif defined(AVOID_UART3_FOR_PWM_PPM)
     serialInit(featureIsEnabled(FEATURE_SOFTSERIAL),
-            featureIsEnabled(FEATURE_RX_PPM) || featureIsEnabled(FEATURE_RX_PARALLEL_PWM) ? SERIAL_PORT_USART3 : SERIAL_PORT_NONE);
+               featureIsEnabled(FEATURE_RX_PPM) || featureIsEnabled(FEATURE_RX_PARALLEL_PWM) ? SERIAL_PORT_USART3 : SERIAL_PORT_NONE);
 #else
     serialInit(featureIsEnabled(FEATURE_SOFTSERIAL), SERIAL_PORT_NONE);
 #endif
@@ -623,7 +624,7 @@ void init(void)
 #ifdef USE_BEEPER
     beeperInit(beeperDevConfig());
 #endif
-/* temp until PGs are implemented. */
+    /* temp until PGs are implemented. */
 #if defined(USE_INVERTER) && !defined(SIMULATOR_BUILD)
     initInverters(serialPinConfig());
 #endif
@@ -641,8 +642,8 @@ void init(void)
     }
 
 #ifdef USE_USB_MSC
-/* MSC mode will start after init, but will not allow scheduler to run,
- *  so there is no bottleneck in reading and writing data */
+    /* MSC mode will start after init, but will not allow scheduler to run,
+     *  so there is no bottleneck in reading and writing data */
     mscInit();
     if (mscCheckBootAndReset() || mscCheckButton()) {
         ledInit(statusLedConfig());
@@ -656,7 +657,7 @@ void init(void)
         }
 #endif
         if (mscStart() == 0) {
-             mscWaitForButton();
+            mscWaitForButton();
         } else {
             systemResetFromMsc();
         }
@@ -715,7 +716,7 @@ void init(void)
 #if defined(USE_UNIFIED_TARGET)
             && isSystemConfigured()
 #endif
-            ) {
+           ) {
             indicateFailure(FAILURE_MISSING_ACC, 2);
         }
         setArmingDisabled(ARMING_DISABLED_NO_GYRO);
@@ -898,7 +899,7 @@ void init(void)
 
 #ifdef SOFTSERIAL_LOOPBACK
     // FIXME this is a hack, perhaps add a FUNCTION_LOOPBACK to support it properly
-    loopbackPort = (serialPort_t*)&(softSerialPorts[0]);
+    loopbackPort = (serialPort_t *) & (softSerialPorts[0]);
     if (!loopbackPort->vTable) {
         loopbackPort = openSoftSerial(0, NULL, 19200, SERIAL_NOT_INVERTED);
     }
@@ -919,9 +920,9 @@ void init(void)
     mspInit();
     mspSerialInit();
 
-/*
- * CMS, display devices and OSD
- */
+    /*
+     * CMS, display devices and OSD
+     */
 #ifdef USE_CMS
     cmsInit();
 #endif
@@ -937,7 +938,7 @@ void init(void)
     if (featureIsEnabled(FEATURE_OSD)) {
         osdDisplayPortDevice_e device = osdConfig()->displayPortDevice;
 
-        switch(device) {
+        switch (device) {
 
         case OSD_DISPLAYPORT_DEVICE_AUTO:
             FALLTHROUGH;

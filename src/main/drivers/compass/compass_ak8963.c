@@ -114,7 +114,8 @@ static bool ak8963SlaveReadRegisterBuffer(const busDevice_t *slavedev, uint8_t r
 {
     const busDevice_t *bus = slavedev->busdev_u.mpuSlave.master;
 
-    ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_ADDR, slavedev->busdev_u.mpuSlave.address | READ_FLAG); // set I2C slave address for read
+    ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_ADDR,
+                                slavedev->busdev_u.mpuSlave.address | READ_FLAG); // set I2C slave address for read
     ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_REG, reg);                             // set I2C slave register
     ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_CTRL, (len & 0x0F) | I2C_SLV0_EN);     // read number of bytes
     delay(4);
@@ -128,7 +129,8 @@ static bool ak8963SlaveWriteRegister(const busDevice_t *slavedev, uint8_t reg, u
 {
     const busDevice_t *bus = slavedev->busdev_u.mpuSlave.master;
 
-    ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_ADDR, slavedev->busdev_u.mpuSlave.address); // set I2C slave address for write
+    ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_ADDR,
+                                slavedev->busdev_u.mpuSlave.address); // set I2C slave address for write
     ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_REG, reg);                             // set I2C slave register
     ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_DO, data);                             // set I2C sLave value
     ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_CTRL, (1 & 0x0F) | I2C_SLV0_EN);       // write 1 byte
@@ -153,7 +155,8 @@ static bool ak8963SlaveStartRead(const busDevice_t *slavedev, uint8_t reg, uint8
 
     queuedRead.len = len;
 
-    ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_ADDR, slavedev->busdev_u.mpuSlave.address | READ_FLAG);  // set I2C slave address for read
+    ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_ADDR,
+                                slavedev->busdev_u.mpuSlave.address | READ_FLAG);  // set I2C slave address for read
     ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_REG, reg);                             // set I2C slave register
     ak8963SpiWriteRegisterDelay(bus, MPU_RA_I2C_SLV0_CTRL, (len & 0x0F) | I2C_SLV0_EN);    // read number of bytes
 
@@ -215,48 +218,48 @@ static bool ak8963SlaveReadData(const busDevice_t *busdev, uint8_t *buf)
 
 restart:
     switch (state) {
-        case CHECK_STATUS: {
-            ak8963SlaveStartRead(busdev, AK8963_MAG_REG_ST1, 1);
-            state = WAITING_FOR_STATUS;
+    case CHECK_STATUS: {
+        ak8963SlaveStartRead(busdev, AK8963_MAG_REG_ST1, 1);
+        state = WAITING_FOR_STATUS;
+        return false;
+    }
+
+    case WAITING_FOR_STATUS: {
+        uint32_t timeRemaining = ak8963SlaveQueuedReadTimeRemaining();
+        if (timeRemaining) {
             return false;
         }
 
-        case WAITING_FOR_STATUS: {
-            uint32_t timeRemaining = ak8963SlaveQueuedReadTimeRemaining();
-            if (timeRemaining) {
-                return false;
-            }
+        ack = ak8963SlaveCompleteRead(busdev, &buf[0]);
 
-            ack = ak8963SlaveCompleteRead(busdev, &buf[0]);
+        uint8_t status = buf[0];
 
-            uint8_t status = buf[0];
-
-            if (!ack || (status & ST1_DATA_READY) == 0) {
-                // too early. queue the status read again
-                state = CHECK_STATUS;
-                if (retry) {
-                    retry = false;
-                    goto restart;
-               }
-               return false;
-            }
-
-            // read the 6 bytes of data and the status2 register
-            ak8963SlaveStartRead(busdev, AK8963_MAG_REG_HXL, 7);
-
-            state = WAITING_FOR_DATA;
-            return false;
-        }
-
-        case WAITING_FOR_DATA: {
-            uint32_t timeRemaining = ak8963SlaveQueuedReadTimeRemaining();
-            if (timeRemaining) {
-                return false;
-            }
-
-            ack = ak8963SlaveCompleteRead(busdev, &buf[0]);
+        if (!ack || (status & ST1_DATA_READY) == 0) {
+            // too early. queue the status read again
             state = CHECK_STATUS;
+            if (retry) {
+                retry = false;
+                goto restart;
+            }
+            return false;
         }
+
+        // read the 6 bytes of data and the status2 register
+        ak8963SlaveStartRead(busdev, AK8963_MAG_REG_HXL, 7);
+
+        state = WAITING_FOR_DATA;
+        return false;
+    }
+
+    case WAITING_FOR_DATA: {
+        uint32_t timeRemaining = ak8963SlaveQueuedReadTimeRemaining();
+        if (timeRemaining) {
+            return false;
+        }
+
+        ack = ak8963SlaveCompleteRead(busdev, &buf[0]);
+        state = CHECK_STATUS;
+    }
     }
 
     return ack;
@@ -296,9 +299,10 @@ static bool ak8963DirectReadData(const busDevice_t *busdev, uint8_t *buf)
     return ak8963ReadRegisterBuffer(busdev, AK8963_MAG_REG_HXL, buf, 7);
 }
 
-static int16_t parseMag(uint8_t *raw, int16_t gain) {
-  int ret = (int16_t)(raw[1] << 8 | raw[0]) * gain / 256;
-  return constrain(ret, INT16_MIN, INT16_MAX);
+static int16_t parseMag(uint8_t *raw, int16_t gain)
+{
+    int ret = (int16_t)(raw[1] << 8 | raw[0]) * gain / 256;
+    return constrain(ret, INT16_MIN, INT16_MAX);
 }
 
 static bool ak8963Read(magDev_t *mag, int16_t *magData)
@@ -330,7 +334,8 @@ static bool ak8963Read(magDev_t *mag, int16_t *magData)
         return false;
     }
 
-    ak8963WriteRegister(busdev, AK8963_MAG_REG_CNTL1, CNTL1_BIT_16_BIT | CNTL1_MODE_ONCE); // start reading again    uint8_t status2 = buf[6];
+    ak8963WriteRegister(busdev, AK8963_MAG_REG_CNTL1,
+                        CNTL1_BIT_16_BIT | CNTL1_MODE_ONCE); // start reading again    uint8_t status2 = buf[6];
 
     if (status2 & ST2_MAG_SENSOR_OVERFLOW) {
         return false;
@@ -352,9 +357,11 @@ static bool ak8963Init(magDev_t *mag)
 
     busDeviceRegister(busdev);
 
-    ak8963WriteRegister(busdev, AK8963_MAG_REG_CNTL1, CNTL1_MODE_POWER_DOWN);               // power down before entering fuse mode
+    ak8963WriteRegister(busdev, AK8963_MAG_REG_CNTL1,
+                        CNTL1_MODE_POWER_DOWN);               // power down before entering fuse mode
     ak8963WriteRegister(busdev, AK8963_MAG_REG_CNTL1, CNTL1_MODE_FUSE_ROM);                 // Enter Fuse ROM access mode
-    ak8963ReadRegisterBuffer(busdev, AK8963_MAG_REG_ASAX, asa, sizeof(asa));                // Read the x-, y-, and z-axis calibration values
+    ak8963ReadRegisterBuffer(busdev, AK8963_MAG_REG_ASAX, asa,
+                             sizeof(asa));                // Read the x-, y-, and z-axis calibration values
 
     mag->magGain[X] = asa[X] + 128;
     mag->magGain[Y] = asa[Y] + 128;
@@ -398,9 +405,11 @@ void ak8963BusInit(busDevice_t *busdev)
         rescheduleTask(TASK_COMPASS, TASK_PERIOD_HZ(40));
 
         // initialze I2C master via SPI bus
-        ak8963SpiWriteRegisterDelay(busdev->busdev_u.mpuSlave.master, MPU_RA_INT_PIN_CFG, MPU6500_BIT_INT_ANYRD_2CLEAR | MPU6500_BIT_BYPASS_EN);
+        ak8963SpiWriteRegisterDelay(busdev->busdev_u.mpuSlave.master, MPU_RA_INT_PIN_CFG,
+                                    MPU6500_BIT_INT_ANYRD_2CLEAR | MPU6500_BIT_BYPASS_EN);
         ak8963SpiWriteRegisterDelay(busdev->busdev_u.mpuSlave.master, MPU_RA_I2C_MST_CTRL, 0x0D); // I2C multi-master / 400kHz
-        ak8963SpiWriteRegisterDelay(busdev->busdev_u.mpuSlave.master, MPU_RA_USER_CTRL, 0x30);   // I2C master mode, SPI mode only
+        ak8963SpiWriteRegisterDelay(busdev->busdev_u.mpuSlave.master, MPU_RA_USER_CTRL,
+                                    0x30);   // I2C master mode, SPI mode only
         break;
 #endif
     default:
@@ -439,7 +448,8 @@ bool ak8963Detect(magDev_t *mag)
 
     busDevice_t *busdev = &mag->busdev;
 
-    if ((busdev->bustype == BUSTYPE_I2C || busdev->bustype == BUSTYPE_MPU_SLAVE) && busdev->busdev_u.mpuSlave.address == 0) {
+    if ((busdev->bustype == BUSTYPE_I2C || busdev->bustype == BUSTYPE_MPU_SLAVE)
+        && busdev->busdev_u.mpuSlave.address == 0) {
         busdev->busdev_u.mpuSlave.address = AK8963_MAG_I2C_ADDRESS;
     }
 
@@ -450,8 +460,7 @@ bool ak8963Detect(magDev_t *mag)
 
     bool ack = ak8963ReadRegisterBuffer(busdev, AK8963_MAG_REG_WIA, &sig, 1);               // check for AK8963
 
-    if (ack && sig == AK8963_DEVICE_ID) // 0x48 / 01001000 / 'H'
-    {
+    if (ack && sig == AK8963_DEVICE_ID) { // 0x48 / 01001000 / 'H'
         mag->init = ak8963Init;
         mag->read = ak8963Read;
 

@@ -72,7 +72,7 @@ void fat_convertFilenameToFATStyle(const char *filename, uint8_t *fatFilename)
         if (*filename == '\0' || *filename == '.') {
             *fatFilename = ' ';
         } else {
-            *fatFilename = toupper((unsigned char)*filename);
+            *fatFilename = toupper((unsigned char) * filename);
             filename++;
         }
         fatFilename++;
@@ -83,12 +83,12 @@ void fat_convertFilenameToFATStyle(const char *filename, uint8_t *fatFilename)
     }
 
     for (int i = 0; i < 3; i++) {
-         if (*filename == '\0') {
-             *fatFilename = ' ';
-         } else {
-             *fatFilename = toupper((unsigned char)*filename);
-             filename++;
-         }
-         fatFilename++;
-     }
+        if (*filename == '\0') {
+            *fatFilename = ' ';
+        } else {
+            *fatFilename = toupper((unsigned char) * filename);
+            filename++;
+        }
+        fatFilename++;
+    }
 }

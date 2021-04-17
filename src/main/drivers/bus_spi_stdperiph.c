@@ -135,9 +135,11 @@ uint8_t spiTransferByte(SPI_TypeDef *instance, uint8_t txByte)
 bool spiIsBusBusy(SPI_TypeDef *instance)
 {
 #ifdef STM32F303xC
-    return SPI_GetTransmissionFIFOStatus(instance) != SPI_TransmissionFIFOStatus_Empty || SPI_I2S_GetFlagStatus(instance, SPI_I2S_FLAG_BSY) == SET;
+    return SPI_GetTransmissionFIFOStatus(instance) != SPI_TransmissionFIFOStatus_Empty
+           || SPI_I2S_GetFlagStatus(instance, SPI_I2S_FLAG_BSY) == SET;
 #else
-    return SPI_I2S_GetFlagStatus(instance, SPI_I2S_FLAG_TXE) == RESET || SPI_I2S_GetFlagStatus(instance, SPI_I2S_FLAG_BSY) == SET;
+    return SPI_I2S_GetFlagStatus(instance, SPI_I2S_FLAG_TXE) == RESET
+           || SPI_I2S_GetFlagStatus(instance, SPI_I2S_FLAG_BSY) == SET;
 #endif
 
 }

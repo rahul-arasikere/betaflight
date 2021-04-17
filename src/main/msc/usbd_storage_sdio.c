@@ -77,12 +77,12 @@ static int8_t STORAGE_Init (uint8_t lun);
 
 #ifdef USE_HAL_DRIVER
 static int8_t STORAGE_GetCapacity (uint8_t lun,
-                           uint32_t *block_num,
-                           uint16_t *block_size);
+                                   uint32_t *block_num,
+                                   uint16_t *block_size);
 #else
 static int8_t STORAGE_GetCapacity (uint8_t lun,
-                           uint32_t *block_num,
-                           uint32_t *block_size);
+                                   uint32_t *block_num,
+                                   uint32_t *block_size);
 #endif
 
 static int8_t  STORAGE_IsReady (uint8_t lun);
@@ -90,21 +90,21 @@ static int8_t  STORAGE_IsReady (uint8_t lun);
 static int8_t  STORAGE_IsWriteProtected (uint8_t lun);
 
 static int8_t STORAGE_Read (uint8_t lun,
-                        uint8_t *buf,
-                        uint32_t blk_addr,
-                        uint16_t blk_len);
+                            uint8_t *buf,
+                            uint32_t blk_addr,
+                            uint16_t blk_len);
 
 static int8_t STORAGE_Write (uint8_t lun,
-                        uint8_t *buf,
-                        uint32_t blk_addr,
-                        uint16_t blk_len);
+                             uint8_t *buf,
+                             uint32_t blk_addr,
+                             uint16_t blk_len);
 
 static int8_t STORAGE_GetMaxLun (void);
 
 /* USB Mass storage Standard Inquiry Data */
 static uint8_t  STORAGE_Inquirydata[] = {//36
 
-  /* LUN 0 */
+    /* LUN 0 */
     0x00,
     0x80,
     0x02,
@@ -120,12 +120,11 @@ static uint8_t  STORAGE_Inquirydata[] = {//36
     'S', 'T', 'M', ' ', ' ', ' ', ' ', ' ', /* Manufacturer : 8 bytes */
     'P', 'r', 'o', 'd', 'u', 't', ' ', ' ', /* Product      : 16 Bytes */
     ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    '0', '.', '0' ,'1',                     /* Version      : 4 Bytes */
+    '0', '.', '0', '1',                     /* Version      : 4 Bytes */
 };
 
 #ifdef USE_HAL_DRIVER
-USBD_StorageTypeDef USBD_MSC_MICRO_SDIO_fops =
-{
+USBD_StorageTypeDef USBD_MSC_MICRO_SDIO_fops = {
     STORAGE_Init,
     STORAGE_GetCapacity,
     STORAGE_IsReady,
@@ -133,11 +132,10 @@ USBD_StorageTypeDef USBD_MSC_MICRO_SDIO_fops =
     STORAGE_Read,
     STORAGE_Write,
     STORAGE_GetMaxLun,
-    (int8_t*)STORAGE_Inquirydata,
+    (int8_t *)STORAGE_Inquirydata,
 };
 #else
-USBD_STORAGE_cb_TypeDef USBD_MSC_MICRO_SDIO_fops =
-{
+USBD_STORAGE_cb_TypeDef USBD_MSC_MICRO_SDIO_fops = {
     STORAGE_Init,
     STORAGE_GetCapacity,
     STORAGE_IsReady,
@@ -145,7 +143,7 @@ USBD_STORAGE_cb_TypeDef USBD_MSC_MICRO_SDIO_fops =
     STORAGE_Read,
     STORAGE_Write,
     STORAGE_GetMaxLun,
-    (int8_t*)STORAGE_Inquirydata,
+    (int8_t *)STORAGE_Inquirydata,
 };
 #endif
 
@@ -167,7 +165,7 @@ static int8_t STORAGE_Init (uint8_t lun)
     LED0_OFF;
 
 #ifdef USE_DMA_SPEC
-        const dmaChannelSpec_t *dmaChannelSpec = dmaGetChannelSpecByPeripheral(DMA_PERIPH_SDIO, 0, sdioConfig()->dmaopt);
+    const dmaChannelSpec_t *dmaChannelSpec = dmaGetChannelSpecByPeripheral(DMA_PERIPH_SDIO, 0, sdioConfig()->dmaopt);
 
     if (!dmaChannelSpec) {
         return 1;
@@ -252,18 +250,18 @@ static int8_t  STORAGE_IsWriteProtected (uint8_t lun)
 * Return         : None.
 *******************************************************************************/
 static int8_t STORAGE_Read (uint8_t lun,
-                 uint8_t *buf,
-                 uint32_t blk_addr,
-                 uint16_t blk_len)
+                            uint8_t *buf,
+                            uint32_t blk_addr,
+                            uint16_t blk_len)
 {
     UNUSED(lun);
     if (!sdcard_isInserted()) {
         return -1;
     }
     //buf should be 32bit aligned, but usually is so we don't do byte alignment
-    if (SD_ReadBlocks_DMA(blk_addr, (uint32_t*) buf, 512, blk_len) == 0) {
+    if (SD_ReadBlocks_DMA(blk_addr, (uint32_t *) buf, 512, blk_len) == 0) {
         while (SD_CheckRead());
-        while(SD_GetState() == false);
+        while (SD_GetState() == false);
         mscSetActive();
         return 0;
     }
@@ -277,18 +275,18 @@ static int8_t STORAGE_Read (uint8_t lun,
 * Return         : None.
 *******************************************************************************/
 static int8_t STORAGE_Write (uint8_t lun,
-                  uint8_t *buf,
-                  uint32_t blk_addr,
-                  uint16_t blk_len)
+                             uint8_t *buf,
+                             uint32_t blk_addr,
+                             uint16_t blk_len)
 {
     UNUSED(lun);
     if (!sdcard_isInserted()) {
         return -1;
     }
     //buf should be 32bit aligned, but usually is so we don't do byte alignment
-    if (SD_WriteBlocks_DMA(blk_addr, (uint32_t*) buf, 512, blk_len) == 0) {
+    if (SD_WriteBlocks_DMA(blk_addr, (uint32_t *) buf, 512, blk_len) == 0) {
         while (SD_CheckWrite());
-        while(SD_GetState() == false);
+        while (SD_GetState() == false);
         mscSetActive();
         return 0;
     }

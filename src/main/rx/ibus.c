@@ -147,7 +147,8 @@ static bool isChecksumOkIa6(void)
 }
 
 
-static bool checksumIsOk(void) {
+static bool checksumIsOk(void)
+{
     if (ibusModel == IBUS_MODEL_IA6 ) {
         return isChecksumOkIa6();
     } else {
@@ -156,7 +157,8 @@ static bool checksumIsOk(void) {
 }
 
 
-static void updateChannelData(void) {
+static void updateChannelData(void)
+{
     uint8_t i;
     uint8_t offset;
     for (i = 0, offset = ibusChannelOffset; i < IBUS_MAX_SLOTS; i++, offset += 2) {
@@ -233,13 +235,13 @@ bool ibusInit(const rxConfig_t *rxConfig, rxRuntimeState_t *rxRuntimeState)
 
     rxBytesToIgnore = 0;
     serialPort_t *ibusPort = openSerialPort(portConfig->identifier,
-        FUNCTION_RX_SERIAL,
-        ibusDataReceive,
-        NULL,
-        IBUS_BAUDRATE,
-        portShared ? MODE_RXTX : MODE_RX,
-        (rxConfig->serialrx_inverted ? SERIAL_INVERTED : 0) | (rxConfig->halfDuplex || portShared ? SERIAL_BIDIR : 0)
-        );
+                                            FUNCTION_RX_SERIAL,
+                                            ibusDataReceive,
+                                            NULL,
+                                            IBUS_BAUDRATE,
+                                            portShared ? MODE_RXTX : MODE_RX,
+                                            (rxConfig->serialrx_inverted ? SERIAL_INVERTED : 0) | (rxConfig->halfDuplex || portShared ? SERIAL_BIDIR : 0)
+                                           );
 
 #if defined(USE_TELEMETRY) && defined(USE_TELEMETRY_IBUS)
     if (portShared) {

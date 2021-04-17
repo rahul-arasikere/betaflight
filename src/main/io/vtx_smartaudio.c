@@ -672,8 +672,9 @@ void saSetMode(int mode)
         //the response will just say pit=off but the device will still go into pitmode on reboot.
         //therefore we have to memorize this change here.
     }
-    dprintf(("saSetMode(0x%x): pir=%s por=%s pitdsbl=%s %s\r\n", mode, (mode & 1) ? "on " : "off", (mode & 2) ? "on " : "off",
-            (mode & 4)? "on " : "off", (mode & 8) ? "locked" : "unlocked"));
+    dprintf(("saSetMode(0x%x): pir=%s por=%s pitdsbl=%s %s\r\n", mode, (mode & 1) ? "on " : "off",
+             (mode & 2) ? "on " : "off",
+             (mode & 4) ? "on " : "off", (mode & 8) ? "locked" : "unlocked"));
     buf[5] = CRC8(buf, 5);
 
     saQueueCmd(buf, 6);
@@ -697,7 +698,7 @@ bool vtxSmartAudioInit(void)
     dprintf(("smartAudioInit: OK\r\n"));
 #endif
 
-    // Note, for SA, which uses bidirectional mode, would normally require pullups. 
+    // Note, for SA, which uses bidirectional mode, would normally require pullups.
     // the SA protocol instead requires pulldowns, and therefore uses SERIAL_BIDIR_PP_PD instead of SERIAL_BIDIR_PP
     const serialPortConfig_t *portConfig = findSerialPortConfig(FUNCTION_VTX_SMARTAUDIO);
     if (portConfig) {
@@ -708,7 +709,8 @@ bool vtxSmartAudioInit(void)
         portOptions = SERIAL_BIDIR;
 #endif
 
-        smartAudioSerialPort = openSerialPort(portConfig->identifier, FUNCTION_VTX_SMARTAUDIO, NULL, NULL, 4800, MODE_RXTX, portOptions);
+        smartAudioSerialPort = openSerialPort(portConfig->identifier, FUNCTION_VTX_SMARTAUDIO, NULL, NULL, 4800, MODE_RXTX,
+                                              portOptions);
     }
 
     if (!smartAudioSerialPort) {
@@ -826,7 +828,8 @@ static void vtxSAProcess(vtxDevice_t *vtxDevice, timeUs_t currentTimeUs)
 
     // Command queue control
 
-    timeMs_t nowMs = millis();             // Don't substitute with "currentTimeUs / 1000"; sa_lastTransmissionMs is based on millis().
+    timeMs_t nowMs =
+        millis();             // Don't substitute with "currentTimeUs / 1000"; sa_lastTransmissionMs is based on millis().
     static timeMs_t lastCommandSentMs = 0; // Last non-GET_SETTINGS sent
 
     if ((sa_outstanding != SA_CMD_NONE) && (nowMs - sa_lastTransmissionMs > SMARTAUDIO_CMD_TIMEOUT)) {
@@ -955,9 +958,10 @@ static void vtxSASetPitMode(vtxDevice_t *vtxDevice, uint8_t onoff)
         // ensure when turning on pit mode that pit mode gets actually enabled
         newMode |= SA_MODE_SET_IN_RANGE_PITMODE;
     }
-    dprintf(("vtxSASetPitMode %s with stored mode 0x%x por %s, pir %s, newMode 0x%x\r\n", onoff ? "on" : "off", saDevice.mode,
-            (saDevice.mode & SA_MODE_GET_OUT_RANGE_PITMODE) ? "on" : "off",
-            (saDevice.mode & SA_MODE_GET_IN_RANGE_PITMODE) ? "on" : "off" , newMode));
+    dprintf(("vtxSASetPitMode %s with stored mode 0x%x por %s, pir %s, newMode 0x%x\r\n", onoff ? "on" : "off",
+             saDevice.mode,
+             (saDevice.mode & SA_MODE_GET_OUT_RANGE_PITMODE) ? "on" : "off",
+             (saDevice.mode & SA_MODE_GET_IN_RANGE_PITMODE) ? "on" : "off", newMode));
 
 
     saSetMode(newMode);
@@ -1036,7 +1040,7 @@ static uint8_t vtxSAGetPowerLevels(const vtxDevice_t *vtxDevice, uint16_t *level
 
     for (uint8_t i = 0; i < saSupportedNumPowerLevels; i++) {
         levels[i] = saSupportedPowerValues[i];
-        uint16_t power = (uint16_t)pow(10.0,levels[i]/10.0);
+        uint16_t power = (uint16_t)pow(10.0, levels[i] / 10.0);
 
         if (levels[i] > 14) {
             // For powers greater than 25mW round up to a multiple of 50 to match expectations

@@ -87,11 +87,13 @@ void mpu9250SpiGyroInit(gyroDev_t *gyro)
 
     spiResetErrorCounter(gyro->bus.busdev_u.spi.instance);
 
-    spiSetDivisor(gyro->bus.busdev_u.spi.instance, spiCalculateDivider(MPU9250_MAX_SPI_CLK_HZ)); //high speed now that we don't need to write to the slow registers
+    spiSetDivisor(gyro->bus.busdev_u.spi.instance,
+                  spiCalculateDivider(MPU9250_MAX_SPI_CLK_HZ)); //high speed now that we don't need to write to the slow registers
 
     mpuGyroRead(gyro);
 
-    if ((((int8_t)gyro->gyroADCRaw[1]) == -1 && ((int8_t)gyro->gyroADCRaw[0]) == -1) || spiGetErrorCounter(gyro->bus.busdev_u.spi.instance) != 0) {
+    if ((((int8_t)gyro->gyroADCRaw[1]) == -1 && ((int8_t)gyro->gyroADCRaw[0]) == -1)
+        || spiGetErrorCounter(gyro->bus.busdev_u.spi.instance) != 0) {
         spiResetErrorCounter(gyro->bus.busdev_u.spi.instance);
         failureMode(FAILURE_GYRO_INIT_FAILED);
     }
@@ -122,9 +124,11 @@ bool mpu9250SpiWriteRegisterVerify(const busDevice_t *bus, uint8_t reg, uint8_t 
     return false;
 }
 
-static void mpu9250AccAndGyroInit(gyroDev_t *gyro) {
+static void mpu9250AccAndGyroInit(gyroDev_t *gyro)
+{
 
-    spiSetDivisor(gyro->bus.busdev_u.spi.instance, spiCalculateDivider(MPU9250_MAX_SPI_INIT_CLK_HZ)); //low speed for writing to slow registers
+    spiSetDivisor(gyro->bus.busdev_u.spi.instance,
+                  spiCalculateDivider(MPU9250_MAX_SPI_INIT_CLK_HZ)); //low speed for writing to slow registers
 
     mpu9250SpiWriteRegister(&gyro->bus, MPU_RA_PWR_MGMT_1, MPU9250_BIT_RESET);
     delay(50);
@@ -138,10 +142,12 @@ static void mpu9250AccAndGyroInit(gyroDev_t *gyro) {
     mpu9250SpiWriteRegisterVerify(&gyro->bus, MPU_RA_SMPLRT_DIV, gyro->mpuDividerDrops);
 
     mpu9250SpiWriteRegisterVerify(&gyro->bus, MPU_RA_ACCEL_CONFIG, INV_FSR_16G << 3);
-    mpu9250SpiWriteRegisterVerify(&gyro->bus, MPU_RA_INT_PIN_CFG, 0 << 7 | 0 << 6 | 0 << 5 | 1 << 4 | 0 << 3 | 0 << 2 | 1 << 1 | 0 << 0);  // INT_ANYRD_2CLEAR, BYPASS_EN
+    mpu9250SpiWriteRegisterVerify(&gyro->bus, MPU_RA_INT_PIN_CFG,
+                                  0 << 7 | 0 << 6 | 0 << 5 | 1 << 4 | 0 << 3 | 0 << 2 | 1 << 1 | 0 << 0);  // INT_ANYRD_2CLEAR, BYPASS_EN
 
 #if defined(USE_MPU_DATA_READY_SIGNAL)
-    mpu9250SpiWriteRegisterVerify(&gyro->bus, MPU_RA_INT_ENABLE, 0x01); //this resets register MPU_RA_PWR_MGMT_1 and won't read back correctly.
+    mpu9250SpiWriteRegisterVerify(&gyro->bus, MPU_RA_INT_ENABLE,
+                                  0x01); //this resets register MPU_RA_PWR_MGMT_1 and won't read back correctly.
 #endif
 
     spiSetDivisor(gyro->bus.busdev_u.spi.instance, spiCalculateDivider(MPU9250_MAX_SPI_CLK_HZ));

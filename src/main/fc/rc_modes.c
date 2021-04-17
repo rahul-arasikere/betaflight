@@ -56,17 +56,18 @@ static uint8_t activeMacArray[MAX_MODE_ACTIVATION_CONDITION_COUNT];
 static int activeLinkedMacCount = 0;
 static uint8_t activeLinkedMacArray[MAX_MODE_ACTIVATION_CONDITION_COUNT];
 
-PG_REGISTER_ARRAY(modeActivationCondition_t, MAX_MODE_ACTIVATION_CONDITION_COUNT, modeActivationConditions, PG_MODE_ACTIVATION_PROFILE, 2);
+PG_REGISTER_ARRAY(modeActivationCondition_t, MAX_MODE_ACTIVATION_CONDITION_COUNT, modeActivationConditions,
+                  PG_MODE_ACTIVATION_PROFILE, 2);
 
 #if defined(USE_CUSTOM_BOX_NAMES)
 PG_REGISTER_WITH_RESET_TEMPLATE(modeActivationConfig_t, modeActivationConfig, PG_MODE_ACTIVATION_CONFIG, 0);
 
 PG_RESET_TEMPLATE(modeActivationConfig_t, modeActivationConfig,
-    .box_user_1_name = { 0 },
-    .box_user_2_name = { 0 },
-    .box_user_3_name = { 0 },
-    .box_user_4_name = { 0 },
-);
+                  .box_user_1_name = { 0 },
+                  .box_user_2_name = { 0 },
+                  .box_user_3_name = { 0 },
+                  .box_user_4_name = { 0 },
+                 );
 #endif
 
 bool IS_RC_MODE_ACTIVE(boxId_e boxId)
@@ -79,16 +80,19 @@ void rcModeUpdate(boxBitmask_t *newState)
     rcModeActivationMask = *newState;
 }
 
-bool airmodeIsEnabled(void) {
+bool airmodeIsEnabled(void)
+{
     return airmodeEnabled;
 }
 
-bool isRangeActive(uint8_t auxChannelIndex, const channelRange_t *range) {
+bool isRangeActive(uint8_t auxChannelIndex, const channelRange_t *range)
+{
     if (!IS_RANGE_USABLE(range)) {
         return false;
     }
 
-    const uint16_t channelValue = constrain(rcData[auxChannelIndex + NON_AUX_CHANNEL_COUNT], CHANNEL_RANGE_MIN, CHANNEL_RANGE_MAX - 1);
+    const uint16_t channelValue = constrain(rcData[auxChannelIndex + NON_AUX_CHANNEL_COUNT], CHANNEL_RANGE_MIN,
+                                            CHANNEL_RANGE_MAX - 1);
     return (channelValue >= 900 + (range->startStep * 25) &&
             channelValue < 900 + (range->endStep * 25));
 }
@@ -226,7 +230,8 @@ void removeModeActivationCondition(const boxId_e modeId)
     }
 }
 
-bool isModeActivationConditionConfigured(const modeActivationCondition_t *mac, const modeActivationCondition_t *emptyMac)
+bool isModeActivationConditionConfigured(const modeActivationCondition_t *mac,
+                                         const modeActivationCondition_t *emptyMac)
 {
     if (memcmp(mac, emptyMac, sizeof(*emptyMac))) {
         return true;

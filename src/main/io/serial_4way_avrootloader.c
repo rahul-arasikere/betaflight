@@ -93,8 +93,7 @@ static uint8_t suart_getc_(uint8_t *bt)
     uint8_t bit = 0;
     while (micros() < btime);
     while (1) {
-        if (ESC_IS_HI)
-        {
+        if (ESC_IS_HI) {
             bitmask |= (1 << bit);
         }
         btime = btime + BIT_TIME;
@@ -118,8 +117,7 @@ static void suart_putc_(uint8_t *tx_b)
     while (1) {
         if (bitmask & 1) {
             ESC_SET_HI; // 1
-        }
-        else {
+        } else {
             ESC_SET_LO; // 0
         }
         btime = btime + BIT_TIME;
@@ -135,9 +133,8 @@ static uint8_16_u LastCRC_16;
 static void ByteCrc(uint8_t *bt)
 {
     uint8_t xb = *bt;
-    for (uint8_t i = 0; i < 8; i++)
-    {
-        if (((xb & 0x01) ^ (CRC_16.word & 0x0001)) !=0 ) {
+    for (uint8_t i = 0; i < 8; i++) {
+        if (((xb & 0x01) ^ (CRC_16.word & 0x0001)) != 0 ) {
             CRC_16.word = CRC_16.word >> 1;
             CRC_16.word = CRC_16.word ^ 0xA001;
         } else {
@@ -178,7 +175,7 @@ timeout:
 static void BL_SendBuf(uint8_t *pstring, uint8_t len)
 {
     ESC_OUTPUT;
-    CRC_16.word=0;
+    CRC_16.word = 0;
     do {
         suart_putc_(pstring);
         ByteCrc(pstring);
@@ -195,19 +192,19 @@ static void BL_SendBuf(uint8_t *pstring, uint8_t len)
 
 uint8_t BL_ConnectEx(uint8_32_u *pDeviceInfo)
 {
-    #define BootMsgLen 4
-    #define DevSignHi (BootMsgLen)
-    #define DevSignLo (BootMsgLen+1)
+#define BootMsgLen 4
+#define DevSignHi (BootMsgLen)
+#define DevSignLo (BootMsgLen+1)
 
     //DeviceInfo.dword=0; is set before
     uint8_t BootInfo[9];
-    uint8_t BootMsg[BootMsgLen-1] = "471";
+    uint8_t BootMsg[BootMsgLen - 1] = "471";
     // x * 0 + 9
 #if defined(USE_SERIAL_4WAY_SK_BOOTLOADER)
-    uint8_t BootInit[] = {0,0,0,0,0,0,0,0,0,0,0,0,0x0D,'B','L','H','e','l','i',0xF4,0x7D};
+    uint8_t BootInit[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 'B', 'L', 'H', 'e', 'l', 'i', 0xF4, 0x7D};
     BL_SendBuf(BootInit, 21);
 #else
-    uint8_t BootInit[] = {0,0,0,0,0,0,0,0,0x0D,'B','L','H','e','l','i',0xF4,0x7D};
+    uint8_t BootInit[] = {0, 0, 0, 0, 0, 0, 0, 0, 0x0D, 'B', 'L', 'H', 'e', 'l', 'i', 0xF4, 0x7D};
     BL_SendBuf(BootInit, 17);
 #endif
     if (!BL_ReadBuf(BootInfo, BootMsgLen + 4)) {
@@ -349,8 +346,7 @@ uint8_t BL_VerifyFlash(ioMem_t *pMem)
 #define FAKE_PAGE_SIZE 512
 #define FAKE_FLASH_SIZE 16385
 
-static uint8_t fakeFlash[FAKE_FLASH_SIZE] =
-{
+static uint8_t fakeFlash[FAKE_FLASH_SIZE] = {
     0x02, 0x19, 0xFD, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x02, 0x00, 0xAA, 0xFF, 0xFF,
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x02, 0x01, 0x87, 0xFF, 0xFF,
@@ -830,7 +826,7 @@ static uint8_t fakeFlash[FAKE_FLASH_SIZE] =
     0xE5, 0x22, 0x65, 0x23, 0x65, 0x23, 0xF5, 0x22, 0x22, 0xAE, 0x24, 0xAF, 0x25, 0x0E, 0x0F, 0xDE,
     0xFE, 0xDF, 0xFC, 0xD2, 0x01, 0x22, 0x42, 0x4C, 0x48, 0x65, 0x6C, 0x69, 0x34, 0x37, 0x31, 0x63,
     0xF3, 0x90, 0x06, 0x01
-    };
+};
 
 uint8_t BL_ConnectEx(uint8_32_u *pDeviceInfo)
 {

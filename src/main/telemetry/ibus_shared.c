@@ -129,7 +129,7 @@ static ibusAddress_t ibusBaseAddress = INVALID_IBUS_ADDRESS;
 static uint8_t sendBuffer[IBUS_BUFFSIZE];
 
 
-static void setValue(uint8_t* bufferPtr, uint8_t sensorType, uint8_t length);
+static void setValue(uint8_t *bufferPtr, uint8_t sensorType, uint8_t length);
 
 static uint8_t getSensorID(ibusAddress_t address)
 {
@@ -139,8 +139,9 @@ static uint8_t getSensorID(ibusAddress_t address)
 }
 
 #if defined(USE_TELEMETRY_IBUS_EXTENDED)
-static const uint8_t* getSensorStruct(uint8_t sensorType, uint8_t* itemCount){
-    const uint8_t* structure = 0;
+static const uint8_t *getSensorStruct(uint8_t sensorType, uint8_t *itemCount)
+{
+    const uint8_t *structure = 0;
     if (sensorType == IBUS_SENSOR_TYPE_GPS_FULL) {
         structure = FULL_GPS_IDS;
         *itemCount = sizeof(FULL_GPS_IDS);
@@ -159,12 +160,13 @@ static const uint8_t* getSensorStruct(uint8_t sensorType, uint8_t* itemCount){
 
 static uint8_t getSensorLength(uint8_t sensorType)
 {
-    if (sensorType == IBUS_SENSOR_TYPE_PRES || (sensorType >= IBUS_SENSOR_TYPE_GPS_LAT && sensorType <= IBUS_SENSOR_TYPE_ALT_MAX)) {
+    if (sensorType == IBUS_SENSOR_TYPE_PRES || (sensorType >= IBUS_SENSOR_TYPE_GPS_LAT
+                                                && sensorType <= IBUS_SENSOR_TYPE_ALT_MAX)) {
         return IBUS_4BYTE_SESNSOR;
     }
 #if defined(USE_TELEMETRY_IBUS_EXTENDED)
     uint8_t itemCount;
-    const uint8_t* structure = getSensorStruct(sensorType, &itemCount);
+    const uint8_t *structure = getSensorStruct(sensorType, &itemCount);
     if (structure != 0) {
         uint8_t size = 0;
         for (unsigned i = 0; i < itemCount; i++) {
@@ -253,7 +255,7 @@ static uint16_t getMode()
 {
     uint16_t flightMode = 1; //Acro
     if (FLIGHT_MODE(ANGLE_MODE)) {
-         flightMode = 0; //Stab
+        flightMode = 0; //Stab
     }
     if (FLIGHT_MODE(PASSTHRU_MODE)) {
         flightMode = 3; //Auto
@@ -278,7 +280,7 @@ static int16_t getACC(uint8_t index)
 #endif
 
 #if defined(USE_TELEMETRY_IBUS_EXTENDED)
-static void setCombinedFrame(uint8_t* bufferPtr, const uint8_t* structure, uint8_t itemCount)
+static void setCombinedFrame(uint8_t *bufferPtr, const uint8_t *structure, uint8_t itemCount)
 {
     uint8_t offset = 0;
     uint8_t size = 0;
@@ -293,7 +295,7 @@ static void setCombinedFrame(uint8_t* bufferPtr, const uint8_t* structure, uint8
 
 
 #if defined(USE_GPS)
-static bool setGPS(uint8_t sensorType, ibusTelemetry_s* value)
+static bool setGPS(uint8_t sensorType, ibusTelemetry_s *value)
 {
     bool result = false;
     for (unsigned i = 0; i < sizeof(GPS_IDS); i++) {
@@ -346,13 +348,13 @@ static bool setGPS(uint8_t sensorType, ibusTelemetry_s* value)
 }
 #endif //defined(USE_GPS)
 
-static void setValue(uint8_t* bufferPtr, uint8_t sensorType, uint8_t length)
+static void setValue(uint8_t *bufferPtr, uint8_t sensorType, uint8_t length)
 {
     ibusTelemetry_s value;
 
 #if defined(USE_TELEMETRY_IBUS_EXTENDED)
     uint8_t itemCount;
-    const uint8_t* structure = getSensorStruct(sensorType, &itemCount);
+    const uint8_t *structure = getSensorStruct(sensorType, &itemCount);
     if (structure != 0) {
         setCombinedFrame(bufferPtr, structure, itemCount);
         return;
@@ -371,63 +373,63 @@ static void setValue(uint8_t* bufferPtr, uint8_t sensorType, uint8_t length)
     }
 #endif //defined(USE_TELEMETRY_IBUS_EXTENDED)
     switch (sensorType) {
-        case IBUS_SENSOR_TYPE_EXTERNAL_VOLTAGE:
-            value.uint16 = getVoltage();
-            break;
-        case IBUS_SENSOR_TYPE_TEMPERATURE:
-            value.uint16 = getTemperature();
-            break;
-        case IBUS_SENSOR_TYPE_RPM_FLYSKY:
-            value.int16 = (int16_t)rcCommand[THROTTLE];
-            break;
-        case IBUS_SENSOR_TYPE_FUEL:
-            value.uint16 = getFuel();
-            break;
-        case IBUS_SENSOR_TYPE_RPM:
-            value.uint16 = getRPM();
-            break;
-        case IBUS_SENSOR_TYPE_FLIGHT_MODE:
-            value.uint16 = getMode();
-            break;
-        case IBUS_SENSOR_TYPE_CELL:
-            value.uint16 = (uint16_t)(getBatteryAverageCellVoltage());
-            break;
-        case IBUS_SENSOR_TYPE_BAT_CURR:
-            value.uint16 = (uint16_t)getAmperage();
-            break;
+    case IBUS_SENSOR_TYPE_EXTERNAL_VOLTAGE:
+        value.uint16 = getVoltage();
+        break;
+    case IBUS_SENSOR_TYPE_TEMPERATURE:
+        value.uint16 = getTemperature();
+        break;
+    case IBUS_SENSOR_TYPE_RPM_FLYSKY:
+        value.int16 = (int16_t)rcCommand[THROTTLE];
+        break;
+    case IBUS_SENSOR_TYPE_FUEL:
+        value.uint16 = getFuel();
+        break;
+    case IBUS_SENSOR_TYPE_RPM:
+        value.uint16 = getRPM();
+        break;
+    case IBUS_SENSOR_TYPE_FLIGHT_MODE:
+        value.uint16 = getMode();
+        break;
+    case IBUS_SENSOR_TYPE_CELL:
+        value.uint16 = (uint16_t)(getBatteryAverageCellVoltage());
+        break;
+    case IBUS_SENSOR_TYPE_BAT_CURR:
+        value.uint16 = (uint16_t)getAmperage();
+        break;
 #if defined(USE_ACC)
-        case IBUS_SENSOR_TYPE_ACC_X:
-        case IBUS_SENSOR_TYPE_ACC_Y:
-        case IBUS_SENSOR_TYPE_ACC_Z:
-            value.int16 = getACC(sensorType - IBUS_SENSOR_TYPE_ACC_X);
-            break;
+    case IBUS_SENSOR_TYPE_ACC_X:
+    case IBUS_SENSOR_TYPE_ACC_Y:
+    case IBUS_SENSOR_TYPE_ACC_Z:
+        value.int16 = getACC(sensorType - IBUS_SENSOR_TYPE_ACC_X);
+        break;
 #endif
-        case IBUS_SENSOR_TYPE_ROLL:
-        case IBUS_SENSOR_TYPE_PITCH:
-        case IBUS_SENSOR_TYPE_YAW:
-            value.int16 = attitude.raw[sensorType - IBUS_SENSOR_TYPE_ROLL] *10;
-            break;
-        case IBUS_SENSOR_TYPE_ARMED:
-            value.uint16 = ARMING_FLAG(ARMED) ? 1 : 0;
-            break;
+    case IBUS_SENSOR_TYPE_ROLL:
+    case IBUS_SENSOR_TYPE_PITCH:
+    case IBUS_SENSOR_TYPE_YAW:
+        value.int16 = attitude.raw[sensorType - IBUS_SENSOR_TYPE_ROLL] * 10;
+        break;
+    case IBUS_SENSOR_TYPE_ARMED:
+        value.uint16 = ARMING_FLAG(ARMED) ? 1 : 0;
+        break;
 #if defined(USE_TELEMETRY_IBUS_EXTENDED)
-        case IBUS_SENSOR_TYPE_CMP_HEAD:
-            value.uint16 = DECIDEGREES_TO_DEGREES(attitude.values.yaw);
-            break;
+    case IBUS_SENSOR_TYPE_CMP_HEAD:
+        value.uint16 = DECIDEGREES_TO_DEGREES(attitude.values.yaw);
+        break;
 #ifdef USE_VARIO
-        case IBUS_SENSOR_TYPE_VERTICAL_SPEED:
-        case IBUS_SENSOR_TYPE_CLIMB_RATE:
-            value.int16 = (int16_t) constrain(getEstimatedVario(), SHRT_MIN, SHRT_MAX);
-            break;
+    case IBUS_SENSOR_TYPE_VERTICAL_SPEED:
+    case IBUS_SENSOR_TYPE_CLIMB_RATE:
+        value.int16 = (int16_t) constrain(getEstimatedVario(), SHRT_MIN, SHRT_MAX);
+        break;
 #endif
 #ifdef USE_BARO
-        case IBUS_SENSOR_TYPE_ALT:
-        case IBUS_SENSOR_TYPE_ALT_MAX:
-            value.int32 = baro.BaroAlt;
-            break;
-        case IBUS_SENSOR_TYPE_PRES:
-            value.uint32 = baro.baroPressure | (((uint32_t)getTemperature()) << 19);
-            break;
+    case IBUS_SENSOR_TYPE_ALT:
+    case IBUS_SENSOR_TYPE_ALT_MAX:
+        value.int32 = baro.BaroAlt;
+        break;
+    case IBUS_SENSOR_TYPE_PRES:
+        value.uint32 = baro.baroPressure | (((uint32_t)getTemperature()) << 19);
+        break;
 #endif
 #endif //defined(TELEMETRY_IBUS_EXTENDED)
     }
@@ -457,7 +459,7 @@ static ibusAddress_t getAddress(const uint8_t *ibusPacket)
 static void autodetectFirstReceivedAddressAsBaseAddress(ibusAddress_t returnAddress)
 {
     if ((INVALID_IBUS_ADDRESS == ibusBaseAddress) &&
-    (INVALID_IBUS_ADDRESS != returnAddress)) {
+        (INVALID_IBUS_ADDRESS != returnAddress)) {
         ibusBaseAddress = returnAddress;
     }
 }
@@ -465,11 +467,11 @@ static void autodetectFirstReceivedAddressAsBaseAddress(ibusAddress_t returnAddr
 static bool theAddressIsWithinOurRange(ibusAddress_t returnAddress)
 {
     return (returnAddress >= ibusBaseAddress) &&
-    (ibusAddress_t)(returnAddress - ibusBaseAddress) < ARRAYLEN(telemetryConfig()->flysky_sensors) &&
-    telemetryConfig()->flysky_sensors[(returnAddress - ibusBaseAddress)] != IBUS_SENSOR_TYPE_NONE;
+           (ibusAddress_t)(returnAddress - ibusBaseAddress) < ARRAYLEN(telemetryConfig()->flysky_sensors) &&
+           telemetryConfig()->flysky_sensors[(returnAddress - ibusBaseAddress)] != IBUS_SENSOR_TYPE_NONE;
 }
 
-uint8_t respondToIbusRequest(uint8_t const * const ibusPacket)
+uint8_t respondToIbusRequest(uint8_t const *const ibusPacket)
 {
     ibusAddress_t returnAddress = getAddress(ibusPacket);
     autodetectFirstReceivedAddressAsBaseAddress(returnAddress);

@@ -64,7 +64,7 @@ static int hottWriteString(displayPort_t *displayPort, uint8_t col, uint8_t row,
 static int hottClearScreen(displayPort_t *displayPort)
 {
     for (int row = 0; row < displayPort->rows; row++) {
-        for (int col= 0; col < displayPort->cols; col++) {
+        for (int col = 0; col < displayPort->cols; col++) {
             hottWriteChar(displayPort, col, row, DISPLAYPORT_ATTR_NONE, ' ');
         }
     }
@@ -80,7 +80,7 @@ static bool hottIsTransferInProgress(const displayPort_t *displayPort)
 static int hottHeartbeat(displayPort_t *displayPort)
 {
     if (!hottTextmodeIsAlive()) {
-        cmsMenuExit(displayPort, (void*)CMS_EXIT_SAVE);
+        cmsMenuExit(displayPort, (void *)CMS_EXIT_SAVE);
     }
 
     return 0;
@@ -154,31 +154,31 @@ void hottCmsOpen()
 void hottSetCmsKey(uint8_t hottKey, bool keepCmsOpen)
 {
     switch (hottKey) {
-        case HOTTV4_BUTTON_DEC:
-            cmsSetExternKey(CMS_KEY_UP);
-            break;
-        case HOTTV4_BUTTON_INC:
-            cmsSetExternKey(CMS_KEY_DOWN);
-            break;
-        case HOTTV4_BUTTON_SET:
-            if (cmsInMenu) {
-                cmsMenuExit(pCurrentDisplay, (void*)CMS_EXIT_SAVE);
-            }
-            cmsSetExternKey(CMS_KEY_NONE);
-            break;
-        case HOTTV4_BUTTON_NEXT:
-            cmsSetExternKey(CMS_KEY_RIGHT);
-            break;
-        case HOTTV4_BUTTON_PREV:
-            cmsSetExternKey(CMS_KEY_LEFT);
-            if (keepCmsOpen) { // Make sure CMS is open until textmode is closed.
-                cmsMenuOpen();
-            }
-            break;
-         default:
-            cmsSetExternKey(CMS_KEY_NONE);
-            break;
+    case HOTTV4_BUTTON_DEC:
+        cmsSetExternKey(CMS_KEY_UP);
+        break;
+    case HOTTV4_BUTTON_INC:
+        cmsSetExternKey(CMS_KEY_DOWN);
+        break;
+    case HOTTV4_BUTTON_SET:
+        if (cmsInMenu) {
+            cmsMenuExit(pCurrentDisplay, (void *)CMS_EXIT_SAVE);
         }
+        cmsSetExternKey(CMS_KEY_NONE);
+        break;
+    case HOTTV4_BUTTON_NEXT:
+        cmsSetExternKey(CMS_KEY_RIGHT);
+        break;
+    case HOTTV4_BUTTON_PREV:
+        cmsSetExternKey(CMS_KEY_LEFT);
+        if (keepCmsOpen) { // Make sure CMS is open until textmode is closed.
+            cmsMenuOpen();
+        }
+        break;
+    default:
+        cmsSetExternKey(CMS_KEY_NONE);
+        break;
+    }
 }
 
 #endif

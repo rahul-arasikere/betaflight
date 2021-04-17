@@ -89,10 +89,18 @@ void bbTimerChannelInit(bbPort_t *bbPort)
     const timerHardware_t *timhw = bbPort->timhw;
 
     switch (bbPort->timhw->channel) {
-    case TIM_CHANNEL_1: bbPort->llChannel = LL_TIM_CHANNEL_CH1; break;
-    case TIM_CHANNEL_2: bbPort->llChannel = LL_TIM_CHANNEL_CH2; break;
-    case TIM_CHANNEL_3: bbPort->llChannel = LL_TIM_CHANNEL_CH3; break;
-    case TIM_CHANNEL_4: bbPort->llChannel = LL_TIM_CHANNEL_CH4; break;
+    case TIM_CHANNEL_1:
+        bbPort->llChannel = LL_TIM_CHANNEL_CH1;
+        break;
+    case TIM_CHANNEL_2:
+        bbPort->llChannel = LL_TIM_CHANNEL_CH2;
+        break;
+    case TIM_CHANNEL_3:
+        bbPort->llChannel = LL_TIM_CHANNEL_CH3;
+        break;
+    case TIM_CHANNEL_4:
+        bbPort->llChannel = LL_TIM_CHANNEL_CH4;
+        break;
     }
 
     LL_TIM_OC_InitTypeDef ocInit;
@@ -166,7 +174,7 @@ static void bbSaveDMARegs(dmaResource_t *dmaResource, dmaRegCache_t *dmaRegCache
 }
 #endif
 
-void bbSwitchToOutput(bbPort_t * bbPort)
+void bbSwitchToOutput(bbPort_t *bbPort)
 {
     // Output idle level before switching to output
     // Use BSRR register for this
@@ -241,7 +249,8 @@ void bbSwitchToInput(bbPort_t *bbPort)
 
 void bbDMAPreconfigure(bbPort_t *bbPort, uint8_t direction)
 {
-    LL_DMA_InitTypeDef *dmainit = (direction == DSHOT_BITBANG_DIRECTION_OUTPUT) ?  &bbPort->outputDmaInit : &bbPort->inputDmaInit;
+    LL_DMA_InitTypeDef *dmainit = (direction == DSHOT_BITBANG_DIRECTION_OUTPUT) ?  &bbPort->outputDmaInit :
+                                  &bbPort->inputDmaInit;
 
     LL_DMA_StructInit(dmainit);
 
@@ -305,7 +314,7 @@ void bbTIM_TimeBaseInit(bbPort_t *bbPort, uint16_t period)
     MODIFY_REG(bbPort->timhw->tim->CR1, TIM_CR1_ARPE, TIM_AUTORELOAD_PRELOAD_ENABLE);
 }
 
-void bbTIM_DMACmd(TIM_TypeDef* TIMx, uint16_t TIM_DMASource, FunctionalState NewState)
+void bbTIM_DMACmd(TIM_TypeDef *TIMx, uint16_t TIM_DMASource, FunctionalState NewState)
 {
     //TIM_DMACmd(TIMx, TIM_DMASource, NewState);
     if (NewState == ENABLE) {
@@ -322,9 +331,9 @@ void bbDMA_ITConfig(bbPort_t *bbPort)
     xLL_EX_DMA_EnableIT_TC(bbPort->dmaResource);
 
 #if defined(STM32G4)
-    SET_BIT(((DMA_Channel_TypeDef *)(bbPort->dmaResource))->CCR, DMA_CCR_TCIE|DMA_CCR_TEIE);
+    SET_BIT(((DMA_Channel_TypeDef *)(bbPort->dmaResource))->CCR, DMA_CCR_TCIE | DMA_CCR_TEIE);
 #else
-    SET_BIT(((DMA_Stream_TypeDef *)(bbPort->dmaResource))->CR, DMA_SxCR_TCIE|DMA_SxCR_TEIE);
+    SET_BIT(((DMA_Stream_TypeDef *)(bbPort->dmaResource))->CR, DMA_SxCR_TCIE | DMA_SxCR_TEIE);
 #endif
 }
 

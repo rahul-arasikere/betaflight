@@ -37,8 +37,8 @@ static float setpointDeltaImpl[XYZ_AXIS_COUNT];
 static float setpointDelta[XYZ_AXIS_COUNT];
 
 typedef struct laggedMovingAverageCombined_s {
-     laggedMovingAverage_t filter;
-     float buf[4];
+    laggedMovingAverage_t filter;
+    float buf[4];
 } laggedMovingAverageCombined_t;
 
 laggedMovingAverageCombined_t  setpointDeltaAvg[XYZ_AXIS_COUNT];
@@ -57,7 +57,8 @@ static uint8_t averagingCount;
 static float ffMaxRateLimit[XYZ_AXIS_COUNT];
 static float ffMaxRate[XYZ_AXIS_COUNT];
 
-void interpolatedSpInit(const pidProfile_t *pidProfile) {
+void interpolatedSpInit(const pidProfile_t *pidProfile)
+{
     const float ffMaxRateScale = pidProfile->ff_max_rate_limit * 0.01f;
     averagingCount = pidProfile->ff_interpolate_sp;
     for (int i = 0; i < XYZ_AXIS_COUNT; i++) {
@@ -67,7 +68,8 @@ void interpolatedSpInit(const pidProfile_t *pidProfile) {
     }
 }
 
-FAST_CODE_NOINLINE float interpolatedSpApply(int axis, bool newRcFrame, ffInterpolationType_t type) {
+FAST_CODE_NOINLINE float interpolatedSpApply(int axis, bool newRcFrame, ffInterpolationType_t type)
+{
 
     if (newRcFrame) {
         float rawSetpoint = getRawSetpoint(axis);
@@ -123,7 +125,7 @@ FAST_CODE_NOINLINE float interpolatedSpApply(int axis, bool newRcFrame, ffInterp
 
         // determine if this step was a relatively large one, to use when evaluating next packet
 
-        if (absSetpointSpeed > 1.5f * absPrevSetpointSpeed || absPrevSetpointSpeed > 1.5f * absSetpointSpeed){
+        if (absSetpointSpeed > 1.5f * absPrevSetpointSpeed || absPrevSetpointSpeed > 1.5f * absSetpointSpeed) {
             bigStep[axis] = true;
         } else {
             bigStep[axis] = false;
@@ -140,7 +142,7 @@ FAST_CODE_NOINLINE float interpolatedSpApply(int axis, bool newRcFrame, ffInterp
         }
 
         prevAcceleration[axis] = setpointAcceleration;
-     
+
         // all values afterwards are small numbers
         setpointAcceleration *= pidGetDT();
         setpointDeltaImpl[axis] = setpointSpeed * pidGetDT();
@@ -186,7 +188,8 @@ FAST_CODE_NOINLINE float interpolatedSpApply(int axis, bool newRcFrame, ffInterp
     return setpointDelta[axis];
 }
 
-FAST_CODE_NOINLINE float applyFfLimit(int axis, float value, float Kp, float currentPidSetpoint) {
+FAST_CODE_NOINLINE float applyFfLimit(int axis, float value, float Kp, float currentPidSetpoint)
+{
     switch (axis) {
     case FD_ROLL:
         DEBUG_SET(DEBUG_FF_LIMIT, 0, value);
@@ -199,7 +202,8 @@ FAST_CODE_NOINLINE float applyFfLimit(int axis, float value, float Kp, float cur
     }
 
     if (fabsf(currentPidSetpoint) <= ffMaxRateLimit[axis]) {
-        value = constrainf(value, (-ffMaxRateLimit[axis] - currentPidSetpoint) * Kp, (ffMaxRateLimit[axis] - currentPidSetpoint) * Kp);
+        value = constrainf(value, (-ffMaxRateLimit[axis] - currentPidSetpoint) * Kp,
+                           (ffMaxRateLimit[axis] - currentPidSetpoint) * Kp);
     } else {
         value = 0;
     }

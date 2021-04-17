@@ -129,14 +129,14 @@
 
 // Sensor names (used in lookup tables for *_hardware settings and in status command output)
 // sync with accelerationSensor_e
-const char * const lookupTableAccHardware[] = {
+const char *const lookupTableAccHardware[] = {
     "AUTO", "NONE", "ADXL345", "MPU6050", "MMA8452", "BMA280", "LSM303DLHC",
     "MPU6000", "MPU6500", "MPU9250", "ICM20601", "ICM20602", "ICM20608G", "ICM20649", "ICM20689", "ICM42605",
     "BMI160", "BMI270", "LSM6DSO", "FAKE"
 };
 
 // sync with gyroHardware_e
-const char * const lookupTableGyroHardware[] = {
+const char *const lookupTableGyroHardware[] = {
     "AUTO", "NONE", "MPU6050", "L3G4200D", "MPU3050", "L3GD20",
     "MPU6000", "MPU6500", "MPU9250", "ICM20601", "ICM20602", "ICM20608G", "ICM20649", "ICM20689", "ICM42605",
     "BMI160", "BMI270", "LSM6SDO", "FAKE"
@@ -144,35 +144,35 @@ const char * const lookupTableGyroHardware[] = {
 
 #if defined(USE_SENSOR_NAMES) || defined(USE_BARO)
 // sync with baroSensor_e
-const char * const lookupTableBaroHardware[] = {
+const char *const lookupTableBaroHardware[] = {
     "AUTO", "NONE", "BMP085", "MS5611", "BMP280", "LPS", "QMP6988", "BMP388", "DPS310"
 };
 #endif
 #if defined(USE_SENSOR_NAMES) || defined(USE_MAG)
 // sync with magSensor_e
-const char * const lookupTableMagHardware[] = {
+const char *const lookupTableMagHardware[] = {
     "AUTO", "NONE", "HMC5883", "AK8975", "AK8963", "QMC5883", "LIS3MDL", "MAG_MPU925X_AK8963"
 };
 #endif
 #if defined(USE_SENSOR_NAMES) || defined(USE_RANGEFINDER)
-const char * const lookupTableRangefinderHardware[] = {
+const char *const lookupTableRangefinderHardware[] = {
     "NONE", "HCSR04", "TFMINI", "TF02"
 };
 #endif
 
-const char * const lookupTableOffOn[] = {
+const char *const lookupTableOffOn[] = {
     "OFF", "ON"
 };
 
-static const char * const lookupTableCrashRecovery[] = {
-    "OFF", "ON" ,"BEEP", "DISARM"
+static const char *const lookupTableCrashRecovery[] = {
+    "OFF", "ON", "BEEP", "DISARM"
 };
 
-static const char * const lookupTableUnit[] = {
+static const char *const lookupTableUnit[] = {
     "IMPERIAL", "METRIC", "BRITISH"
 };
 
-static const char * const lookupTableAlignment[] = {
+static const char *const lookupTableAlignment[] = {
     "DEFAULT",
     "CW0",
     "CW90",
@@ -186,47 +186,47 @@ static const char * const lookupTableAlignment[] = {
 };
 
 #ifdef USE_MULTI_GYRO
-static const char * const lookupTableGyro[] = {
+static const char *const lookupTableGyro[] = {
     "FIRST", "SECOND", "BOTH"
 };
 #endif
 
 #ifdef USE_GPS
-static const char * const lookupTableGPSProvider[] = {
+static const char *const lookupTableGPSProvider[] = {
     "NMEA", "UBLOX", "MSP"
 };
 
-static const char * const lookupTableGPSSBASMode[] = {
+static const char *const lookupTableGPSSBASMode[] = {
     "AUTO", "EGNOS", "WAAS", "MSAS", "GAGAN", "NONE"
 };
 
-static const char * const lookupTableGPSUBLOXMode[] = {
+static const char *const lookupTableGPSUBLOXMode[] = {
     "AIRBORNE", "PEDESTRIAN", "DYNAMIC"
 };
 #endif
 
 #ifdef USE_SERVOS
-static const char * const lookupTableGimbalMode[] = {
+static const char *const lookupTableGimbalMode[] = {
     "NORMAL", "MIXTILT"
 };
 #endif
 
 #ifdef USE_BLACKBOX
-static const char * const lookupTableBlackboxDevice[] = {
+static const char *const lookupTableBlackboxDevice[] = {
     "NONE", "SPIFLASH", "SDCARD", "SERIAL"
 };
 
-static const char * const lookupTableBlackboxMode[] = {
+static const char *const lookupTableBlackboxMode[] = {
     "NORMAL", "MOTOR_TEST", "ALWAYS"
 };
 
-static const char * const lookupTableBlackboxSampleRate[] = {
+static const char *const lookupTableBlackboxSampleRate[] = {
     "1/1", "1/2", "1/4", "1/8", "1/16"
 };
 #endif
 
 #ifdef USE_SERIAL_RX
-static const char * const lookupTableSerialRX[] = {
+static const char *const lookupTableSerialRX[] = {
     "SPEK1024",
     "SPEK2048",
     "SBUS",
@@ -247,7 +247,7 @@ static const char * const lookupTableSerialRX[] = {
 
 #ifdef USE_RX_SPI
 // sync with rx_spi_protocol_e
-static const char * const lookupTableRxSpi[] = {
+static const char *const lookupTableRxSpi[] = {
     "V202_250K",
     "V202_1M",
     "SYMA_X",
@@ -270,7 +270,7 @@ static const char * const lookupTableRxSpi[] = {
 };
 #endif
 
-static const char * const lookupTableGyroHardwareLpf[] = {
+static const char *const lookupTableGyroHardwareLpf[] = {
     "NORMAL",
 #ifdef USE_GYRO_DLPF_EXPERIMENTAL
     "EXPERIMENTAL"
@@ -278,51 +278,51 @@ static const char * const lookupTableGyroHardwareLpf[] = {
 };
 
 #ifdef USE_CAMERA_CONTROL
-static const char * const lookupTableCameraControlMode[] = {
+static const char *const lookupTableCameraControlMode[] = {
     "HARDWARE_PWM",
     "SOFTWARE_PWM",
     "DAC"
 };
 #endif
 
-static const char * const lookupTablePwmProtocol[] = {
+static const char *const lookupTablePwmProtocol[] = {
     "PWM", "ONESHOT125", "ONESHOT42", "MULTISHOT", "BRUSHED",
     "DSHOT150", "DSHOT300", "DSHOT600", "PROSHOT1000",
     "DISABLED"
 };
 
-static const char * const lookupTableRcInterpolation[] = {
+static const char *const lookupTableRcInterpolation[] = {
     "OFF", "PRESET", "AUTO", "MANUAL"
 };
 
-static const char * const lookupTableRcInterpolationChannels[] = {
+static const char *const lookupTableRcInterpolationChannels[] = {
     "RP", "RPY", "RPYT", "T", "RPT",
 };
 
-static const char * const lookupTableLowpassType[] = {
+static const char *const lookupTableLowpassType[] = {
     "PT1",
     "BIQUAD",
 };
 
-static const char * const lookupTableDtermLowpassType[] = {
+static const char *const lookupTableDtermLowpassType[] = {
     "PT1",
     "BIQUAD",
 };
 
-static const char * const lookupTableAntiGravityMode[] = {
+static const char *const lookupTableAntiGravityMode[] = {
     "SMOOTH",
     "STEP",
 };
 
-static const char * const lookupTableFailsafe[] = {
+static const char *const lookupTableFailsafe[] = {
     "AUTO-LAND", "DROP", "GPS-RESCUE"
 };
 
-static const char * const lookupTableFailsafeSwitchMode[] = {
+static const char *const lookupTableFailsafeSwitchMode[] = {
     "STAGE1", "KILL", "STAGE2"
 };
 
-static const char * const lookupTableBusType[] = {
+static const char *const lookupTableBusType[] = {
     "NONE", "I2C", "SPI", "SLAVE",
 #if defined(USE_SPI_GYRO) && defined(USE_I2C_GYRO)
     "GYROAUTO"
@@ -330,29 +330,29 @@ static const char * const lookupTableBusType[] = {
 };
 
 #ifdef USE_MAX7456
-static const char * const lookupTableMax7456Clock[] = {
+static const char *const lookupTableMax7456Clock[] = {
     "HALF", "DEFAULT", "FULL"
 };
 #endif
 
 #ifdef USE_RX_FRSKY_SPI
-static const char * const lookupTableFrskySpiA1Source[] = {
+static const char *const lookupTableFrskySpiA1Source[] = {
     "VBAT", "EXTADC", "CONST"
 };
 #endif
 
 #ifdef USE_GYRO_OVERFLOW_CHECK
-static const char * const lookupTableGyroOverflowCheck[] = {
+static const char *const lookupTableGyroOverflowCheck[] = {
     "OFF", "YAW", "ALL"
 };
 #endif
 
-static const char * const lookupTableRatesType[] = {
+static const char *const lookupTableRatesType[] = {
     "BETAFLIGHT", "RACEFLIGHT", "KISS", "ACTUAL", "QUICK"
 };
 
 #ifdef USE_OVERCLOCK
-static const char * const lookupOverclock[] = {
+static const char *const lookupOverclock[] = {
     "OFF",
 #if defined(STM32F40_41xxx) || defined(STM32G4)
     "192MHZ", "216MHZ", "240MHZ"
@@ -365,98 +365,98 @@ static const char * const lookupOverclock[] = {
 #endif
 
 #ifdef USE_LED_STRIP
-    static const char * const lookupLedStripFormatRGB[] = {
-        "GRB", "RGB"
-    };
+static const char *const lookupLedStripFormatRGB[] = {
+    "GRB", "RGB"
+};
 #endif
 
-static const char * const lookupTableThrottleLimitType[] = {
+static const char *const lookupTableThrottleLimitType[] = {
     "OFF", "SCALE", "CLIP"
 };
 
 
 #ifdef USE_GPS_RESCUE
-static const char * const lookupTableRescueSanityType[] = {
+static const char *const lookupTableRescueSanityType[] = {
     "RESCUE_SANITY_OFF", "RESCUE_SANITY_ON", "RESCUE_SANITY_FS_ONLY"
 };
-const char * const lookupTableRescueAltitudeMode[] = {
+const char *const lookupTableRescueAltitudeMode[] = {
     "MAX_ALT", "FIXED_ALT", "CURRENT_ALT"
 };
 #endif
 
 #if defined(USE_MAX7456) || defined(USE_FRSKYOSD)
-static const char * const lookupTableVideoSystem[] = {
+static const char *const lookupTableVideoSystem[] = {
     "AUTO", "PAL", "NTSC"
 };
 #endif
 
 #if defined(USE_ITERM_RELAX)
-const char * const lookupTableItermRelax[] = {
+const char *const lookupTableItermRelax[] = {
     "OFF", "RP", "RPY", "RP_INC", "RPY_INC"
 };
-const char * const lookupTableItermRelaxType[] = {
+const char *const lookupTableItermRelaxType[] = {
     "GYRO", "SETPOINT"
 };
 #endif
 
 #ifdef USE_ACRO_TRAINER
-static const char * const lookupTableAcroTrainerDebug[] = {
+static const char *const lookupTableAcroTrainerDebug[] = {
     "ROLL", "PITCH"
 };
 #endif // USE_ACRO_TRAINER
 
 #ifdef USE_RC_SMOOTHING_FILTER
-static const char * const lookupTableRcSmoothingType[] = {
+static const char *const lookupTableRcSmoothingType[] = {
     "INTERPOLATION", "FILTER"
 };
-static const char * const lookupTableRcSmoothingDebug[] = {
+static const char *const lookupTableRcSmoothingDebug[] = {
     "ROLL", "PITCH", "YAW", "THROTTLE"
 };
-static const char * const lookupTableRcSmoothingInputType[] = {
+static const char *const lookupTableRcSmoothingInputType[] = {
     "PT1", "BIQUAD"
 };
-static const char * const lookupTableRcSmoothingDerivativeType[] = {
+static const char *const lookupTableRcSmoothingDerivativeType[] = {
     "OFF", "PT1", "BIQUAD", "AUTO"
 };
 #endif // USE_RC_SMOOTHING_FILTER
 
 #ifdef USE_VTX_COMMON
-static const char * const lookupTableVtxLowPowerDisarm[] = {
+static const char *const lookupTableVtxLowPowerDisarm[] = {
     "OFF", "ON", "UNTIL_FIRST_ARM"
 };
 #endif
 
 #ifdef USE_SDCARD
-static const char * const lookupTableSdcardMode[] = {
+static const char *const lookupTableSdcardMode[] = {
     "OFF", "SPI", "SDIO"
 };
 #endif
 
 #ifdef USE_LAUNCH_CONTROL
-static const char * const lookupTableLaunchControlMode[] = {
+static const char *const lookupTableLaunchControlMode[] = {
     "NORMAL", "PITCHONLY", "FULL"
 };
 #endif
 
 #ifdef USE_TPA_MODE
-static const char * const lookupTableTpaMode[] = {
+static const char *const lookupTableTpaMode[] = {
     "PD", "D"
 };
 #endif
 
 #ifdef USE_LED_STRIP
 #ifdef USE_LED_STRIP_STATUS_MODE
-static const char * const lookupTableLEDProfile[] = {
+static const char *const lookupTableLEDProfile[] = {
     "RACE", "BEACON", "STATUS"
 };
 #else
-static const char * const lookupTableLEDProfile[] = {
+static const char *const lookupTableLEDProfile[] = {
     "RACE", "BEACON"
 };
 #endif
 #endif
 
-const char * const lookupTableLedstripColors[COLOR_COUNT] = {
+const char *const lookupTableLedstripColors[COLOR_COUNT] = {
     "BLACK",
     "WHITE",
     "RED",
@@ -473,45 +473,45 @@ const char * const lookupTableLedstripColors[COLOR_COUNT] = {
     "DEEP_PINK"
 };
 
-static const char * const lookupTableGyroFilterDebug[] = {
+static const char *const lookupTableGyroFilterDebug[] = {
     "ROLL", "PITCH", "YAW"
 };
 
-static const char * const lookupTablePositionAltSource[] = {
+static const char *const lookupTablePositionAltSource[] = {
     "DEFAULT", "BARO_ONLY", "GPS_ONLY"
 };
 
-static const char * const lookupTableOffOnAuto[] = {
+static const char *const lookupTableOffOnAuto[] = {
     "OFF", "ON", "AUTO"
 };
 
-const char* const lookupTableInterpolatedSetpoint[] = {
+const char *const lookupTableInterpolatedSetpoint[] = {
     "OFF", "ON", "AVERAGED_2", "AVERAGED_3", "AVERAGED_4"
 };
 
-static const char* const lookupTableDshotBitbangedTimer[] = {
+static const char *const lookupTableDshotBitbangedTimer[] = {
     "AUTO", "TIM1", "TIM8"
 };
 
-const char * const lookupTableOsdDisplayPortDevice[] = {
+const char *const lookupTableOsdDisplayPortDevice[] = {
     "NONE", "AUTO", "MAX7456", "MSP", "FRSKYOSD"
 };
 
 #ifdef USE_OSD
-static const char * const lookupTableOsdLogoOnArming[] = {
+static const char *const lookupTableOsdLogoOnArming[] = {
     "OFF", "ON", "FIRST_ARMING",
 };
 #endif
-const char * const lookupTableSimplifiedTuningPidsMode[] = {
+const char *const lookupTableSimplifiedTuningPidsMode[] = {
     "OFF", "RP", "RPY",
 };
 
-static const char* const lookupTableMixerType[] = {
+static const char *const lookupTableMixerType[] = {
     "LEGACY", "LINEAR", "DYNAMIC",
 };
 
 #ifdef USE_OSD
-const char * const lookupTableCMSMenuBackgroundType[] = {
+const char *const lookupTableCMSMenuBackgroundType[] = {
     "TRANSPARENT", "BLACK", "GRAY", "LIGHT_GRAY"
 };
 #endif
@@ -751,8 +751,8 @@ const clivalue_t valueTable[] = {
     { "rc_smoothing_derivative_hz", VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { 0, UINT8_MAX }, PG_RX_CONFIG, offsetof(rxConfig_t, rc_smoothing_derivative_cutoff) },
     { "rc_smoothing_debug_axis",    VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_RC_SMOOTHING_DEBUG }, PG_RX_CONFIG, offsetof(rxConfig_t, rc_smoothing_debug_axis) },
     { "rc_smoothing_input_type",    VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_RC_SMOOTHING_INPUT_TYPE }, PG_RX_CONFIG, offsetof(rxConfig_t, rc_smoothing_input_type) },
-    { "rc_smoothing_derivative_type",VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_RC_SMOOTHING_DERIVATIVE_TYPE }, PG_RX_CONFIG, offsetof(rxConfig_t, rc_smoothing_derivative_type) },
-    { "rc_smoothing_auto_smoothness",VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { RC_SMOOTHING_AUTO_FACTOR_MIN, RC_SMOOTHING_AUTO_FACTOR_MAX }, PG_RX_CONFIG, offsetof(rxConfig_t, rc_smoothing_auto_factor) },
+    { "rc_smoothing_derivative_type", VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_RC_SMOOTHING_DERIVATIVE_TYPE }, PG_RX_CONFIG, offsetof(rxConfig_t, rc_smoothing_derivative_type) },
+    { "rc_smoothing_auto_smoothness", VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { RC_SMOOTHING_AUTO_FACTOR_MIN, RC_SMOOTHING_AUTO_FACTOR_MAX }, PG_RX_CONFIG, offsetof(rxConfig_t, rc_smoothing_auto_factor) },
 #endif // USE_RC_SMOOTHING_FILTER
 
     { "fpv_mix_degrees",            VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { 0, 90 }, PG_RX_CONFIG, offsetof(rxConfig_t, fpvCamAngleDegrees) },
@@ -763,7 +763,7 @@ const clivalue_t valueTable[] = {
 #endif
 #ifdef USE_SPEKTRUM_BIND
     { "spektrum_sat_bind",          VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { SPEKTRUM_SAT_BIND_DISABLED, SPEKTRUM_SAT_BIND_MAX}, PG_RX_CONFIG, offsetof(rxConfig_t, spektrum_sat_bind) },
-    { "spektrum_sat_bind_autoreset",VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_OFF_ON }, PG_RX_CONFIG, offsetof(rxConfig_t, spektrum_sat_bind_autoreset) },
+    { "spektrum_sat_bind_autoreset", VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_OFF_ON }, PG_RX_CONFIG, offsetof(rxConfig_t, spektrum_sat_bind_autoreset) },
 #endif
 #ifdef USE_SERIALRX_SRXL2
     { "srxl2_unit_id",             VAR_UINT8  | MASTER_VALUE, .config.minmax = { 0, 0xf }, PG_RX_CONFIG, offsetof(rxConfig_t, srxl2_unit_id) },
@@ -861,7 +861,7 @@ const clivalue_t valueTable[] = {
     { "failsafe_off_delay",         VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { 0, 200 }, PG_FAILSAFE_CONFIG, offsetof(failsafeConfig_t, failsafe_off_delay) },
     { "failsafe_throttle",          VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { PWM_PULSE_MIN, PWM_PULSE_MAX }, PG_FAILSAFE_CONFIG, offsetof(failsafeConfig_t, failsafe_throttle) },
     { "failsafe_switch_mode",       VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_FAILSAFE_SWITCH_MODE }, PG_FAILSAFE_CONFIG, offsetof(failsafeConfig_t, failsafe_switch_mode) },
-    { "failsafe_throttle_low_delay",VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { 0, 300 }, PG_FAILSAFE_CONFIG, offsetof(failsafeConfig_t, failsafe_throttle_low_delay) },
+    { "failsafe_throttle_low_delay", VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { 0, 300 }, PG_FAILSAFE_CONFIG, offsetof(failsafeConfig_t, failsafe_throttle_low_delay) },
     { "failsafe_procedure",         VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_FAILSAFE }, PG_FAILSAFE_CONFIG, offsetof(failsafeConfig_t, failsafe_procedure) },
     { "failsafe_recovery_delay",    VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { 0, 200 }, PG_FAILSAFE_CONFIG, offsetof(failsafeConfig_t, failsafe_recovery_delay) },
     { "failsafe_stick_threshold",   VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { 0, 50 }, PG_FAILSAFE_CONFIG, offsetof(failsafeConfig_t, failsafe_stick_threshold) },
@@ -1258,7 +1258,7 @@ const clivalue_t valueTable[] = {
 // PG_LED_STRIP_CONFIG
 #ifdef USE_LED_STRIP
     { "ledstrip_visual_beeper",     VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_OFF_ON }, PG_LED_STRIP_CONFIG, offsetof(ledStripConfig_t, ledstrip_visual_beeper) },
-    { "ledstrip_visual_beeper_color",VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_LEDSTRIP_COLOR }, PG_LED_STRIP_CONFIG, offsetof(ledStripConfig_t, ledstrip_visual_beeper_color) },
+    { "ledstrip_visual_beeper_color", VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_LEDSTRIP_COLOR }, PG_LED_STRIP_CONFIG, offsetof(ledStripConfig_t, ledstrip_visual_beeper_color) },
     { "ledstrip_grb_rgb",           VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_RGB_GRB }, PG_LED_STRIP_CONFIG, offsetof(ledStripConfig_t, ledstrip_grb_rgb) },
     { "ledstrip_profile",           VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_LED_PROFILE }, PG_LED_STRIP_CONFIG, offsetof(ledStripConfig_t, ledstrip_profile) },
     { "ledstrip_race_color",        VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_LEDSTRIP_COLOR }, PG_LED_STRIP_CONFIG, offsetof(ledStripConfig_t, ledstrip_race_color) },
@@ -1342,7 +1342,7 @@ const clivalue_t valueTable[] = {
     { "osd_ah_max_rol",             VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { 0, 90 }, PG_OSD_CONFIG, offsetof(osdConfig_t, ahMaxRoll) },
     { "osd_ah_invert",              VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_OFF_ON }, PG_OSD_CONFIG, offsetof(osdConfig_t, ahInvert) },
     { "osd_logo_on_arming",         VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_OSD_LOGO_ON_ARMING }, PG_OSD_CONFIG, offsetof(osdConfig_t, logo_on_arming) },
-    { "osd_logo_on_arming_duration",VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { 5, 50 }, PG_OSD_CONFIG, offsetof(osdConfig_t, logo_on_arming_duration) },
+    { "osd_logo_on_arming_duration", VAR_UINT8  | MASTER_VALUE, .config.minmaxUnsigned = { 5, 50 }, PG_OSD_CONFIG, offsetof(osdConfig_t, logo_on_arming_duration) },
 
     { "osd_tim1",                   VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { 0, INT16_MAX }, PG_OSD_CONFIG, offsetof(osdConfig_t, timers[OSD_TIMER_1]) },
     { "osd_tim2",                   VAR_UINT16 | MASTER_VALUE, .config.minmaxUnsigned = { 0, INT16_MAX }, PG_OSD_CONFIG, offsetof(osdConfig_t, timers[OSD_TIMER_2]) },
@@ -1450,7 +1450,7 @@ const clivalue_t valueTable[] = {
     { "osd_stat_max_g_force",       VAR_UINT32  | MASTER_VALUE | MODE_BITSET, .config.bitpos = OSD_STAT_MAX_G_FORCE,     PG_OSD_CONFIG, offsetof(osdConfig_t, enabled_stats)},
     { "osd_stat_max_esc_temp",      VAR_UINT32  | MASTER_VALUE | MODE_BITSET, .config.bitpos = OSD_STAT_MAX_ESC_TEMP,    PG_OSD_CONFIG, offsetof(osdConfig_t, enabled_stats)},
     { "osd_stat_max_esc_rpm",       VAR_UINT32  | MASTER_VALUE | MODE_BITSET, .config.bitpos = OSD_STAT_MAX_ESC_RPM,     PG_OSD_CONFIG, offsetof(osdConfig_t, enabled_stats)},
-    { "osd_stat_min_link_quality",  VAR_UINT32  | MASTER_VALUE | MODE_BITSET, .config.bitpos = OSD_STAT_MIN_LINK_QUALITY,PG_OSD_CONFIG, offsetof(osdConfig_t, enabled_stats)},
+    { "osd_stat_min_link_quality",  VAR_UINT32  | MASTER_VALUE | MODE_BITSET, .config.bitpos = OSD_STAT_MIN_LINK_QUALITY, PG_OSD_CONFIG, offsetof(osdConfig_t, enabled_stats)},
     { "osd_stat_flight_dist",       VAR_UINT32  | MASTER_VALUE | MODE_BITSET, .config.bitpos = OSD_STAT_FLIGHT_DISTANCE, PG_OSD_CONFIG, offsetof(osdConfig_t, enabled_stats)},
 #ifdef USE_GYRO_DATA_ANALYSE
     { "osd_stat_max_fft",           VAR_UINT32  | MASTER_VALUE | MODE_BITSET, .config.bitpos = OSD_STAT_MAX_FFT, PG_OSD_CONFIG, offsetof(osdConfig_t, enabled_stats)},
@@ -1546,11 +1546,11 @@ const clivalue_t valueTable[] = {
 
 // PG_DISPLAY_PORT_MSP_CONFIG
 #ifdef USE_MAX7456
-    { "displayport_max7456_col_adjust", VAR_INT8| MASTER_VALUE, .config.minmax = { -6, 0 }, PG_DISPLAY_PORT_MAX7456_CONFIG, offsetof(displayPortProfile_t, colAdjust) },
-    { "displayport_max7456_row_adjust", VAR_INT8| MASTER_VALUE, .config.minmax = { -3, 0 }, PG_DISPLAY_PORT_MAX7456_CONFIG, offsetof(displayPortProfile_t, rowAdjust) },
-    { "displayport_max7456_inv",        VAR_UINT8| MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_OFF_ON }, PG_DISPLAY_PORT_MAX7456_CONFIG, offsetof(displayPortProfile_t, invert) },
-    { "displayport_max7456_blk",        VAR_UINT8| MASTER_VALUE, .config.minmaxUnsigned = { 0, 3 }, PG_DISPLAY_PORT_MAX7456_CONFIG, offsetof(displayPortProfile_t, blackBrightness) },
-    { "displayport_max7456_wht",        VAR_UINT8| MASTER_VALUE, .config.minmaxUnsigned = { 0, 3 }, PG_DISPLAY_PORT_MAX7456_CONFIG, offsetof(displayPortProfile_t, whiteBrightness) },
+    { "displayport_max7456_col_adjust", VAR_INT8 | MASTER_VALUE, .config.minmax = { -6, 0 }, PG_DISPLAY_PORT_MAX7456_CONFIG, offsetof(displayPortProfile_t, colAdjust) },
+    { "displayport_max7456_row_adjust", VAR_INT8 | MASTER_VALUE, .config.minmax = { -3, 0 }, PG_DISPLAY_PORT_MAX7456_CONFIG, offsetof(displayPortProfile_t, rowAdjust) },
+    { "displayport_max7456_inv",        VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, .config.lookup = { TABLE_OFF_ON }, PG_DISPLAY_PORT_MAX7456_CONFIG, offsetof(displayPortProfile_t, invert) },
+    { "displayport_max7456_blk",        VAR_UINT8 | MASTER_VALUE, .config.minmaxUnsigned = { 0, 3 }, PG_DISPLAY_PORT_MAX7456_CONFIG, offsetof(displayPortProfile_t, blackBrightness) },
+    { "displayport_max7456_wht",        VAR_UINT8 | MASTER_VALUE, .config.minmaxUnsigned = { 0, 3 }, PG_DISPLAY_PORT_MAX7456_CONFIG, offsetof(displayPortProfile_t, whiteBrightness) },
 #endif
 
 #ifdef USE_ESC_SENSOR

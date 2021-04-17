@@ -223,7 +223,7 @@ static const beeperTableEntry_t beeperTable[] = {
     { BEEPER_ENTRY(BEEPER_CRASH_FLIP_MODE,       20, beep_2longerBeeps,    "CRASH_FLIP") },
     { BEEPER_ENTRY(BEEPER_CAM_CONNECTION_OPEN,   21, beep_camOpenBeep,     "CAM_CONNECTION_OPEN") },
     { BEEPER_ENTRY(BEEPER_CAM_CONNECTION_CLOSE,  22, beep_camCloseBeep,    "CAM_CONNECTION_CLOSE") },
-    { BEEPER_ENTRY(BEEPER_RC_SMOOTHING_INIT_FAIL,23, beep_rcSmoothingInitFail, "RC_SMOOTHING_INIT_FAIL") },
+    { BEEPER_ENTRY(BEEPER_RC_SMOOTHING_INIT_FAIL, 23, beep_rcSmoothingInitFail, "RC_SMOOTHING_INIT_FAIL") },
     { BEEPER_ENTRY(BEEPER_ALL,                   24, NULL,                 "ALL") },
 };
 
@@ -396,8 +396,10 @@ void beeperUpdate(timeUs_t currentTimeUs)
     if (!beeperIsOn) {
 #ifdef USE_DSHOT
         if (!areMotorsRunning()
-            && ((currentBeeperEntry->mode == BEEPER_RX_SET && !(beeperConfig()->dshotBeaconOffFlags & BEEPER_GET_FLAG(BEEPER_RX_SET)))
-            || (currentBeeperEntry->mode == BEEPER_RX_LOST && !(beeperConfig()->dshotBeaconOffFlags & BEEPER_GET_FLAG(BEEPER_RX_LOST))))) {
+            && ((currentBeeperEntry->mode == BEEPER_RX_SET
+                 && !(beeperConfig()->dshotBeaconOffFlags & BEEPER_GET_FLAG(BEEPER_RX_SET)))
+                || (currentBeeperEntry->mode == BEEPER_RX_LOST
+                    && !(beeperConfig()->dshotBeaconOffFlags & BEEPER_GET_FLAG(BEEPER_RX_LOST))))) {
 
             if ((currentTimeUs - getLastDisarmTimeUs() > DSHOT_BEACON_GUARD_DELAY_US) && !isTryingToArm()) {
                 lastDshotBeaconCommandTimeUs = currentTimeUs;
@@ -418,7 +420,7 @@ void beeperUpdate(timeUs_t currentTimeUs)
             if (
                 beeperPos == 0
                 && (currentBeeperEntry->mode == BEEPER_ARMING || currentBeeperEntry->mode == BEEPER_ARMING_GPS_FIX
-                || currentBeeperEntry->mode == BEEPER_ARMING_GPS_NO_FIX)) {
+                    || currentBeeperEntry->mode == BEEPER_ARMING_GPS_NO_FIX)) {
                 armingBeepTimeMicros = micros();
             }
         }
@@ -508,17 +510,50 @@ bool isBeeperOn(void)
 #else
 
 // Stub out beeper functions if #BEEPER not defined
-void beeper(beeperMode_e mode) {UNUSED(mode);}
+void beeper(beeperMode_e mode)
+{
+    UNUSED(mode);
+}
 void beeperSilence(void) {}
-void beeperConfirmationBeeps(uint8_t beepCount) {UNUSED(beepCount);}
-void beeperWarningBeeps(uint8_t beepCount) {UNUSED(beepCount);}
-void beeperUpdate(timeUs_t currentTimeUs) {UNUSED(currentTimeUs);}
-uint32_t getArmingBeepTimeMicros(void) {return 0;}
-beeperMode_e beeperModeForTableIndex(int idx) {UNUSED(idx); return BEEPER_SILENCE;}
-uint32_t beeperModeMaskForTableIndex(int idx) {UNUSED(idx); return 0;}
-const char *beeperNameForTableIndex(int idx) {UNUSED(idx); return NULL;}
-int beeperTableEntryCount(void) {return 0;}
-bool isBeeperOn(void) {return false;}
+void beeperConfirmationBeeps(uint8_t beepCount)
+{
+    UNUSED(beepCount);
+}
+void beeperWarningBeeps(uint8_t beepCount)
+{
+    UNUSED(beepCount);
+}
+void beeperUpdate(timeUs_t currentTimeUs)
+{
+    UNUSED(currentTimeUs);
+}
+uint32_t getArmingBeepTimeMicros(void)
+{
+    return 0;
+}
+beeperMode_e beeperModeForTableIndex(int idx)
+{
+    UNUSED(idx);
+    return BEEPER_SILENCE;
+}
+uint32_t beeperModeMaskForTableIndex(int idx)
+{
+    UNUSED(idx);
+    return 0;
+}
+const char *beeperNameForTableIndex(int idx)
+{
+    UNUSED(idx);
+    return NULL;
+}
+int beeperTableEntryCount(void)
+{
+    return 0;
+}
+bool isBeeperOn(void)
+{
+    return false;
+}
 
 #endif
 

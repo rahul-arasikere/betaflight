@@ -139,7 +139,7 @@
 
 #ifdef USE_MAG_DATA_READY_SIGNAL
 
-static void hmc5883_extiHandler(extiCallbackRec_t* cb)
+static void hmc5883_extiHandler(extiCallbackRec_t *cb)
 {
     UNUSED(cb);
 #ifdef DEBUG_MAG_DATA_READY_INTERRUPT
@@ -159,7 +159,7 @@ static void hmc5883_extiHandler(extiCallbackRec_t* cb)
 }
 #endif
 
-static void hmc5883lConfigureDataReadyInterruptHandling(magDev_t* mag)
+static void hmc5883lConfigureDataReadyInterruptHandling(magDev_t *mag)
 {
 #ifdef USE_MAG_DATA_READY_SIGNAL
     if (mag->magIntExtiTag == IO_TAG_NONE) {
@@ -228,9 +228,12 @@ static bool hmc5883lInit(magDev_t *mag)
     busDevice_t *busdev = &mag->busdev;
 
     // leave test mode
-    busWriteRegister(busdev, HMC58X3_REG_CONFA, HMC_CONFA_8_SAMLES | HMC_CONFA_DOR_15HZ | HMC_CONFA_NORMAL);    // Configuration Register A  -- 0 11 100 00  num samples: 8 ; output rate: 15Hz ; normal measurement mode
-    busWriteRegister(busdev, HMC58X3_REG_CONFB, HMC_CONFB_GAIN_1_3GA);                                          // Configuration Register B  -- 001 00000    configuration gain 1.3Ga
-    busWriteRegister(busdev, HMC58X3_REG_MODE, HMC_MODE_CONTINOUS);                                             // Mode register             -- 000000 00    continuous Conversion Mode
+    busWriteRegister(busdev, HMC58X3_REG_CONFA,
+                     HMC_CONFA_8_SAMLES | HMC_CONFA_DOR_15HZ | HMC_CONFA_NORMAL);    // Configuration Register A  -- 0 11 100 00  num samples: 8 ; output rate: 15Hz ; normal measurement mode
+    busWriteRegister(busdev, HMC58X3_REG_CONFB,
+                     HMC_CONFB_GAIN_1_3GA);                                          // Configuration Register B  -- 001 00000    configuration gain 1.3Ga
+    busWriteRegister(busdev, HMC58X3_REG_MODE,
+                     HMC_MODE_CONTINOUS);                                             // Mode register             -- 000000 00    continuous Conversion Mode
 
     delay(100);
 
@@ -238,7 +241,7 @@ static bool hmc5883lInit(magDev_t *mag)
     return true;
 }
 
-bool hmc5883lDetect(magDev_t* mag)
+bool hmc5883lDetect(magDev_t *mag)
 {
     busDevice_t *busdev = &mag->busdev;
 

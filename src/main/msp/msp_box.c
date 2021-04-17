@@ -226,7 +226,8 @@ void initActiveBoxIds(void)
 
     BME(BOXFAILSAFE);
 
-    if (mixerConfig()->mixerMode == MIXER_FLYING_WING || mixerConfig()->mixerMode == MIXER_AIRPLANE || mixerConfig()->mixerMode == MIXER_CUSTOM_AIRPLANE) {
+    if (mixerConfig()->mixerMode == MIXER_FLYING_WING || mixerConfig()->mixerMode == MIXER_AIRPLANE
+        || mixerConfig()->mixerMode == MIXER_CUSTOM_AIRPLANE) {
         BME(BOXPASSTHRU);
     }
 
@@ -304,7 +305,7 @@ void initActiveBoxIds(void)
         if (pinioBoxConfig()->permanentId[i] != PERMANENT_ID_NONE) {
             const box_t *box = findBoxByPermanentId(pinioBoxConfig()->permanentId[i]);
             if (box) {
-                switch(box->boxId) {
+                switch (box->boxId) {
                 case BOXUSER1:
                 case BOXUSER2:
                 case BOXUSER3:
@@ -357,7 +358,8 @@ bool getBoxIdState(boxId_e boxid)
     const uint8_t boxIdToFlightModeMap[] = BOXID_TO_FLIGHT_MODE_MAP_INITIALIZER;
 
     // we assume that all boxId below BOXID_FLIGHTMODE_LAST except BOXARM are mapped to flightmode
-    STATIC_ASSERT(ARRAYLEN(boxIdToFlightModeMap) == BOXID_FLIGHTMODE_LAST + 1, FLIGHT_MODE_BOXID_MAP_INITIALIZER_does_not_match_boxId_e);
+    STATIC_ASSERT(ARRAYLEN(boxIdToFlightModeMap) == BOXID_FLIGHTMODE_LAST + 1,
+                  FLIGHT_MODE_BOXID_MAP_INITIALIZER_does_not_match_boxId_e);
 
     if (boxid == BOXARM) {
         return ARMING_FLAG(ARMED);

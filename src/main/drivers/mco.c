@@ -73,7 +73,7 @@ void mcoConfigure(MCODevice_e device, const mcoConfig_t *config)
     // Only configure MCO2 with PLLI2SCLK as source for now.
     // Other MCO1 and other sources can easily be added.
 
-    switch(device) {
+    switch (device) {
     case MCODEV_1: // MCO1 on PA8
         return; // Not supported (yet)
 

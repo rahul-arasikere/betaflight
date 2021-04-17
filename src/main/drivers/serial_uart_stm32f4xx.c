@@ -56,12 +56,12 @@ const uartHardware_t uartHardware[UARTDEV_COUNT] = {
 #if defined (STM32F411xE)
             { DEFIO_TAG_E(PB3) },
 #endif
-            },
+        },
         .txPins = { { DEFIO_TAG_E(PA9) }, { DEFIO_TAG_E(PB6) },
 #if defined (STM32F411xE)
             { DEFIO_TAG_E(PA15) },
 #endif
-            },
+        },
         .af = GPIO_AF_USART1,
         .rcc = RCC_APB2(USART1),
         .irqn = USART1_IRQn,
@@ -196,14 +196,14 @@ const uartHardware_t uartHardware[UARTDEV_COUNT] = {
 #else
             { DEFIO_TAG_E(PG9) },
 #endif
-            },
+        },
         .txPins = { { DEFIO_TAG_E(PC6) },
 #if defined (STM32F411xE)
             { DEFIO_TAG_E(PA11) },
 #else
             { DEFIO_TAG_E(PG14) },
 #endif
-            },
+        },
         .af = GPIO_AF_USART6,
         .rcc = RCC_APB2(USART6),
         .irqn = USART6_IRQn,
@@ -222,25 +222,21 @@ static void handleUsartTxDma(uartPort_t *s)
     uartTryStartTxDMA(s);
 }
 
-void uartDmaIrqHandler(dmaChannelDescriptor_t* descriptor)
+void uartDmaIrqHandler(dmaChannelDescriptor_t *descriptor)
 {
-    uartPort_t *s = &(((uartDevice_t*)(descriptor->userParam))->port);
-    if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_TCIF))
-    {
+    uartPort_t *s = &(((uartDevice_t *)(descriptor->userParam))->port);
+    if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_TCIF)) {
         DMA_CLEAR_FLAG(descriptor, DMA_IT_TCIF);
         DMA_CLEAR_FLAG(descriptor, DMA_IT_HTIF);
-        if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_FEIF))
-        {
+        if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_FEIF)) {
             DMA_CLEAR_FLAG(descriptor, DMA_IT_FEIF);
         }
         handleUsartTxDma(s);
     }
-    if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_TEIF))
-    {
+    if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_TEIF)) {
         DMA_CLEAR_FLAG(descriptor, DMA_IT_TEIF);
     }
-    if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_DMEIF))
-    {
+    if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_DMEIF)) {
         DMA_CLEAR_FLAG(descriptor, DMA_IT_DMEIF);
     }
 }
@@ -281,7 +277,8 @@ uartPort_t *serialUART(UARTDevice_e device, uint32_t baudRate, portMode_e mode, 
 
     if (options & SERIAL_BIDIR) {
         IOInit(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device));
-        IOConfigGPIOAF(txIO, ((options & SERIAL_BIDIR_PP) || (options & SERIAL_BIDIR_PP_PD)) ? IOCFG_AF_PP : IOCFG_AF_OD, hardware->af);
+        IOConfigGPIOAF(txIO, ((options & SERIAL_BIDIR_PP)
+                              || (options & SERIAL_BIDIR_PP_PD)) ? IOCFG_AF_PP : IOCFG_AF_OD, hardware->af);
     } else {
         if ((mode & MODE_TX) && txIO) {
             IOInit(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device));

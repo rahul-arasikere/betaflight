@@ -41,25 +41,29 @@
 #include "adc.h"
 
 const adcDevice_t adcHardware[] = {
-    { .ADCx = ADC1, .rccADC = RCC_AHB(ADC12),
+    {
+        .ADCx = ADC1, .rccADC = RCC_AHB(ADC12),
 #if !defined(USE_DMA_SPEC)
         .dmaResource = (dmaResource_t *)DMA1_Channel1,
 #endif
     },
 #ifdef ADC24_DMA_REMAP
-    { .ADCx = ADC2, .rccADC = RCC_AHB(ADC12),
+    {
+        .ADCx = ADC2, .rccADC = RCC_AHB(ADC12),
 #if !defined(USE_DMA_SPEC)
         .dmaResource = (dmaResource_t *)DMA2_Channel3,
 #endif
     },
 #else
-    { .ADCx = ADC2, .rccADC = RCC_AHB(ADC12),
+    {
+        .ADCx = ADC2, .rccADC = RCC_AHB(ADC12),
 #if !defined(USE_DMA_SPEC)
         .dmaResource = (dmaResource_t *)DMA2_Channel1,
 #endif
     },
 #endif
-    { .ADCx = ADC3, .rccADC = RCC_AHB(ADC34),
+    {
+        .ADCx = ADC3, .rccADC = RCC_AHB(ADC34),
 #if !defined(USE_DMA_SPEC)
         .dmaResource = (dmaResource_t *)DMA2_Channel5,
 #endif

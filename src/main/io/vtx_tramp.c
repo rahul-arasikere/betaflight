@@ -189,53 +189,50 @@ static char trampHandleResponse(void)
     const uint8_t respCode = trampRespBuffer[1];
 
     switch (respCode) {
-    case 'r':
-        {
-            const uint16_t min_freq = trampRespBuffer[2]|(trampRespBuffer[3] << 8);
-            // Check we're not reading the request (indicated by freq zero)
-            if (min_freq != 0) {
-                // Got response, update device limits
-                trampRFFreqMin = min_freq;
-                trampRFFreqMax = trampRespBuffer[4]|(trampRespBuffer[5] << 8);
-                trampRFPowerMax = trampRespBuffer[6]|(trampRespBuffer[7] << 8);
-                return 'r';
-            }
-            break;
+    case 'r': {
+        const uint16_t min_freq = trampRespBuffer[2] | (trampRespBuffer[3] << 8);
+        // Check we're not reading the request (indicated by freq zero)
+        if (min_freq != 0) {
+            // Got response, update device limits
+            trampRFFreqMin = min_freq;
+            trampRFFreqMax = trampRespBuffer[4] | (trampRespBuffer[5] << 8);
+            trampRFPowerMax = trampRespBuffer[6] | (trampRespBuffer[7] << 8);
+            return 'r';
         }
-    case 'v':
-        {
-            const uint16_t freq = trampRespBuffer[2]|(trampRespBuffer[3] << 8);
-            // Check we're not reading the request (indicated by freq zero)
-            if (freq != 0) {
-                // Got response, update device status
-                trampCurFreq = freq;
-                trampCurConfPower = trampRespBuffer[4]|(trampRespBuffer[5] << 8);
-                trampCurControlMode = trampRespBuffer[6]; // Currently only used for race lock
-                trampCurPitMode = trampRespBuffer[7];
-                trampCurActPower = trampRespBuffer[8]|(trampRespBuffer[9] << 8);
+        break;
+    }
+    case 'v': {
+        const uint16_t freq = trampRespBuffer[2] | (trampRespBuffer[3] << 8);
+        // Check we're not reading the request (indicated by freq zero)
+        if (freq != 0) {
+            // Got response, update device status
+            trampCurFreq = freq;
+            trampCurConfPower = trampRespBuffer[4] | (trampRespBuffer[5] << 8);
+            trampCurControlMode = trampRespBuffer[6]; // Currently only used for race lock
+            trampCurPitMode = trampRespBuffer[7];
+            trampCurActPower = trampRespBuffer[8] | (trampRespBuffer[9] << 8);
 
-                // Init config with current status if not set
-                if (trampConfFreq == 0) {
-                    trampConfFreq  = trampCurFreq;
-                }
-                if (trampConfPower == 0) {
-                    trampConfPower = trampCurConfPower;
-                }
-                return 'v';
+            // Init config with current status if not set
+            if (trampConfFreq == 0) {
+                trampConfFreq  = trampCurFreq;
             }
-            break;
-        }
-    case 's':
-        {
-            const uint16_t temp = (int16_t)(trampRespBuffer[6]|(trampRespBuffer[7] << 8));
-            // Check we're not reading the request (indicated by temp zero)
-            if (temp != 0) {
-                // Got response, update device status
-                trampCurTemp = temp;
-                return 's';
+            if (trampConfPower == 0) {
+                trampConfPower = trampCurConfPower;
             }
-            break;
+            return 'v';
         }
+        break;
+    }
+    case 's': {
+        const uint16_t temp = (int16_t)(trampRespBuffer[6] | (trampRespBuffer[7] << 8));
+        // Check we're not reading the request (indicated by temp zero)
+        if (temp != 0) {
+            // Got response, update device status
+            trampCurTemp = temp;
+            return 's';
+        }
+        break;
+    }
     }
 
     // Likely reading a request, return zero to indicate not accepted
@@ -261,55 +258,51 @@ static char trampReceive()
         trampRespBuffer[trampReceivePos++] = c;
 
         switch (trampReceiveState) {
-        case S_WAIT_LEN:
-            {
-                if (c == 0x0F) {
-                    // Found header byte, advance to wait for code
-                    trampReceiveState = S_WAIT_CODE;
-                } else {
-                    // Unexpected header, reset state machine
-                    trampResetReceiver();
-                }
-                break;
+        case S_WAIT_LEN: {
+            if (c == 0x0F) {
+                // Found header byte, advance to wait for code
+                trampReceiveState = S_WAIT_CODE;
+            } else {
+                // Unexpected header, reset state machine
+                trampResetReceiver();
             }
-        case S_WAIT_CODE:
-            {
-                if (c == 'r' || c == 'v' || c == 's') {
-                    // Code is for response is one we're interested in, advance to data
-                    trampReceiveState = S_DATA;
-                } else {
-                    // Unexpected code, reset state machine
-                    trampResetReceiver();
-                }
-                break;
+            break;
+        }
+        case S_WAIT_CODE: {
+            if (c == 'r' || c == 'v' || c == 's') {
+                // Code is for response is one we're interested in, advance to data
+                trampReceiveState = S_DATA;
+            } else {
+                // Unexpected code, reset state machine
+                trampResetReceiver();
             }
-        case S_DATA:
-            {
-                if (trampReceivePos == 16) {
-                    // Buffer is full, calculate checksum
-                    uint8_t cksum = trampChecksum(trampRespBuffer);
+            break;
+        }
+        case S_DATA: {
+            if (trampReceivePos == 16) {
+                // Buffer is full, calculate checksum
+                uint8_t cksum = trampChecksum(trampRespBuffer);
 
-                    // Reset state machine ready for next response
-                    trampResetReceiver();
+                // Reset state machine ready for next response
+                trampResetReceiver();
 
-                    if ((trampRespBuffer[14] == cksum) && (trampRespBuffer[15] == 0)) {
-                        // Checksum is correct, process response
-                        char r = trampHandleResponse();
+                if ((trampRespBuffer[14] == cksum) && (trampRespBuffer[15] == 0)) {
+                    // Checksum is correct, process response
+                    char r = trampHandleResponse();
 
-                        // Check response valid else keep on reading
-                        if (r != 0) {
-                            return r;
-                        }
+                    // Check response valid else keep on reading
+                    if (r != 0) {
+                        return r;
                     }
                 }
-                break;
             }
-        default:
-            {
-                // Invalid state, reset state machine
-                trampResetReceiver();
-                break;
-            }
+            break;
+        }
+        default: {
+            // Invalid state, reset state machine
+            trampResetReceiver();
+            break;
+        }
         }
     }
 
@@ -332,147 +325,141 @@ static void vtxTrampProcess(vtxDevice_t *vtxDevice, timeUs_t currentTimeUs)
     const char replyCode = trampReceive();
 
     // Act on state
-    switch(trampStatus) {
-    case TRAMP_STATUS_OFFLINE:
-        {
-            // Offline, check for response
-            if (replyCode == 'r') {
-                // Device replied to reset? request, enter init
-                trampStatus = TRAMP_STATUS_INIT;
-            } else if (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_MIN_REQUEST_PERIOD_US) {
-                // Min request period exceeded, issue another reset?
-                trampQuery('r');
+    switch (trampStatus) {
+    case TRAMP_STATUS_OFFLINE: {
+        // Offline, check for response
+        if (replyCode == 'r') {
+            // Device replied to reset? request, enter init
+            trampStatus = TRAMP_STATUS_INIT;
+        } else if (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_MIN_REQUEST_PERIOD_US) {
+            // Min request period exceeded, issue another reset?
+            trampQuery('r');
+
+            // Update last time
+            trampLastTimeUs = currentTimeUs;
+        }
+        break;
+    }
+    case TRAMP_STATUS_INIT: {
+        // Initializing, check for response
+        if (replyCode == 'v') {
+            // Device replied to freq / power / pit query, enter online
+            trampStatus = TRAMP_STATUS_ONLINE_MONITOR_FREQPWRPIT;
+        } else if (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_MIN_REQUEST_PERIOD_US) {
+            // Min request period exceeded, issue another query
+            trampQuery('v');
+
+            // Update last time
+            trampLastTimeUs = currentTimeUs;
+        }
+        break;
+    }
+    case TRAMP_STATUS_ONLINE_MONITOR_FREQPWRPIT: {
+        // Note after config a status update request is made, a new status
+        // request is made, this request is handled above and should prevent
+        // subsiquent config updates if the config is now correct
+        if (trampRetryCount > 0 && (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_MIN_REQUEST_PERIOD_US)) {
+            // Config retries remain and min request period exceeded, check freq
+            if (!trampVtxRaceLockEnabled() && (trampConfFreq != trampCurFreq)) {
+                // Freq can be and needs to be updated, issue request
+                trampSendCommand('F', trampConfFreq);
+
+                // Set flag
+                configUpdateRequired = true;
+            } else if (!trampVtxRaceLockEnabled() && (trampConfPower != trampCurConfPower)) {
+                // Power can be and needs to be updated, issue request
+                trampSendCommand('P', trampConfPower);
+
+                // Set flag
+                configUpdateRequired = true;
+            } else if (trampConfPitMode != trampCurPitMode) {
+                // Pit mode needs to be updated, issue request
+                trampSendCommand('I', trampConfPitMode ? 0 : 1);
+
+                // Set flag
+                configUpdateRequired = true;
+            }
+
+            if (configUpdateRequired) {
+                // Update required, decrement retry count
+                trampRetryCount--;
 
                 // Update last time
                 trampLastTimeUs = currentTimeUs;
-            }
-            break;
-        }
-    case TRAMP_STATUS_INIT:
-        {
-            // Initializing, check for response
-            if (replyCode == 'v') {
-                // Device replied to freq / power / pit query, enter online
-                trampStatus = TRAMP_STATUS_ONLINE_MONITOR_FREQPWRPIT;
-            } else if (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_MIN_REQUEST_PERIOD_US) {
-                // Min request period exceeded, issue another query
-                trampQuery('v');
-
-                // Update last time
-                trampLastTimeUs = currentTimeUs;
-            }
-            break;
-        }
-    case TRAMP_STATUS_ONLINE_MONITOR_FREQPWRPIT:
-        {
-            // Note after config a status update request is made, a new status
-            // request is made, this request is handled above and should prevent
-            // subsiquent config updates if the config is now correct
-            if (trampRetryCount > 0 && (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_MIN_REQUEST_PERIOD_US)) {
-                // Config retries remain and min request period exceeded, check freq
-                if (!trampVtxRaceLockEnabled() && (trampConfFreq != trampCurFreq)) {
-                    // Freq can be and needs to be updated, issue request
-                    trampSendCommand('F', trampConfFreq);
-
-                    // Set flag
-                    configUpdateRequired = true;
-                } else if (!trampVtxRaceLockEnabled() && (trampConfPower != trampCurConfPower)) {
-                    // Power can be and needs to be updated, issue request
-                    trampSendCommand('P', trampConfPower);
-
-                    // Set flag
-                    configUpdateRequired = true;
-                } else if (trampConfPitMode != trampCurPitMode) {
-                    // Pit mode needs to be updated, issue request
-                    trampSendCommand('I', trampConfPitMode ? 0 : 1);
-
-                    // Set flag
-                    configUpdateRequired = true;
-                }
-
-                if (configUpdateRequired) {
-                    // Update required, decrement retry count
-                    trampRetryCount--;
-
-                    // Update last time
-                    trampLastTimeUs = currentTimeUs;
-
-                    // Advance state
-                    trampStatus = TRAMP_STATUS_ONLINE_CONFIG;
-                } else {
-                    // No update required, reset retry count
-                    trampRetryCount = TRAMP_MAX_RETRIES;
-                }
-            }
-
-            /* Was a config update made? */
-            if (!configUpdateRequired) {
-                /* No, look to continue monitoring */
-                if (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_STATUS_REQUEST_PERIOD_US) {
-                    // Request period exceeded, issue freq/power/pit query
-                    trampQuery('v');
-
-                    // Update last time
-                    trampLastTimeUs = currentTimeUs;
-                } else if (replyCode == 'v') {
-                    // Got reply, issue temp query
-                    trampQuery('s');
-
-                    // Wait for reply
-                    trampStatus = TRAMP_STATUS_ONLINE_MONITOR_TEMP;
-
-                    // Update last time
-                    trampLastTimeUs = currentTimeUs;
-                }
-            }
-
-            break;
-        }
-    case TRAMP_STATUS_ONLINE_MONITOR_TEMP:
-        {
-            // Check request time
-            if (replyCode == 's') {
-                // Got reply, return to request freq/power/pit
-                trampStatus = TRAMP_STATUS_ONLINE_MONITOR_TEMP;
-            } else if (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_MIN_REQUEST_PERIOD_US) {
-                // Timed out after min request period, return to request freq/power/pit query
-                trampStatus = TRAMP_STATUS_ONLINE_MONITOR_FREQPWRPIT;
-            }
-            break;
-        }
-    case TRAMP_STATUS_ONLINE_CONFIG:
-        {
-            // Param should now be set, check time
-            if (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_MIN_REQUEST_PERIOD_US) {
-                // Min request period exceeded, re-query
-                trampQuery('v');
 
                 // Advance state
-                trampStatus = TRAMP_STATUS_ONLINE_MONITOR_FREQPWRPIT;
+                trampStatus = TRAMP_STATUS_ONLINE_CONFIG;
+            } else {
+                // No update required, reset retry count
+                trampRetryCount = TRAMP_MAX_RETRIES;
+            }
+        }
+
+        /* Was a config update made? */
+        if (!configUpdateRequired) {
+            /* No, look to continue monitoring */
+            if (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_STATUS_REQUEST_PERIOD_US) {
+                // Request period exceeded, issue freq/power/pit query
+                trampQuery('v');
+
+                // Update last time
+                trampLastTimeUs = currentTimeUs;
+            } else if (replyCode == 'v') {
+                // Got reply, issue temp query
+                trampQuery('s');
+
+                // Wait for reply
+                trampStatus = TRAMP_STATUS_ONLINE_MONITOR_TEMP;
 
                 // Update last time
                 trampLastTimeUs = currentTimeUs;
             }
-            break;
         }
-    default:
-        {
-            // Invalid state, reset
-            trampStatus = TRAMP_STATUS_OFFLINE;
-            break;
+
+        break;
+    }
+    case TRAMP_STATUS_ONLINE_MONITOR_TEMP: {
+        // Check request time
+        if (replyCode == 's') {
+            // Got reply, return to request freq/power/pit
+            trampStatus = TRAMP_STATUS_ONLINE_MONITOR_TEMP;
+        } else if (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_MIN_REQUEST_PERIOD_US) {
+            // Timed out after min request period, return to request freq/power/pit query
+            trampStatus = TRAMP_STATUS_ONLINE_MONITOR_FREQPWRPIT;
         }
+        break;
+    }
+    case TRAMP_STATUS_ONLINE_CONFIG: {
+        // Param should now be set, check time
+        if (cmp32(currentTimeUs, trampLastTimeUs) >= TRAMP_MIN_REQUEST_PERIOD_US) {
+            // Min request period exceeded, re-query
+            trampQuery('v');
+
+            // Advance state
+            trampStatus = TRAMP_STATUS_ONLINE_MONITOR_FREQPWRPIT;
+
+            // Update last time
+            trampLastTimeUs = currentTimeUs;
+        }
+        break;
+    }
+    default: {
+        // Invalid state, reset
+        trampStatus = TRAMP_STATUS_OFFLINE;
+        break;
+    }
     }
 
     DEBUG_SET(DEBUG_VTX_TRAMP, 0, trampStatus);
     DEBUG_SET(DEBUG_VTX_TRAMP, 1, replyCode);
     DEBUG_SET(DEBUG_VTX_TRAMP, 2, ((trampConfPitMode << 14) &              0xC000) |
-                                  ((trampCurPitMode << 12) &               0x3000) |
-                                  ((trampConfPower << 8) &                 0x0F00) |
-                                  ((trampCurConfPower << 4) &              0x00F0) |
-                                  ((trampConfFreq != trampCurFreq) ?       0x0008 : 0x0000) |
-                                  ((trampConfPower != trampCurConfPower) ? 0x0004 : 0x0000) |
-                                  ((trampConfPitMode != trampCurPitMode) ? 0x0002 : 0x0000) |
-                                  (configUpdateRequired ?                  0x0001 : 0x0000));
+              ((trampCurPitMode << 12) &               0x3000) |
+              ((trampConfPower << 8) &                 0x0F00) |
+              ((trampCurConfPower << 4) &              0x00F0) |
+              ((trampConfFreq != trampCurFreq) ?       0x0008 : 0x0000) |
+              ((trampConfPower != trampCurConfPower) ? 0x0004 : 0x0000) |
+              ((trampConfPitMode != trampCurPitMode) ? 0x0002 : 0x0000) |
+              (configUpdateRequired ?                  0x0001 : 0x0000));
     DEBUG_SET(DEBUG_VTX_TRAMP, 3, trampRetryCount);
 
 #ifdef USE_CMS

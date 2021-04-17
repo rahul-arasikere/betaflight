@@ -104,7 +104,7 @@ static bool rcdeviceRespCtxQueuePush(rcdeviceWaitingResponseQueue *queue, rcdevi
     return true;
 }
 
-static rcdeviceResponseParseContext_t* rcdeviceRespCtxQueuePeekFront(rcdeviceWaitingResponseQueue *queue)
+static rcdeviceResponseParseContext_t *rcdeviceRespCtxQueuePeekFront(rcdeviceWaitingResponseQueue *queue)
 {
     if (queue == NULL || queue->itemCount == 0) {
         return NULL;
@@ -114,7 +114,7 @@ static rcdeviceResponseParseContext_t* rcdeviceRespCtxQueuePeekFront(rcdeviceWai
     return ctx;
 }
 
-STATIC_UNIT_TESTED rcdeviceResponseParseContext_t* rcdeviceRespCtxQueueShift(rcdeviceWaitingResponseQueue *queue)
+STATIC_UNIT_TESTED rcdeviceResponseParseContext_t *rcdeviceRespCtxQueueShift(rcdeviceWaitingResponseQueue *queue)
 {
     if (queue == NULL || queue->itemCount == 0) {
         return NULL;
@@ -173,7 +173,8 @@ static void runcamDeviceSendPacket(runcamDevice_t *device, uint8_t command, uint
 }
 
 // a common way to send a packet to device, and get response from the device.
-static void runcamDeviceSendRequestAndWaitingResp(runcamDevice_t *device, uint8_t commandID, uint8_t *paramData, uint8_t paramDataLen, timeMs_t tiemout, int maxRetryTimes, void *userInfo, rcdeviceRespParseFunc parseFunc)
+static void runcamDeviceSendRequestAndWaitingResp(runcamDevice_t *device, uint8_t commandID, uint8_t *paramData,
+                                                  uint8_t paramDataLen, timeMs_t tiemout, int maxRetryTimes, void *userInfo, rcdeviceRespParseFunc parseFunc)
 {
     runcamDeviceFlushRxBuffer(device);
 
@@ -208,7 +209,8 @@ static void runcamDeviceParseV1DeviceInfo(rcdeviceResponseParseContext_t *ctx)
 
     runcamDevice_t *device = ctx->device;
     device->info.protocolVersion = RCDEVICE_PROTOCOL_RCSPLIT_VERSION;
-    device->info.features = RCDEVICE_PROTOCOL_FEATURE_SIMULATE_POWER_BUTTON | RCDEVICE_PROTOCOL_FEATURE_SIMULATE_WIFI_BUTTON | RCDEVICE_PROTOCOL_FEATURE_CHANGE_MODE;
+    device->info.features = RCDEVICE_PROTOCOL_FEATURE_SIMULATE_POWER_BUTTON | RCDEVICE_PROTOCOL_FEATURE_SIMULATE_WIFI_BUTTON
+                            | RCDEVICE_PROTOCOL_FEATURE_CHANGE_MODE;
     device->isReady = true;
 }
 
@@ -285,7 +287,8 @@ static void runcamDeviceParseV2DeviceInfo(rcdeviceResponseParseContext_t *ctx)
 // definition of runcamDeviceInfo_t to know more)
 static void runcamDeviceGetDeviceInfo(runcamDevice_t *device)
 {
-    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_GET_DEVICE_INFO, NULL, 0, rcdeviceConfig()->initDeviceAttemptInterval, rcdeviceConfig()->initDeviceAttempts, NULL, runcamDeviceParseV2DeviceInfo);
+    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_GET_DEVICE_INFO, NULL, 0,
+                                          rcdeviceConfig()->initDeviceAttemptInterval, rcdeviceConfig()->initDeviceAttempts, NULL, runcamDeviceParseV2DeviceInfo);
 }
 
 // init the runcam device, it'll search the UART port with FUNCTION_RCDEVICE id
@@ -324,7 +327,8 @@ bool runcamDeviceSimulateCameraButton(runcamDevice_t *device, uint8_t operation)
 void runcamDeviceOpen5KeyOSDCableConnection(runcamDevice_t *device, rcdeviceRespParseFunc parseFunc)
 {
     uint8_t operation = RCDEVICE_PROTOCOL_5KEY_CONNECTION_OPEN;
-    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_5KEY_CONNECTION, &operation, sizeof(uint8_t), 400, 2, NULL, parseFunc);
+    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_5KEY_CONNECTION, &operation, sizeof(uint8_t),
+                                          400, 2, NULL, parseFunc);
 }
 
 // when the control was stop, must call this method to the camera to disconnect
@@ -332,26 +336,30 @@ void runcamDeviceOpen5KeyOSDCableConnection(runcamDevice_t *device, rcdeviceResp
 void runcamDeviceClose5KeyOSDCableConnection(runcamDevice_t *device, rcdeviceRespParseFunc parseFunc)
 {
     uint8_t operation = RCDEVICE_PROTOCOL_5KEY_CONNECTION_CLOSE;
-    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_5KEY_CONNECTION, &operation, sizeof(uint8_t), 400, 2, NULL, parseFunc);
+    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_5KEY_CONNECTION, &operation, sizeof(uint8_t),
+                                          400, 2, NULL, parseFunc);
 }
 
 // simulate button press event of 5 key osd cable with special button
-void runcamDeviceSimulate5KeyOSDCableButtonPress(runcamDevice_t *device, uint8_t operation, rcdeviceRespParseFunc parseFunc)
+void runcamDeviceSimulate5KeyOSDCableButtonPress(runcamDevice_t *device, uint8_t operation,
+                                                 rcdeviceRespParseFunc parseFunc)
 {
     if (operation == RCDEVICE_PROTOCOL_5KEY_SIMULATION_NONE) {
         return;
     }
 
-    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_5KEY_SIMULATION_PRESS, &operation, sizeof(uint8_t), 400, 2, NULL, parseFunc);
+    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_5KEY_SIMULATION_PRESS, &operation,
+                                          sizeof(uint8_t), 400, 2, NULL, parseFunc);
 }
 
 // simulate button release event of 5 key osd cable
 void runcamDeviceSimulate5KeyOSDCableButtonRelease(runcamDevice_t *device, rcdeviceRespParseFunc parseFunc)
 {
-    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_5KEY_SIMULATION_RELEASE, NULL, 0, 400, 2, NULL, parseFunc);
+    runcamDeviceSendRequestAndWaitingResp(device, RCDEVICE_PROTOCOL_COMMAND_5KEY_SIMULATION_RELEASE, NULL, 0, 400, 2, NULL,
+                                          parseFunc);
 }
 
-static rcdeviceResponseParseContext_t* getWaitingResponse(timeMs_t currentTimeMs)
+static rcdeviceResponseParseContext_t *getWaitingResponse(timeMs_t currentTimeMs)
 {
     rcdeviceResponseParseContext_t *respCtx = rcdeviceRespCtxQueuePeekFront(&waitingResponseQueue);
     while (respCtx != NULL && respCtx->timeoutTimestamp != 0 && currentTimeMs > respCtx->timeoutTimestamp) {
@@ -382,7 +390,7 @@ static rcdeviceResponseParseContext_t* getWaitingResponse(timeMs_t currentTimeMs
     return respCtx;
 }
 
-runcamDeviceRequest_t* rcdeviceGetRequest()
+runcamDeviceRequest_t *rcdeviceGetRequest()
 {
     if (requestParserContext.isParseDone) {
         // reset the parse done state, then we can handle next request from rcdevice
@@ -407,7 +415,8 @@ void rcdeviceReceive(timeUs_t currentTimeUs)
         const uint8_t c = serialRead(respCtx->device->serialPort);
         if (respCtx->recvRespLen == 0) {
             // Only start receiving packet when we found a header
-            if ((respCtx->protocolVersion == RCDEVICE_PROTOCOL_VERSION_1_0 && c != RCDEVICE_PROTOCOL_HEADER) || (respCtx->protocolVersion == RCDEVICE_PROTOCOL_RCSPLIT_VERSION && c != RCSPLIT_PACKET_HEADER)) {
+            if ((respCtx->protocolVersion == RCDEVICE_PROTOCOL_VERSION_1_0 && c != RCDEVICE_PROTOCOL_HEADER)
+                || (respCtx->protocolVersion == RCDEVICE_PROTOCOL_RCSPLIT_VERSION && c != RCSPLIT_PACKET_HEADER)) {
                 continue;
             }
         }
@@ -425,7 +434,8 @@ void rcdeviceReceive(timeUs_t currentTimeUs)
 
                 respCtx->result = (crc == 0) ? RCDEVICE_RESP_SUCCESS : RCDEVICE_RESP_INCORRECT_CRC;
             } else if (respCtx->protocolVersion == RCDEVICE_PROTOCOL_RCSPLIT_VERSION) {
-                if (respCtx->recvBuf[0] == RCSPLIT_PACKET_HEADER && respCtx->recvBuf[1] == RCSPLIT_PACKET_CMD_CTRL && respCtx->recvBuf[2] == 0xFF && respCtx->recvBuf[4] == RCSPLIT_PACKET_TAIL) {
+                if (respCtx->recvBuf[0] == RCSPLIT_PACKET_HEADER && respCtx->recvBuf[1] == RCSPLIT_PACKET_CMD_CTRL
+                    && respCtx->recvBuf[2] == 0xFF && respCtx->recvBuf[4] == RCSPLIT_PACKET_TAIL) {
                     uint8_t crcFromPacket = respCtx->recvBuf[3];
                     respCtx->recvBuf[3] = respCtx->recvBuf[4]; // move packet tail field to crc field, and calc crc with first 4 bytes
                     uint8_t crc = crc8HighFirst(respCtx->recvBuf, 4);
@@ -457,60 +467,61 @@ void rcdeviceReceive(timeUs_t currentTimeUs)
             break;
         }
 
-        // if it is during the packet receiving progress, check if it is already timeout(200 ms), 
+        // if it is during the packet receiving progress, check if it is already timeout(200 ms),
         // if timeout, then reset the state, else the later requests can't  be accept
-        if (requestParserContext.state != RCDEVICE_STATE_WAITING_HEADER && millis() - requestParserContext.lastRecvDataTimestamp > 200) {
+        if (requestParserContext.state != RCDEVICE_STATE_WAITING_HEADER
+            && millis() - requestParserContext.lastRecvDataTimestamp > 200) {
             memset(&requestParserContext, 0, sizeof(runcamDeviceRequestParseContext_t));
             requestParserContext.state = RCDEVICE_STATE_WAITING_COMMAND; // reset state to waiting header
         }
 
         const uint8_t c = serialRead(currentDevice->serialPort);
         switch (requestParserContext.state) {
-            case RCDEVICE_STATE_WAITING_HEADER:
-                if (c == RCDEVICE_PROTOCOL_HEADER) {
-                    memset(&requestParserContext, 0, sizeof(runcamDeviceRequestParseContext_t));
-                    requestParserContext.state = RCDEVICE_STATE_WAITING_COMMAND;
-                }
-                break;
-            case RCDEVICE_STATE_WAITING_COMMAND:
-                requestParserContext.request.command = c;
-                // there is no payload for RCDEVICE_PROTOCOL_COMMAND_REQUEST_FC_ATTITUDE, skip to waiting crc step
-                if (requestParserContext.request.command == RCDEVICE_PROTOCOL_COMMAND_REQUEST_FC_ATTITUDE) { 
-                    requestParserContext.state = RCDEVICE_STATE_WAITING_CRC;
-                } else {
-                    // for now, only RCDEVICE_PROTOCOL_COMMAND_REQUEST_FC_ATTITUDE support, so reset the state to waiting header.
-                    requestParserContext.state = RCDEVICE_PROTOCOL_HEADER;
-                }
-                break;
-            case RCDEVICE_STATE_WAITING_DATA_LENGTH:
-                requestParserContext.expectedDataLength = c;
-                requestParserContext.state = RCDEVICE_STATE_WAITING_DATA;
-                break;
-            case RCDEVICE_STATE_WAITING_DATA:
-                if (requestParserContext.request.dataLength < requestParserContext.expectedDataLength) {
-                    requestParserContext.request.data[requestParserContext.request.dataLength] = c;
-                    requestParserContext.request.dataLength++;
-                }
-
-                if (requestParserContext.request.dataLength == requestParserContext.expectedDataLength) {
-                    requestParserContext.state = RCDEVICE_STATE_WAITING_CRC; // data received done
-                }
-                break;
-            case RCDEVICE_STATE_WAITING_CRC: {
-                // verify crc
-                uint8_t crc = 0;
-                uint8_t header = RCDEVICE_PROTOCOL_HEADER;
-                crc = crc8_dvb_s2_update(crc, &header, 1);
-                crc = crc8_dvb_s2_update(crc, &requestParserContext.request.command, 1);
-                crc = crc8_dvb_s2_update(crc, &requestParserContext.request.data, requestParserContext.request.dataLength);
-
-                if (crc == c) {
-                    requestParserContext.isParseDone = 1;
-                }
-
-                requestParserContext.state = RCDEVICE_STATE_WAITING_HEADER;
+        case RCDEVICE_STATE_WAITING_HEADER:
+            if (c == RCDEVICE_PROTOCOL_HEADER) {
+                memset(&requestParserContext, 0, sizeof(runcamDeviceRequestParseContext_t));
+                requestParserContext.state = RCDEVICE_STATE_WAITING_COMMAND;
             }
-                break;
+            break;
+        case RCDEVICE_STATE_WAITING_COMMAND:
+            requestParserContext.request.command = c;
+            // there is no payload for RCDEVICE_PROTOCOL_COMMAND_REQUEST_FC_ATTITUDE, skip to waiting crc step
+            if (requestParserContext.request.command == RCDEVICE_PROTOCOL_COMMAND_REQUEST_FC_ATTITUDE) {
+                requestParserContext.state = RCDEVICE_STATE_WAITING_CRC;
+            } else {
+                // for now, only RCDEVICE_PROTOCOL_COMMAND_REQUEST_FC_ATTITUDE support, so reset the state to waiting header.
+                requestParserContext.state = RCDEVICE_PROTOCOL_HEADER;
+            }
+            break;
+        case RCDEVICE_STATE_WAITING_DATA_LENGTH:
+            requestParserContext.expectedDataLength = c;
+            requestParserContext.state = RCDEVICE_STATE_WAITING_DATA;
+            break;
+        case RCDEVICE_STATE_WAITING_DATA:
+            if (requestParserContext.request.dataLength < requestParserContext.expectedDataLength) {
+                requestParserContext.request.data[requestParserContext.request.dataLength] = c;
+                requestParserContext.request.dataLength++;
+            }
+
+            if (requestParserContext.request.dataLength == requestParserContext.expectedDataLength) {
+                requestParserContext.state = RCDEVICE_STATE_WAITING_CRC; // data received done
+            }
+            break;
+        case RCDEVICE_STATE_WAITING_CRC: {
+            // verify crc
+            uint8_t crc = 0;
+            uint8_t header = RCDEVICE_PROTOCOL_HEADER;
+            crc = crc8_dvb_s2_update(crc, &header, 1);
+            crc = crc8_dvb_s2_update(crc, &requestParserContext.request.command, 1);
+            crc = crc8_dvb_s2_update(crc, &requestParserContext.request.data, requestParserContext.request.dataLength);
+
+            if (crc == c) {
+                requestParserContext.isParseDone = 1;
+            }
+
+            requestParserContext.state = RCDEVICE_STATE_WAITING_HEADER;
+        }
+        break;
         }
 
         requestParserContext.lastRecvDataTimestamp = millis();

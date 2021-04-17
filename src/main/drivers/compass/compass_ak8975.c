@@ -111,9 +111,10 @@ static bool ak8975Init(magDev_t *mag)
     return true;
 }
 
-static int16_t parseMag(uint8_t *raw, int16_t gain) {
-  int ret = (int16_t)(raw[1] << 8 | raw[0]) * gain / 256;
-  return constrain(ret, INT16_MIN, INT16_MAX);
+static int16_t parseMag(uint8_t *raw, int16_t gain)
+{
+    int ret = (int16_t)(raw[1] << 8 | raw[0]) * gain / 256;
+    return constrain(ret, INT16_MIN, INT16_MAX);
 }
 
 static bool ak8975Read(magDev_t *mag, int16_t *magData)
@@ -136,7 +137,8 @@ static bool ak8975Read(magDev_t *mag, int16_t *magData)
         return false;
     }
 
-    busWriteRegister(busdev, AK8975_MAG_REG_CNTL, CNTL_BIT_16_BIT | CNTL_MODE_ONCE); // start reading again    uint8_t status2 = buf[6];
+    busWriteRegister(busdev, AK8975_MAG_REG_CNTL,
+                     CNTL_BIT_16_BIT | CNTL_MODE_ONCE); // start reading again    uint8_t status2 = buf[6];
 
     if (status & ST2_REG_DATA_ERROR) {
         return false;

@@ -138,10 +138,12 @@ static void gyroInitFilterDynamicNotch()
         gyro.notchFilterDynApplyFn = (filterApplyFnPtr)biquadFilterApplyDF1; // must be this function, not DF2
         gyro.notchFilterDynCount = gyroConfig()->dyn_notch_count;
 
-        const float notchQ = filterGetNotchQ(DYNAMIC_NOTCH_DEFAULT_CENTER_HZ, DYNAMIC_NOTCH_DEFAULT_CUTOFF_HZ); // any defaults OK here
+        const float notchQ = filterGetNotchQ(DYNAMIC_NOTCH_DEFAULT_CENTER_HZ,
+                                             DYNAMIC_NOTCH_DEFAULT_CUTOFF_HZ); // any defaults OK here
         for (uint8_t axis = 0; axis < XYZ_AXIS_COUNT; axis++) {
             for (uint8_t p = 0; p < gyro.notchFilterDynCount; p++) {
-                biquadFilterInit(&gyro.notchFilterDyn[axis][p], DYNAMIC_NOTCH_DEFAULT_CENTER_HZ, gyro.targetLooptime, notchQ, FILTER_NOTCH);
+                biquadFilterInit(&gyro.notchFilterDyn[axis][p], DYNAMIC_NOTCH_DEFAULT_CENTER_HZ, gyro.targetLooptime, notchQ,
+                                 FILTER_NOTCH);
             }
         }
     }
@@ -242,18 +244,18 @@ void gyroInitFilters(void)
 #endif
 
     gyroInitLowpassFilterLpf(
-      FILTER_LOWPASS,
-      gyroConfig()->gyro_lowpass_type,
-      gyro_lowpass_hz,
-      gyro.targetLooptime
+        FILTER_LOWPASS,
+        gyroConfig()->gyro_lowpass_type,
+        gyro_lowpass_hz,
+        gyro.targetLooptime
     );
 
     gyro.downsampleFilterEnabled = gyroInitLowpassFilterLpf(
-      FILTER_LOWPASS2,
-      gyroConfig()->gyro_lowpass2_type,
-      gyroConfig()->gyro_lowpass2_hz,
-      gyro.sampleLooptime
-    );
+                                       FILTER_LOWPASS2,
+                                       gyroConfig()->gyro_lowpass2_type,
+                                       gyroConfig()->gyro_lowpass2_hz,
+                                       gyro.sampleLooptime
+                                   );
 
     gyroInitFilterNotch1(gyroConfig()->gyro_soft_notch_hz_1, gyroConfig()->gyro_soft_notch_cutoff_1);
     gyroInitFilterNotch2(gyroConfig()->gyro_soft_notch_hz_2, gyroConfig()->gyro_soft_notch_cutoff_2);
@@ -269,7 +271,8 @@ void gyroInitFilters(void)
 }
 
 #if defined(USE_GYRO_SLEW_LIMITER)
-void gyroInitSlewLimiter(gyroSensor_t *gyroSensor) {
+void gyroInitSlewLimiter(gyroSensor_t *gyroSensor)
+{
 
     for (int axis = 0; axis < XYZ_AXIS_COUNT; axis++) {
         gyroSensor->gyroDev.gyroADCRawPrevious[axis] = 0;
@@ -326,7 +329,8 @@ void gyroInitSensor(gyroSensor_t *gyroSensor, const gyroDeviceConfig_t *config)
         break;
 
     default:
-        gyroSensor->gyroDev.gyroHasOverflowProtection = false;  // default catch for newly added gyros until proven to be unaffected
+        gyroSensor->gyroDev.gyroHasOverflowProtection =
+            false;  // default catch for newly added gyros until proven to be unaffected
         break;
     }
 
@@ -619,7 +623,8 @@ bool gyroInit(void)
     }
 
     // Only allow using both gyros simultaneously if they are the same hardware type.
-    if (((gyroDetectionFlags & GYRO_ALL_MASK) == GYRO_ALL_MASK) && gyro.gyroSensor1.gyroDev.gyroHardware == gyro.gyroSensor2.gyroDev.gyroHardware) {
+    if (((gyroDetectionFlags & GYRO_ALL_MASK) == GYRO_ALL_MASK)
+        && gyro.gyroSensor1.gyroDev.gyroHardware == gyro.gyroSensor2.gyroDev.gyroHardware) {
         gyroDetectionFlags |= GYRO_IDENTICAL_MASK;
     } else if (gyro.gyroToUse == GYRO_CONFIG_USE_GYRO_BOTH) {
         // If the user selected "BOTH" and they are not the same type, then reset to using only the first gyro.

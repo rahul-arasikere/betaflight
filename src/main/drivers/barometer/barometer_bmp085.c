@@ -50,7 +50,7 @@ static uint8_t sensor_data[BMP085_DATA_FRAME_SIZE];
 static IO_t eocIO;
 static extiCallbackRec_t exti;
 
-static void bmp085ExtiHandler(extiCallbackRec_t* cb)
+static void bmp085ExtiHandler(extiCallbackRec_t *cb)
 {
     UNUSED(cb);
     isConversionComplete = true;
@@ -353,7 +353,7 @@ static bool bmp085GetUP(baroDev_t *baro)
     }
 
     bmp085_up = (uint32_t)(sensor_data[0] << 16 | sensor_data[1] << 8 | sensor_data[2])
-            >> (8 - bmp085.oversampling_setting);
+                >> (8 - bmp085.oversampling_setting);
 
     return true;
 }

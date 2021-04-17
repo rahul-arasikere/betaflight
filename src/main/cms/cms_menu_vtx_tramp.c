@@ -80,7 +80,8 @@ void trampCmsUpdateStatusString(void)
     uint16_t actualPower = vtxTrampGetCurrentActualPower();
     uint8_t powerIndex;
     uint16_t powerValue;
-    if (actualPower > 0 && vtxCommonGetPowerIndex(vtxDevice, &powerIndex) && vtxCommonLookupPowerValue(vtxDevice, powerIndex, &powerValue)) {
+    if (actualPower > 0 && vtxCommonGetPowerIndex(vtxDevice, &powerIndex)
+        && vtxCommonLookupPowerValue(vtxDevice, powerIndex, &powerValue)) {
         tfp_sprintf(&trampCmsStatusString[9], " %c%3d", (actualPower == powerValue) ? ' ' : '*', actualPower);
     } else {
         tfp_sprintf(&trampCmsStatusString[9], " ----");
@@ -157,7 +158,7 @@ static const void *trampCmsConfigPower(displayPort_t *pDisp, const void *self)
 #define TRAMP_PIT_STATUS_OFF (1)
 #define TRAMP_PIT_STATUS_ON (2)
 
-static const char * const trampCmsPitModeNames[] = {
+static const char *const trampCmsPitModeNames[] = {
     "---", "OFF", "ON "
 };
 
@@ -265,8 +266,7 @@ static CMS_Menu trampCmsMenuCommence = {
     .entries = trampCmsMenuCommenceEntries,
 };
 
-static const OSD_Entry trampMenuEntries[] =
-{
+static const OSD_Entry trampMenuEntries[] = {
     { "- TRAMP -", OME_Label, NULL, NULL, 0 },
 
     { "",       OME_Label,   NULL,                   trampCmsStatusString,  DYNAMIC },

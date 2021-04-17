@@ -135,7 +135,7 @@ STATIC_UNIT_TESTED uint16_t h8_3dConvertToPwm(uint8_t val, int16_t _min, int16_t
 
     int32_t ret = val;
     const int32_t range = _max - _min;
-    ret = PWM_RANGE_MIN + ((ret - _min) * PWM_RANGE)/range;
+    ret = PWM_RANGE_MIN + ((ret - _min) * PWM_RANGE) / range;
     return (uint16_t)ret;
 }
 
@@ -269,12 +269,12 @@ static void h8_3dNrf24Setup(rx_spi_protocol_e protocol, const uint32_t *rxSpiId)
     NRF24L01_WriteReg(NRF24L01_06_RF_SETUP, NRF24L01_06_RF_SETUP_RF_DR_1Mbps | NRF24L01_06_RF_SETUP_RF_PWR_n12dbm);
     // RX_ADDR for pipes P1-P5 are left at default values
     NRF24L01_WriteRegisterMulti(NRF24L01_0A_RX_ADDR_P0, rxTxAddrXN297, RX_TX_ADDR_LEN);
-    rxSpiIdPtr = (uint32_t*)rxSpiId;
+    rxSpiIdPtr = (uint32_t *)rxSpiId;
     if (rxSpiId == NULL || *rxSpiId == 0) {
         h8_3dRfChannelIndex = H8_3D_RF_BIND_CHANNEL_START;
         NRF24L01_SetChannel(H8_3D_RF_BIND_CHANNEL_START);
     } else {
-        h8_3dSetBound((uint8_t*)rxSpiId);
+        h8_3dSetBound((uint8_t *)rxSpiId);
     }
 
     payloadSize = H8_3D_PROTOCOL_PAYLOAD_SIZE;

@@ -61,10 +61,12 @@ static int putchw(void *putp, putcf putf, int n, char z, char *bf)
     while (*p++ && n > 0)
         n--;
     while (n-- > 0) {
-        putf(putp, fc); written++;
+        putf(putp, fc);
+        written++;
     }
     while ((ch = *bf++)) {
-        putf(putp, ch); written++;
+        putf(putp, ch);
+        written++;
     }
     return written;
 }
@@ -78,7 +80,8 @@ int tfp_format(void *putp, putcf putf, const char *fmt, va_list va)
 
     while ((ch = *(fmt++))) {
         if (ch != '%') {
-            putf(putp, ch); written++;
+            putf(putp, ch);
+            written++;
         } else {
             char lz = 0;
 #ifdef  REQUIRE_PRINTF_LONG_SUPPORT
@@ -102,26 +105,26 @@ int tfp_format(void *putp, putcf putf, const char *fmt, va_list va)
             switch (ch) {
             case 0:
                 goto abort;
-            case 'u':{
+            case 'u': {
 #ifdef  REQUIRE_PRINTF_LONG_SUPPORT
-                    if (lng)
-                        uli2a(va_arg(va, unsigned long int), 10, 0, bf);
-                    else
+                if (lng)
+                    uli2a(va_arg(va, unsigned long int), 10, 0, bf);
+                else
 #endif
-                        ui2a(va_arg(va, unsigned int), 10, 0, bf);
-                    written += putchw(putp, putf, w, lz, bf);
-                    break;
-                }
-            case 'd':{
+                    ui2a(va_arg(va, unsigned int), 10, 0, bf);
+                written += putchw(putp, putf, w, lz, bf);
+                break;
+            }
+            case 'd': {
 #ifdef  REQUIRE_PRINTF_LONG_SUPPORT
-                    if (lng)
-                        li2a(va_arg(va, unsigned long int), bf);
-                    else
+                if (lng)
+                    li2a(va_arg(va, unsigned long int), bf);
+                else
 #endif
-                        i2a(va_arg(va, int), bf);
-                    written += putchw(putp, putf, w, lz, bf);
-                    break;
-                }
+                    i2a(va_arg(va, int), bf);
+                written += putchw(putp, putf, w, lz, bf);
+                break;
+            }
             case 'x':
             case 'X':
 #ifdef  REQUIRE_PRINTF_LONG_SUPPORT
@@ -133,16 +136,18 @@ int tfp_format(void *putp, putcf putf, const char *fmt, va_list va)
                 written += putchw(putp, putf, w, lz, bf);
                 break;
             case 'c':
-                putf(putp, (char) (va_arg(va, int))); written++;
+                putf(putp, (char) (va_arg(va, int)));
+                written++;
                 break;
             case 's':
                 written += putchw(putp, putf, w, 0, va_arg(va, char *));
                 break;
             case '%':
-                putf(putp, ch); written++;
+                putf(putp, ch);
+                written++;
                 break;
             case 'n':
-                *va_arg(va, int*) = written;
+                *va_arg(va, int *) = written;
                 break;
             default:
                 break;

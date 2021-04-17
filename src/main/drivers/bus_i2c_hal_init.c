@@ -222,7 +222,7 @@ static uint16_t tf = 10;    // Fall time
  * Compute SCLDEL, SDADEL, SCLH and SCLL for TIMINGR register according to reference manuals.
  */
 static void i2cClockComputeRaw(uint32_t pclkFreq, int i2cFreqKhz, int presc, int dfcoeff,
-                       uint8_t *scldel, uint8_t *sdadel, uint16_t *sclh, uint16_t *scll)
+                               uint8_t *scldel, uint8_t *sdadel, uint16_t *sclh, uint16_t *scll)
 {
     if (i2cFreqKhz > 400) {
         // Fm+ (Fast mode plus)
@@ -250,7 +250,7 @@ static void i2cClockComputeRaw(uint32_t pclkFreq, int i2cFreqKhz, int presc, int
     // Convert target i2cFreq into cycle time (nsec)
     float tSCL = 1000000.0f / i2cFreqKhz;
 
-    uint32_t SCLDELmin = (trmax + tsuDATmin)/((presc + 1) * tI2cclk) - 1;
+    uint32_t SCLDELmin = (trmax + tsuDATmin) / ((presc + 1) * tI2cclk) - 1;
 
     uint32_t SDADELmin = (tfmax + thdDATmin - tAFmin - ((dfcoeff + 3) * tI2cclk)) / ((presc + 1) * tI2cclk);
 
@@ -403,19 +403,19 @@ static void i2cUnstick(IO_t scl, IO_t sda)
 
         // Pull low
         IOLo(scl); // Set bus low
-        delayMicroseconds(UNSTICK_CLK_US/2);
+        delayMicroseconds(UNSTICK_CLK_US / 2);
         IOHi(scl); // Set bus high
-        delayMicroseconds(UNSTICK_CLK_US/2);
+        delayMicroseconds(UNSTICK_CLK_US / 2);
     }
 
     // Generate a stop condition in case there was none
     IOLo(scl);
-    delayMicroseconds(UNSTICK_CLK_US/2);
+    delayMicroseconds(UNSTICK_CLK_US / 2);
     IOLo(sda);
-    delayMicroseconds(UNSTICK_CLK_US/2);
+    delayMicroseconds(UNSTICK_CLK_US / 2);
 
     IOHi(scl); // Set bus scl high
-    delayMicroseconds(UNSTICK_CLK_US/2);
+    delayMicroseconds(UNSTICK_CLK_US / 2);
     IOHi(sda); // Set bus sda high
 }
 

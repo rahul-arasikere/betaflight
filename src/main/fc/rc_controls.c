@@ -75,30 +75,30 @@ float rcCommand[4];           // interval [1000;2000] for THROTTLE and [-500;+50
 PG_REGISTER_WITH_RESET_TEMPLATE(rcControlsConfig_t, rcControlsConfig, PG_RC_CONTROLS_CONFIG, 0);
 
 PG_RESET_TEMPLATE(rcControlsConfig_t, rcControlsConfig,
-    .deadband = 0,
-    .yaw_deadband = 0,
-    .alt_hold_deadband = 40,
-    .alt_hold_fast_change = 1,
-    .yaw_control_reversed = false,
-);
+                  .deadband = 0,
+                  .yaw_deadband = 0,
+                  .alt_hold_deadband = 40,
+                  .alt_hold_fast_change = 1,
+                  .yaw_control_reversed = false,
+                 );
 
 PG_REGISTER_WITH_RESET_TEMPLATE(armingConfig_t, armingConfig, PG_ARMING_CONFIG, 1);
 
 PG_RESET_TEMPLATE(armingConfig_t, armingConfig,
-    .gyro_cal_on_first_arm = 0,  // TODO - Cleanup retarded arm support
-    .auto_disarm_delay = 5
-);
+                  .gyro_cal_on_first_arm = 0,  // TODO - Cleanup retarded arm support
+                  .auto_disarm_delay = 5
+                 );
 
 PG_REGISTER_WITH_RESET_TEMPLATE(flight3DConfig_t, flight3DConfig, PG_MOTOR_3D_CONFIG, 0);
 PG_RESET_TEMPLATE(flight3DConfig_t, flight3DConfig,
-    .deadband3d_low = 1406,
-    .deadband3d_high = 1514,
-    .neutral3d = 1460,
-    .deadband3d_throttle = 50,
-    .limit3d_low = 1000,
-    .limit3d_high = 2000,
-    .switched_mode3d = false
-);
+                  .deadband3d_low = 1406,
+                  .deadband3d_high = 1514,
+                  .neutral3d = 1460,
+                  .deadband3d_throttle = 50,
+                  .limit3d_low = 1000,
+                  .limit3d_high = 2000,
+                  .switched_mode3d = false
+                 );
 
 bool isUsingSticksForArming(void)
 {
@@ -117,7 +117,8 @@ throttleStatus_e calculateThrottleStatus(void)
             if (rcData[THROTTLE] < rxConfig()->mincheck) {
                 return THROTTLE_LOW;
             }
-        } else if ((rcData[THROTTLE] > (rxConfig()->midrc - flight3DConfig()->deadband3d_throttle) && rcData[THROTTLE] < (rxConfig()->midrc + flight3DConfig()->deadband3d_throttle))) {
+        } else if ((rcData[THROTTLE] > (rxConfig()->midrc - flight3DConfig()->deadband3d_throttle)
+                    && rcData[THROTTLE] < (rxConfig()->midrc + flight3DConfig()->deadband3d_throttle))) {
             return THROTTLE_LOW;
         }
     } else if (rcData[THROTTLE] < rxConfig()->mincheck) {
@@ -205,7 +206,8 @@ void processRcStickPositions()
             }
         }
         return;
-    } else if (rcSticks == THR_LO + YAW_HI + PIT_CE + ROL_CE && !IS_RC_MODE_ACTIVE(BOXSTICKCOMMANDDISABLE)) { // disable stick arming if STICK COMMAND DISABLE SW is active
+    } else if (rcSticks == THR_LO + YAW_HI + PIT_CE + ROL_CE
+               && !IS_RC_MODE_ACTIVE(BOXSTICKCOMMANDDISABLE)) { // disable stick arming if STICK COMMAND DISABLE SW is active
         if (rcDelayMs >= ARM_DELAY_MS && !doNotRepeat) {
             doNotRepeat = true;
             if (!ARMING_FLAG(ARMED)) {
@@ -224,17 +226,18 @@ void processRcStickPositions()
         resetTryingToArm();
     }
 
-    if (ARMING_FLAG(ARMED) || doNotRepeat || rcDelayMs <= STICK_DELAY_MS || (getArmingDisableFlags() & (ARMING_DISABLED_RUNAWAY_TAKEOFF | ARMING_DISABLED_CRASH_DETECTED))) {
+    if (ARMING_FLAG(ARMED) || doNotRepeat || rcDelayMs <= STICK_DELAY_MS
+        || (getArmingDisableFlags() & (ARMING_DISABLED_RUNAWAY_TAKEOFF | ARMING_DISABLED_CRASH_DETECTED))) {
         return;
     }
     doNotRepeat = true;
 
-    #ifdef USE_USB_CDC_HID
+#ifdef USE_USB_CDC_HID
     // If this target is used as a joystick, we should leave here.
     if (cdcDeviceIsMayBeActive() || IS_RC_MODE_ACTIVE(BOXSTICKCOMMANDDISABLE)) {
         return;
     }
-    #endif
+#endif
 
     // actions during not armed
 
@@ -301,7 +304,7 @@ void processRcStickPositions()
 #endif
 
 
-    if (FLIGHT_MODE(ANGLE_MODE|HORIZON_MODE)) {
+    if (FLIGHT_MODE(ANGLE_MODE | HORIZON_MODE)) {
         // in ANGLE or HORIZON mode, so use sticks to apply accelerometer trims
         rollAndPitchTrims_t accelerometerTrimsDelta;
         memset(&accelerometerTrimsDelta, 0, sizeof(accelerometerTrimsDelta));
@@ -400,7 +403,8 @@ void processRcStickPositions()
 #endif
 }
 
-int32_t getRcStickDeflection(int32_t axis, uint16_t midrc) {
+int32_t getRcStickDeflection(int32_t axis, uint16_t midrc)
+{
     return MIN(ABS(rcData[axis] - midrc), 500);
 }
 

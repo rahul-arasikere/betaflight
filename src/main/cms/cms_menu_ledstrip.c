@@ -57,7 +57,7 @@ static uint8_t cmsx_ledBeaconArmedOnly;
 static uint8_t cmsx_ledVisualBeeper;
 static uint8_t cmsx_ledVisualBeeperColor;
 
-const char * const ledProfileNames[LED_PROFILE_COUNT] = {
+const char *const ledProfileNames[LED_PROFILE_COUNT] = {
     "RACE",
     "BEACON",
 #ifdef USE_LED_STRIP_STATUS_MODE
@@ -107,16 +107,15 @@ static const void *cmsx_Ledstrip_OnExit(displayPort_t *pDisp, const OSD_Entry *s
     return NULL;
 }
 
-static const OSD_Entry cmsx_menuLedstripEntries[] =
-{
+static const OSD_Entry cmsx_menuLedstripEntries[] = {
     { "-- LED STRIP --",  OME_Label, NULL, NULL, 0 },
     { "ENABLED",          OME_Bool,  NULL, &cmsx_FeatureLedstrip, 0 },
     { "PROFILE",          OME_TAB,   NULL, &(OSD_TAB_t){ &cmsx_ledProfile, LED_PROFILE_COUNT - 1, ledProfileNames }, 0 },
     { "RACE COLOR",       OME_TAB,   NULL, &(OSD_TAB_t){ &cmsx_ledRaceColor, COLOR_COUNT - 1, lookupTableLedstripColors }, 0 },
-    { "BEACON COLOR",     OME_TAB,   NULL, &(OSD_TAB_t){ &cmsx_ledBeaconColor, COLOR_COUNT -1, lookupTableLedstripColors }, 0 },
-    { "BEACON PERIOD",    OME_UINT16,NULL, &(OSD_UINT16_t){ &cmsx_ledBeaconPeriod, 50, 10000, 10 }, 0 },
+    { "BEACON COLOR",     OME_TAB,   NULL, &(OSD_TAB_t){ &cmsx_ledBeaconColor, COLOR_COUNT - 1, lookupTableLedstripColors }, 0 },
+    { "BEACON PERIOD",    OME_UINT16, NULL, &(OSD_UINT16_t){ &cmsx_ledBeaconPeriod, 50, 10000, 10 }, 0 },
     { "BEACON ON %",      OME_UINT8, NULL, &(OSD_UINT8_t){ &cmsx_ledBeaconOnPercent, 0, 100, 1 }, 0 },
-    { "BEACON ARMED ONLY",OME_Bool,  NULL, &cmsx_ledBeaconArmedOnly, 0 },
+    { "BEACON ARMED ONLY", OME_Bool,  NULL, &cmsx_ledBeaconArmedOnly, 0 },
     { "VISUAL BEEPER",    OME_Bool,  NULL, &cmsx_ledVisualBeeper, 0 },
     { "VISUAL COLOR",     OME_TAB,   NULL, &(OSD_TAB_t){ &cmsx_ledVisualBeeperColor, COLOR_COUNT - 1, lookupTableLedstripColors }, 0 },
     { "BACK", OME_Back, NULL, NULL, 0 },

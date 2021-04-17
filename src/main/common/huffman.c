@@ -28,7 +28,8 @@
 #include "huffman.h"
 
 
-int huffmanEncodeBuf(uint8_t *outBuf, int outBufLen, const uint8_t *inBuf, int inLen, const huffmanTable_t *huffmanTable)
+int huffmanEncodeBuf(uint8_t *outBuf, int outBufLen, const uint8_t *inBuf, int inLen,
+                     const huffmanTable_t *huffmanTable)
 {
     int ret = 0;
 
@@ -68,7 +69,8 @@ int huffmanEncodeBuf(uint8_t *outBuf, int outBufLen, const uint8_t *inBuf, int i
     return ret;
 }
 
-int huffmanEncodeBufStreaming(huffmanState_t *state, const uint8_t *inBuf, int inLen, const huffmanTable_t *huffmanTable)
+int huffmanEncodeBufStreaming(huffmanState_t *state, const uint8_t *inBuf, int inLen,
+                              const huffmanTable_t *huffmanTable)
 {
     uint8_t *savedOutBytePtr = state->outByte;
     uint8_t savedOutByte = *savedOutBytePtr;

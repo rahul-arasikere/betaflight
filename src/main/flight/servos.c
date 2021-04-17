@@ -79,12 +79,12 @@ void pgResetFn_servoParams(servoParam_t *instance)
 {
     for (int i = 0; i < MAX_SUPPORTED_SERVOS; i++) {
         RESET_CONFIG(servoParam_t, &instance[i],
-            .min = DEFAULT_SERVO_MIN,
-            .max = DEFAULT_SERVO_MAX,
-            .middle = DEFAULT_SERVO_MIDDLE,
-            .rate = 100,
-            .forwardFromChannel = CHANNEL_FORWARDING_DISABLED
-        );
+                     .min = DEFAULT_SERVO_MIN,
+                     .max = DEFAULT_SERVO_MAX,
+                     .middle = DEFAULT_SERVO_MIDDLE,
+                     .rate = 100,
+                     .forwardFromChannel = CHANNEL_FORWARDING_DISABLED
+                    );
     }
 }
 
@@ -284,7 +284,8 @@ void servoMixerLoadMix(int index)
     index++;
     // clear existing
     for (int i = 0; i < MAX_SERVO_RULES; i++) {
-        customServoMixersMutable(i)->targetChannel = customServoMixersMutable(i)->inputSource = customServoMixersMutable(i)->rate = customServoMixersMutable(i)->box = 0;
+        customServoMixersMutable(i)->targetChannel = customServoMixersMutable(i)->inputSource = customServoMixersMutable(
+                                                         i)->rate = customServoMixersMutable(i)->box = 0;
     }
     for (int i = 0; i < servoMixers[index].servoRuleCount; i++) {
         *customServoMixersMutable(i) = servoMixers[index].rule[i];
@@ -296,7 +297,8 @@ STATIC_UNIT_TESTED void forwardAuxChannelsToServos(uint8_t firstServoIndex)
     // start forwarding from this channel
     int channelOffset = servoConfig()->channelForwardingStartChannel;
     const int maxAuxChannelCount = MIN(MAX_AUX_CHANNEL_COUNT, rxConfig()->max_aux_channel);
-    for (int servoOffset = 0; servoOffset < maxAuxChannelCount && channelOffset < MAX_SUPPORTED_RC_CHANNEL_COUNT; servoOffset++) {
+    for (int servoOffset = 0; servoOffset < maxAuxChannelCount
+         && channelOffset < MAX_SUPPORTED_RC_CHANNEL_COUNT; servoOffset++) {
         pwmWriteServo(firstServoIndex + servoOffset, rcData[channelOffset++]);
     }
 }
@@ -425,7 +427,8 @@ void servoMixer(void)
     input[INPUT_GIMBAL_PITCH] = scaleRange(attitude.values.pitch, -1800, 1800, -500, +500);
     input[INPUT_GIMBAL_ROLL] = scaleRange(attitude.values.roll, -1800, 1800, -500, +500);
 
-    input[INPUT_STABILIZED_THROTTLE] = motor[0] - 1000 - 500;  // Since it derives from rcCommand or mincommand and must be [-500:+500]
+    input[INPUT_STABILIZED_THROTTLE] = motor[0] - 1000 -
+                                       500;  // Since it derives from rcCommand or mincommand and must be [-500:+500]
 
     // center the RC input value around the RC middle value
     // by subtracting the RC middle value from the RC input value, we get:
@@ -465,7 +468,8 @@ void servoMixer(void)
                     currentOutput[i] = constrain(currentOutput[i] - currentServoMixer[i].speed, input[from], currentOutput[i]);
             }
 
-            servo[target] += servoDirection(target, from) * constrain(((int32_t)currentOutput[i] * currentServoMixer[i].rate) / 100, min, max);
+            servo[target] += servoDirection(target, from) * constrain(((int32_t)currentOutput[i] * currentServoMixer[i].rate) / 100,
+                                                                      min, max);
         } else {
             currentOutput[i] = 0;
         }
@@ -516,8 +520,10 @@ static void servoTable(void)
 
         if (IS_RC_MODE_ACTIVE(BOXCAMSTAB)) {
             if (gimbalConfig()->mode == GIMBAL_MODE_MIXTILT) {
-                servo[SERVO_GIMBAL_PITCH] -= (-(int32_t)servoParams(SERVO_GIMBAL_PITCH)->rate) * attitude.values.pitch / 50 - (int32_t)servoParams(SERVO_GIMBAL_ROLL)->rate * attitude.values.roll / 50;
-                servo[SERVO_GIMBAL_ROLL] += (-(int32_t)servoParams(SERVO_GIMBAL_PITCH)->rate) * attitude.values.pitch / 50 + (int32_t)servoParams(SERVO_GIMBAL_ROLL)->rate * attitude.values.roll / 50;
+                servo[SERVO_GIMBAL_PITCH] -= (-(int32_t)servoParams(SERVO_GIMBAL_PITCH)->rate) * attitude.values.pitch / 50 -
+                                             (int32_t)servoParams(SERVO_GIMBAL_ROLL)->rate * attitude.values.roll / 50;
+                servo[SERVO_GIMBAL_ROLL] += (-(int32_t)servoParams(SERVO_GIMBAL_PITCH)->rate) * attitude.values.pitch / 50 +
+                                            (int32_t)servoParams(SERVO_GIMBAL_ROLL)->rate * attitude.values.roll / 50;
             } else {
                 servo[SERVO_GIMBAL_PITCH] += (int32_t)servoParams(SERVO_GIMBAL_PITCH)->rate * attitude.values.pitch / 50;
                 servo[SERVO_GIMBAL_ROLL] += (int32_t)servoParams(SERVO_GIMBAL_ROLL)->rate * attitude.values.roll  / 50;

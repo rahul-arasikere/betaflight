@@ -41,8 +41,7 @@
 static void iioGyroInit(gyroDev_t *gyro)
 {
 #if defined(SIMULATOR_BUILD) && defined(SIMULATOR_MULTITHREAD)
-    if (pthread_mutex_init(&gyro->lock, NULL) != 0)
-    {
+    if (pthread_mutex_init(&gyro->lock, NULL) != 0) {
         printf("Create gyro lock error!\n");
     }
 #endif
@@ -59,8 +58,7 @@ bool iioGyroDetect(gyroDev_t *gyro)
 static void iioAccInit(accDev_t *acc)
 {
 #if defined(SIMULATOR_BUILD) && defined(SIMULATOR_MULTITHREAD)
-    if (pthread_mutex_init(&acc->lock, NULL) != 0)
-    {
+    if (pthread_mutex_init(&acc->lock, NULL) != 0) {
         printf("Create acc lock error!\n");
     }
 #endif

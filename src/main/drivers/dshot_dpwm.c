@@ -70,7 +70,8 @@ FAST_CODE uint8_t loadDmaBufferProshot(uint32_t *dmaBuffer, int stride, uint16_t
 {
     int i;
     for (i = 0; i < 4; i++) {
-        dmaBuffer[i * stride] = PROSHOT_BASE_SYMBOL + ((packet & 0xF000) >> 12) * PROSHOT_BIT_WIDTH;  // Most significant nibble first
+        dmaBuffer[i * stride] = PROSHOT_BASE_SYMBOL + ((packet & 0xF000) >> 12) *
+                                PROSHOT_BIT_WIDTH;  // Most significant nibble first
         packet <<= 4;   // Shift 4 bits
     }
     dmaBuffer[i++ * stride] = 0;
@@ -82,14 +83,14 @@ FAST_CODE uint8_t loadDmaBufferProshot(uint32_t *dmaBuffer, int stride, uint16_t
 uint32_t getDshotHz(motorPwmProtocolTypes_e pwmProtocolType)
 {
     switch (pwmProtocolType) {
-    case(PWM_TYPE_PROSHOT1000):
+    case (PWM_TYPE_PROSHOT1000):
         return MOTOR_PROSHOT1000_HZ;
-    case(PWM_TYPE_DSHOT600):
+    case (PWM_TYPE_DSHOT600):
         return MOTOR_DSHOT600_HZ;
-    case(PWM_TYPE_DSHOT300):
+    case (PWM_TYPE_DSHOT300):
         return MOTOR_DSHOT300_HZ;
     default:
-    case(PWM_TYPE_DSHOT150):
+    case (PWM_TYPE_DSHOT150):
         return MOTOR_DSHOT150_HZ;
     }
 }
@@ -151,7 +152,8 @@ static motorVTable_t dshotPwmVTable = {
 
 FAST_DATA_ZERO_INIT motorDevice_t dshotPwmDevice;
 
-motorDevice_t *dshotPwmDevInit(const motorDevConfig_t *motorConfig, uint16_t idlePulse, uint8_t motorCount, bool useUnsyncedPwm)
+motorDevice_t *dshotPwmDevInit(const motorDevConfig_t *motorConfig, uint16_t idlePulse, uint8_t motorCount,
+                               bool useUnsyncedPwm)
 {
     UNUSED(idlePulse);
     UNUSED(useUnsyncedPwm);
@@ -173,7 +175,7 @@ motorDevice_t *dshotPwmDevInit(const motorDevConfig_t *motorConfig, uint16_t idl
         loadDmaBuffer = loadDmaBufferDshot;
 #ifdef USE_DSHOT_DMAR
         useBurstDshot = motorConfig->useBurstDshot == DSHOT_DMAR_ON ||
-            (motorConfig->useBurstDshot == DSHOT_DMAR_AUTO && !motorConfig->useDshotTelemetry);
+                        (motorConfig->useBurstDshot == DSHOT_DMAR_AUTO && !motorConfig->useDshotTelemetry);
 #endif
         break;
     }
@@ -188,10 +190,10 @@ motorDevice_t *dshotPwmDevInit(const motorDevConfig_t *motorConfig, uint16_t idl
             IOInit(motors[motorIndex].io, OWNER_MOTOR, RESOURCE_INDEX(reorderedMotorIndex));
 
             if (pwmDshotMotorHardwareConfig(timerHardware,
-                motorIndex,
-                reorderedMotorIndex,
-                motorConfig->motorPwmProtocol,
-                motorConfig->motorPwmInversion ? timerHardware->output ^ TIMER_OUTPUT_INVERTED : timerHardware->output)) {
+                                            motorIndex,
+                                            reorderedMotorIndex,
+                                            motorConfig->motorPwmProtocol,
+                                            motorConfig->motorPwmInversion ? timerHardware->output ^TIMER_OUTPUT_INVERTED : timerHardware->output)) {
                 motors[motorIndex].enabled = true;
 
                 continue;

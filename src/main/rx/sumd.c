@@ -131,7 +131,7 @@ static uint8_t sumdFrameStatus(rxRuntimeState_t *rxRuntimeState)
 
     // verify CRC
     if (crc == ((sumd[SUMD_BYTES_PER_CHANNEL * sumdChannelCount + SUMD_OFFSET_CHANNEL_1_HIGH] << 8) |
-            (sumd[SUMD_BYTES_PER_CHANNEL * sumdChannelCount + SUMD_OFFSET_CHANNEL_1_LOW]))) {
+                (sumd[SUMD_BYTES_PER_CHANNEL * sumdChannelCount + SUMD_OFFSET_CHANNEL_1_LOW]))) {
 
         switch (sumd[1]) {
         case SUMD_FRAME_STATE_FAILSAFE:
@@ -148,9 +148,9 @@ static uint8_t sumdFrameStatus(rxRuntimeState_t *rxRuntimeState)
 
             for (unsigned channelIndex = 0; channelIndex < channelsToProcess; channelIndex++) {
                 sumdChannels[channelIndex] = (
-                    (sumd[SUMD_BYTES_PER_CHANNEL * channelIndex + SUMD_OFFSET_CHANNEL_1_HIGH] << 8) |
-                    sumd[SUMD_BYTES_PER_CHANNEL * channelIndex + SUMD_OFFSET_CHANNEL_1_LOW]
-                );
+                                                 (sumd[SUMD_BYTES_PER_CHANNEL * channelIndex + SUMD_OFFSET_CHANNEL_1_HIGH] << 8) |
+                                                 sumd[SUMD_BYTES_PER_CHANNEL * channelIndex + SUMD_OFFSET_CHANNEL_1_LOW]
+                                             );
             }
         }
     }
@@ -196,13 +196,13 @@ bool sumdInit(const rxConfig_t *rxConfig, rxRuntimeState_t *rxRuntimeState)
 #endif
 
     serialPort_t *sumdPort = openSerialPort(portConfig->identifier,
-        FUNCTION_RX_SERIAL,
-        sumdDataReceive,
-        NULL,
-        SUMD_BAUDRATE,
-        portShared ? MODE_RXTX : MODE_RX,
-        (rxConfig->serialrx_inverted ? SERIAL_INVERTED : 0) | (rxConfig->halfDuplex ? SERIAL_BIDIR : 0)
-        );
+                                            FUNCTION_RX_SERIAL,
+                                            sumdDataReceive,
+                                            NULL,
+                                            SUMD_BAUDRATE,
+                                            portShared ? MODE_RXTX : MODE_RX,
+                                            (rxConfig->serialrx_inverted ? SERIAL_INVERTED : 0) | (rxConfig->halfDuplex ? SERIAL_BIDIR : 0)
+                                           );
 
 #ifdef USE_TELEMETRY
     if (portShared) {

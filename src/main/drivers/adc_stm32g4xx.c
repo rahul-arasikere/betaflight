@@ -228,7 +228,7 @@ void adcInitDevice(adcDevice_t *adcdev, int channelCount)
     }
 
     if (HAL_ADCEx_Calibration_Start(hadc, ADC_SINGLE_ENDED) != HAL_OK) {
-      handleError();
+        handleError();
     }
 }
 
@@ -307,7 +307,7 @@ void adcInit(const adcConfig_t *config)
             for (dev = 0; dev < ADCDEV_COUNT; dev++) {
                 if (!adcDevice[dev].ADCx
 #ifndef USE_DMA_SPEC
-                     || !adcDevice[dev].dmaResource
+                    || !adcDevice[dev].dmaResource
 #endif
                    ) {
                     // Instance not activated
@@ -353,7 +353,7 @@ void adcInit(const adcConfig_t *config)
 
         adc->ADCHandle.Instance = adc->ADCx;
 
-        if (HAL_ADC_DeInit(&adc->ADCHandle) != HAL_OK) { 
+        if (HAL_ADC_DeInit(&adc->ADCHandle) != HAL_OK) {
             // ADC de-initialization Error
             handleError();
         }
@@ -473,7 +473,8 @@ void adcInit(const adcConfig_t *config)
 
         // Start conversion in DMA mode
 
-        if (HAL_ADC_Start_DMA(&adc->ADCHandle, (uint32_t *)&adcConversionBuffer[dmaBufferIndex], BITCOUNT(adc->channelBits)) != HAL_OK) {
+        if (HAL_ADC_Start_DMA(&adc->ADCHandle, (uint32_t *)&adcConversionBuffer[dmaBufferIndex],
+                              BITCOUNT(adc->channelBits)) != HAL_OK) {
             handleError();
         }
 
@@ -518,14 +519,14 @@ int adcPrivateTemp = -1;
 uint16_t adcInternalReadVrefint(void)
 {
     uint16_t value = adcInternalRead(ADC_VREFINT);
-adcPrivateVref = __HAL_ADC_CALC_VREFANALOG_VOLTAGE(value, ADC_RESOLUTION_12B);
+    adcPrivateVref = __HAL_ADC_CALC_VREFANALOG_VOLTAGE(value, ADC_RESOLUTION_12B);
     return value;
 }
 
 uint16_t adcInternalReadTempsensor(void)
 {
     uint16_t value = adcInternalRead(ADC_TEMPSENSOR);
-adcPrivateTemp = __HAL_ADC_CALC_TEMPERATURE(adcPrivateVref, value, ADC_RESOLUTION_12B);
+    adcPrivateTemp = __HAL_ADC_CALC_TEMPERATURE(adcPrivateVref, value, ADC_RESOLUTION_12B);
     return value;
 }
 #endif // USE_ADC_INTERNAL

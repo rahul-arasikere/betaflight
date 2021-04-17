@@ -31,7 +31,7 @@ const timerHardware_t timerHardware[USABLE_TIMER_CHANNEL_COUNT] = {
     // DEF_TIM(TIM2,  CH2, PB3,  TIM_USE_LED,                 0,  7,  0 ), // SPI1_SCK
     DEF_TIM(TIM12, CH2, PB15, TIM_USE_LED,                 0,  0,  0 ),
 
-    DEF_TIM(TIM1,  CH2, PE11, TIM_USE_PWM|TIM_USE_PPM,     0,  0,  0 ),
+    DEF_TIM(TIM1,  CH2, PE11, TIM_USE_PWM | TIM_USE_PPM,     0,  0,  0 ),
     DEF_TIM(TIM1,  CH1, PE9,  TIM_USE_PWM,                 0,  0,  0 ),
     DEF_TIM(TIM2,  CH1, PA15, TIM_USE_PWM,                 0,  0,  0 ),
 

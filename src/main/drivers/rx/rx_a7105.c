@@ -76,7 +76,8 @@ void A7105Config(const uint8_t *regsTable, uint8_t size)
     }
 }
 
-bool A7105RxTxFinished(timeUs_t *timeStamp) {
+bool A7105RxTxFinished(timeUs_t *timeStamp)
+{
     bool result = false;
 
     if (consumeExti && rxSpiPollExti()) {
@@ -148,7 +149,7 @@ uint32_t A7105ReadID(void)
 void A7105ReadFIFO(uint8_t *data, uint8_t num)
 {
     if (data) {
-        if(num > 64) {
+        if (num > 64) {
             num = 64;
         }
 
@@ -160,7 +161,7 @@ void A7105ReadFIFO(uint8_t *data, uint8_t num)
 void A7105WriteFIFO(uint8_t *data, uint8_t num)
 {
     if (data) {
-        if(num > 64) {
+        if (num > 64) {
             num = 64;
         }
 

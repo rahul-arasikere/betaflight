@@ -32,7 +32,7 @@ const timerHardware_t timerHardware[USABLE_TIMER_CHANNEL_COUNT] = {
     DEF_TIM(TIM3,  CH3, PB0,  TIM_USE_MOTOR, 0, 0, 2),   // S1
     DEF_TIM(TIM3,  CH4, PB1,  TIM_USE_MOTOR, 0, 1, 2),   // S2
 
-    DEF_TIM(TIM5,  CH1, PA0,  TIM_USE_MOTOR, 0, 2, 0),   // S3  
+    DEF_TIM(TIM5,  CH1, PA0,  TIM_USE_MOTOR, 0, 2, 0),   // S3
     DEF_TIM(TIM5,  CH2, PA1,  TIM_USE_MOTOR, 0, 3, 0),   // S4
     DEF_TIM(TIM5,  CH3, PA2,  TIM_USE_MOTOR, 0, 4, 0),   // S5
     DEF_TIM(TIM5,  CH4, PA3,  TIM_USE_MOTOR, 0, 5, 0),   // S6
@@ -49,8 +49,8 @@ const timerHardware_t timerHardware[USABLE_TIMER_CHANNEL_COUNT] = {
     DEF_TIM(TIM2,  CH1, PA15, TIM_USE_BEEPER, 0, 0, 0),  // BEEPER PWM
 
     DEF_TIM(TIM8,  CH2, PC7,  TIM_USE_PPM, 0, 0, 0),   // RX6 PPM
-    DEF_TIM(TIM8,  CH1, PC6,  TIM_USE_ANY, 0, 0, 0),   // TX6    
+    DEF_TIM(TIM8,  CH1, PC6,  TIM_USE_ANY, 0, 0, 0),   // TX6
     DEF_TIM(TIM16, CH1, PB8,  TIM_USE_ANY, 0, 0, 0),   // RX4
     DEF_TIM(TIM17, CH1, PB9,  TIM_USE_ANY, 0, 0, 0),   // TX4
-    
+
 };

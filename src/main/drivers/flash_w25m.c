@@ -244,7 +244,7 @@ int w25m_readBytes(flashDevice_t *fdevice, uint32_t address, uint8_t *buffer, in
     return length;
 }
 
-const flashGeometry_t* w25m_getGeometry(flashDevice_t *fdevice)
+const flashGeometry_t *w25m_getGeometry(flashDevice_t *fdevice)
 {
     return &fdevice->geometry;
 }

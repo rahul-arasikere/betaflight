@@ -37,20 +37,20 @@
 #define AK8963_MAG_I2C_ADDRESS          0x0C
 #define MPU9250_BIT_RESET               0x80
 
-static bool mpu925xDeviceDetect(busDevice_t * dev)
+static bool mpu925xDeviceDetect(busDevice_t *dev)
 {
     busWriteRegister(dev, MPU_RA_PWR_MGMT_1, MPU9250_BIT_RESET);
     delay(150);
     switch (busReadRegister(dev, MPU_RA_WHO_AM_I)) {
-        case MPU9250_WHO_AM_I_CONST:
-        case MPU9255_WHO_AM_I_CONST:
-            return true;
-        default:
-            return false;
+    case MPU9250_WHO_AM_I_CONST:
+    case MPU9255_WHO_AM_I_CONST:
+        return true;
+    default:
+        return false;
     }
 }
 
-bool mpu925Xak8963CompassDetect(magDev_t * mag)
+bool mpu925Xak8963CompassDetect(magDev_t *mag)
 {
     busDevice_t *busdev = &mag->busdev;
     busdev->busdev_u.i2c.address = MPU925X_I2C_ADDRESS;
@@ -64,7 +64,7 @@ bool mpu925Xak8963CompassDetect(magDev_t * mag)
     // now we have ak8963 alike on the bus
     busdev->busdev_u.i2c.address = AK8963_MAG_I2C_ADDRESS;
     busDeviceRegister(busdev);
-    if(!ak8963Detect(mag)) {
+    if (!ak8963Detect(mag)) {
         // if ak8963 is not detected, reset the MPU to disable bypass mode
         busdev->busdev_u.i2c.address = MPU925X_I2C_ADDRESS;
         busWriteRegister(busdev, MPU_RA_PWR_MGMT_1, MPU9250_BIT_RESET);

@@ -94,7 +94,8 @@ bool accGetAccumulationAverage(float *accumulationAverage)
     if (accelerationRuntime.accumulatedMeasurementCount > 0) {
         // If we have gyro data accumulated, calculate average rate that will yield the same rotation
         for (int axis = 0; axis < XYZ_AXIS_COUNT; axis++) {
-            accumulationAverage[axis] = accelerationRuntime.accumulatedMeasurements[axis] / accelerationRuntime.accumulatedMeasurementCount;
+            accumulationAverage[axis] = accelerationRuntime.accumulatedMeasurements[axis] /
+                                        accelerationRuntime.accumulatedMeasurementCount;
             accelerationRuntime.accumulatedMeasurements[axis] = 0.0f;
         }
         accelerationRuntime.accumulatedMeasurementCount = 0;

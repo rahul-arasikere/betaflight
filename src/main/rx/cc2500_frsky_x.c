@@ -60,8 +60,8 @@
 #include "cc2500_frsky_x.h"
 
 const uint16_t crcTable_Short[] = {
-        0x0000,0x1189,0x2312,0x329b,0x4624,0x57ad,0x6536,0x74bf,
-        0x8c48,0x9dc1,0xaf5a,0xbed3,0xca6c,0xdbe5,0xe97e,0xf8f7,
+    0x0000, 0x1189, 0x2312, 0x329b, 0x4624, 0x57ad, 0x6536, 0x74bf,
+    0x8c48, 0x9dc1, 0xaf5a, 0xbed3, 0xca6c, 0xdbe5, 0xe97e, 0xf8f7,
 };
 
 #define TELEMETRY_OUT_BUFFER_SIZE  64
@@ -134,14 +134,16 @@ static uint8_t remoteToProcessIndex = 0;
 static uint8_t packetLength;
 static uint16_t telemetryDelayUs;
 
-static uint16_t crcTable(uint8_t val) {
+static uint16_t crcTable(uint8_t val)
+{
     uint16_t word;
     word = (*(&crcTable_Short[val & 0x0f]));
     val /= 16;
     return word ^ (0x1081 * val);
 }
 
-static uint16_t calculateCrc(const uint8_t *data, uint8_t len) {
+static uint16_t calculateCrc(const uint8_t *data, uint8_t len)
+{
     uint16_t crc = 0;
     for (unsigned i = 0; i < len; i++) {
         crc = (crc << 8) ^ crcTable((uint8_t)(crc >> 8) ^ *data++);
@@ -234,8 +236,8 @@ static void buildTelemetryFrame(uint8_t *packet)
     }
 
     uint16_t lcrc = calculateCrc(&frame[3], 10);
-    frame[13]=lcrc>>8;
-    frame[14]=lcrc;
+    frame[13] = lcrc >> 8;
+    frame[14] = lcrc;
 }
 
 static bool frSkyXReadyToSend(void)
@@ -244,7 +246,8 @@ static bool frSkyXReadyToSend(void)
 }
 
 #if defined(USE_TELEMETRY_SMARTPORT)
-static void frSkyXTelemetrySendByte(uint8_t c) {
+static void frSkyXTelemetrySendByte(uint8_t c)
+{
     if (c == FSSP_DLE || c == FSSP_START_STOP) {
         telemetryOutBuffer[telemetryOutWriter] = FSSP_DLE;
         telemetryOutWriter = (telemetryOutWriter + 1) % TELEMETRY_OUT_BUFFER_SIZE;
@@ -305,7 +308,7 @@ bool isValidPacket(const uint8_t *packet)
         }
     }
 
-    uint16_t lcrc = calculateCrc(&packet[3], (packetLength - 7)); 
+    uint16_t lcrc = calculateCrc(&packet[3], (packetLength - 7));
 
     if ((lcrc >> 8) == packet[packetLength - 4] && (lcrc & 0x00FF) == packet[packetLength - 3] &&
         (packet[0] == packetLength - 3) &&
@@ -318,7 +321,7 @@ bool isValidPacket(const uint8_t *packet)
     return false;
 }
 
-rx_spi_received_e frSkyXHandlePacket(uint8_t * const packet, uint8_t * const protocolState)
+rx_spi_received_e frSkyXHandlePacket(uint8_t *const packet, uint8_t *const protocolState)
 {
     static unsigned receiveTelemetryRetryCount = 0;
     static bool skipChannels = true;
@@ -361,7 +364,7 @@ rx_spi_received_e frSkyXHandlePacket(uint8_t * const packet, uint8_t * const pro
         }
 
         FALLTHROUGH;
-        // here FS code could be
+    // here FS code could be
     case STATE_DATA:
         if (rxSpiGetExtiState() && (!frameReceived)) {
             uint8_t ccLen = cc2500ReadReg(CC2500_3B_RXBYTES | CC2500_READ_BURST) & 0x7F;
@@ -417,16 +420,16 @@ rx_spi_received_e frSkyXHandlePacket(uint8_t * const packet, uint8_t * const pro
 
                     if (receiveTelemetryRetryCount >= 5) {
 #if defined(USE_RX_FRSKY_SPI_TELEMETRY) && defined(USE_TELEMETRY_SMARTPORT)
-                         remoteToProcessId = 0;
-                         remoteToProcessIndex = 0;
+                        remoteToProcessId = 0;
+                        remoteToProcessIndex = 0;
 #endif
-                         remoteAckId = TELEMETRY_SEQUENCE_LENGTH - 1;
-                         for (unsigned i = 0; i < TELEMETRY_SEQUENCE_LENGTH; i++) {
-                             telemetryRxBuffer[i].needsProcessing = false;
-                         }
+                        remoteAckId = TELEMETRY_SEQUENCE_LENGTH - 1;
+                        for (unsigned i = 0; i < TELEMETRY_SEQUENCE_LENGTH; i++) {
+                            telemetryRxBuffer[i].needsProcessing = false;
+                        }
 
-                         receiveTelemetryRetryCount = 0;
-                     }
+                        receiveTelemetryRetryCount = 0;
+                    }
 
                     packetTimerUs = micros();
                     frameReceived = true; // no need to process frame again.
@@ -439,7 +442,8 @@ rx_spi_received_e frSkyXHandlePacket(uint8_t * const packet, uint8_t * const pro
             }
         }
         if (telemetryReceived) {
-            if (cmpTimeUs(micros(), packetTimerUs) > receiveDelayUs) { // if received or not received in this time sent telemetry data
+            if (cmpTimeUs(micros(), packetTimerUs) >
+                receiveDelayUs) { // if received or not received in this time sent telemetry data
                 *protocolState = STATE_TELEMETRY;
                 buildTelemetryFrame(packet);
             }
@@ -461,7 +465,8 @@ rx_spi_received_e frSkyXHandlePacket(uint8_t * const packet, uint8_t * const pro
         break;
 #ifdef USE_RX_FRSKY_SPI_TELEMETRY
     case STATE_TELEMETRY:
-        if (cmpTimeUs(micros(), packetTimerUs) >= receiveDelayUs + telemetryDelayUs) { // if received or not received in this time sent telemetry data
+        if (cmpTimeUs(micros(), packetTimerUs) >= receiveDelayUs +
+            telemetryDelayUs) { // if received or not received in this time sent telemetry data
             cc2500Strobe(CC2500_SIDLE);
             cc2500SetPower(6);
             cc2500Strobe(CC2500_SFRX);
@@ -515,7 +520,7 @@ rx_spi_received_e frSkyXHandlePacket(uint8_t * const packet, uint8_t * const pro
 }
 
 #if defined(USE_RX_FRSKY_SPI_TELEMETRY) && defined(USE_TELEMETRY_SMARTPORT)
-rx_spi_received_e frSkyXProcessFrame(uint8_t * const packet)
+rx_spi_received_e frSkyXProcessFrame(uint8_t *const packet)
 {
     static timeMs_t pollingTimeMs = 0;
 
@@ -541,7 +546,8 @@ rx_spi_received_e frSkyXProcessFrame(uint8_t * const packet)
             }
 
             while (remoteToProcessIndex < telemetryRxBuffer[remoteToProcessId].data.dataLength && !payload) {
-                payload = smartPortDataReceive(telemetryRxBuffer[remoteToProcessId].data.data[remoteToProcessIndex], &clearToSend, frSkyXReadyToSend, false);
+                payload = smartPortDataReceive(telemetryRxBuffer[remoteToProcessId].data.data[remoteToProcessIndex], &clearToSend,
+                                               frSkyXReadyToSend, false);
                 remoteToProcessIndex = remoteToProcessIndex + 1;
             }
         }
@@ -555,7 +561,7 @@ rx_spi_received_e frSkyXProcessFrame(uint8_t * const packet)
 
 uint8_t frSkyXInit(void)
 {
-    switch(spiProtocol) {
+    switch (spiProtocol) {
     case RX_SPI_FRSKY_X:
         packetLength = FRSKY_RX_D16FCC_LENGTH;
         telemetryDelayUs = 400;
@@ -576,11 +582,11 @@ uint8_t frSkyXInit(void)
         break;
     }
 #if defined(USE_TELEMETRY_SMARTPORT)
-     if (featureIsEnabled(FEATURE_TELEMETRY)) {
-         telemetryEnabled = initSmartPortTelemetryExternal(frSkyXTelemetryWriteFrame);
-     }
+    if (featureIsEnabled(FEATURE_TELEMETRY)) {
+        telemetryEnabled = initSmartPortTelemetryExternal(frSkyXTelemetryWriteFrame);
+    }
 #endif
-     return packetLength;
+    return packetLength;
 }
 
 #endif

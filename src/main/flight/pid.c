@@ -102,15 +102,16 @@ PG_REGISTER_WITH_RESET_TEMPLATE(pidConfig_t, pidConfig, PG_PID_CONFIG, 2);
 
 #ifdef USE_RUNAWAY_TAKEOFF
 PG_RESET_TEMPLATE(pidConfig_t, pidConfig,
-    .pid_process_denom = PID_PROCESS_DENOM_DEFAULT,
-    .runaway_takeoff_prevention = true,
-    .runaway_takeoff_deactivate_throttle = 20,  // throttle level % needed to accumulate deactivation time
-    .runaway_takeoff_deactivate_delay = 500     // Accumulated time (in milliseconds) before deactivation in successful takeoff
-);
+                  .pid_process_denom = PID_PROCESS_DENOM_DEFAULT,
+                  .runaway_takeoff_prevention = true,
+                  .runaway_takeoff_deactivate_throttle = 20,  // throttle level % needed to accumulate deactivation time
+                  .runaway_takeoff_deactivate_delay =
+                      500     // Accumulated time (in milliseconds) before deactivation in successful takeoff
+                 );
 #else
 PG_RESET_TEMPLATE(pidConfig_t, pidConfig,
-    .pid_process_denom = PID_PROCESS_DENOM_DEFAULT
-);
+                  .pid_process_denom = PID_PROCESS_DENOM_DEFAULT
+                 );
 #endif
 
 #ifdef USE_ACRO_TRAINER
@@ -127,100 +128,100 @@ PG_REGISTER_ARRAY_WITH_RESET_FN(pidProfile_t, PID_PROFILE_COUNT, pidProfiles, PG
 void resetPidProfile(pidProfile_t *pidProfile)
 {
     RESET_CONFIG(pidProfile_t, pidProfile,
-        .pid = {
-            [PID_ROLL] =  PID_ROLL_DEFAULT,
-            [PID_PITCH] = PID_PITCH_DEFAULT,
-            [PID_YAW] =   PID_YAW_DEFAULT,
-            [PID_LEVEL] = { 50, 50, 75, 0 },
-            [PID_MAG] =   { 40, 0, 0, 0 },
-        },
-        .pidSumLimit = PIDSUM_LIMIT,
-        .pidSumLimitYaw = PIDSUM_LIMIT_YAW,
-        .yaw_lowpass_hz = 0,
-        .dterm_notch_hz = 0,
-        .dterm_notch_cutoff = 0,
-        .itermWindupPointPercent = 100,
-        .pidAtMinThrottle = PID_STABILISATION_ON,
-        .levelAngleLimit = 55,
-        .feedForwardTransition = 0,
-        .yawRateAccelLimit = 0,
-        .rateAccelLimit = 0,
-        .itermThrottleThreshold = 250,
-        .itermAcceleratorGain = 3500,
-        .crash_time = 500,          // ms
-        .crash_delay = 0,           // ms
-        .crash_recovery_angle = 10, // degrees
-        .crash_recovery_rate = 100, // degrees/second
-        .crash_dthreshold = 50,     // degrees/second/second
-        .crash_gthreshold = 400,    // degrees/second
-        .crash_setpoint_threshold = 350, // degrees/second
-        .crash_recovery = PID_CRASH_RECOVERY_OFF, // off by default
-        .horizon_tilt_effect = 75,
-        .horizon_tilt_expert_mode = false,
-        .crash_limit_yaw = 200,
-        .itermLimit = 400,
-        .throttle_boost = 5,
-        .throttle_boost_cutoff = 15,
-        .iterm_rotation = false,
-        .iterm_relax = ITERM_RELAX_RP,
-        .iterm_relax_cutoff = ITERM_RELAX_CUTOFF_DEFAULT,
-        .iterm_relax_type = ITERM_RELAX_SETPOINT,
-        .acro_trainer_angle_limit = 20,
-        .acro_trainer_lookahead_ms = 50,
-        .acro_trainer_debug_axis = FD_ROLL,
-        .acro_trainer_gain = 75,
-        .abs_control_gain = 0,
-        .abs_control_limit = 90,
-        .abs_control_error_limit = 20,
-        .abs_control_cutoff = 11,
-        .antiGravityMode = ANTI_GRAVITY_SMOOTH,
-        .dterm_lowpass_hz = 150,    // NOTE: dynamic lpf is enabled by default so this setting is actually
-                                    // overridden and the static lowpass 1 is disabled. We can't set this
-                                    // value to 0 otherwise Configurator versions 10.4 and earlier will also
-                                    // reset the lowpass filter type to PT1 overriding the desired BIQUAD setting.
-        .dterm_lowpass2_hz = DTERM_LOWPASS_2_HZ_DEFAULT,   // second Dterm LPF ON by default
-        .dterm_filter_type = FILTER_PT1,
-        .dterm_filter2_type = FILTER_PT1,
-        .dyn_lpf_dterm_min_hz = DYN_LPF_DTERM_MIN_HZ_DEFAULT,
-        .dyn_lpf_dterm_max_hz = DYN_LPF_DTERM_MAX_HZ_DEFAULT,
-        .launchControlMode = LAUNCH_CONTROL_MODE_NORMAL,
-        .launchControlThrottlePercent = 20,
-        .launchControlAngleLimit = 0,
-        .launchControlGain = 40,
-        .launchControlAllowTriggerReset = true,
-        .use_integrated_yaw = false,
-        .integrated_yaw_relax = 200,
-        .thrustLinearization = 0,
-        .d_min = D_MIN_DEFAULT,
-        .d_min_gain = 37,
-        .d_min_advance = 20,
-        .motor_output_limit = 100,
-        .auto_profile_cell_count = AUTO_PROFILE_CELL_COUNT_STAY,
-        .transient_throttle_limit = 0,
-        .profileName = { 0 },
-        .dyn_idle_min_rpm = 0,
-        .dyn_idle_p_gain = 50,
-        .dyn_idle_i_gain = 50,
-        .dyn_idle_d_gain = 50,
-        .dyn_idle_max_increase = 150,
-        .ff_interpolate_sp = FF_INTERPOLATE_ON,
-        .ff_max_rate_limit = 100,
-        .ff_smooth_factor = 37,
-        .ff_boost = 15,
-        .dyn_lpf_curve_expo = 5,
-        .level_race_mode = false,
-        .vbat_sag_compensation = 0,
-        .simplified_pids_mode = PID_SIMPLIFIED_TUNING_OFF,
-        .simplified_master_multiplier = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_roll_pitch_ratio = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_i_gain = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_pd_ratio = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_pd_gain = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_dmin_ratio = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_ff_gain = SIMPLIFIED_TUNING_DEFAULT,
-        .simplified_dterm_filter = false,
-        .simplified_dterm_filter_multiplier = SIMPLIFIED_TUNING_DEFAULT,
-    );
+    .pid = {
+        [PID_ROLL] =  PID_ROLL_DEFAULT,
+        [PID_PITCH] = PID_PITCH_DEFAULT,
+        [PID_YAW] =   PID_YAW_DEFAULT,
+        [PID_LEVEL] = { 50, 50, 75, 0 },
+        [PID_MAG] =   { 40, 0, 0, 0 },
+    },
+    .pidSumLimit = PIDSUM_LIMIT,
+    .pidSumLimitYaw = PIDSUM_LIMIT_YAW,
+    .yaw_lowpass_hz = 0,
+    .dterm_notch_hz = 0,
+    .dterm_notch_cutoff = 0,
+    .itermWindupPointPercent = 100,
+    .pidAtMinThrottle = PID_STABILISATION_ON,
+    .levelAngleLimit = 55,
+    .feedForwardTransition = 0,
+    .yawRateAccelLimit = 0,
+    .rateAccelLimit = 0,
+    .itermThrottleThreshold = 250,
+    .itermAcceleratorGain = 3500,
+    .crash_time = 500,          // ms
+    .crash_delay = 0,           // ms
+    .crash_recovery_angle = 10, // degrees
+    .crash_recovery_rate = 100, // degrees/second
+    .crash_dthreshold = 50,     // degrees/second/second
+    .crash_gthreshold = 400,    // degrees/second
+    .crash_setpoint_threshold = 350, // degrees/second
+    .crash_recovery = PID_CRASH_RECOVERY_OFF, // off by default
+    .horizon_tilt_effect = 75,
+    .horizon_tilt_expert_mode = false,
+    .crash_limit_yaw = 200,
+    .itermLimit = 400,
+    .throttle_boost = 5,
+    .throttle_boost_cutoff = 15,
+    .iterm_rotation = false,
+    .iterm_relax = ITERM_RELAX_RP,
+    .iterm_relax_cutoff = ITERM_RELAX_CUTOFF_DEFAULT,
+    .iterm_relax_type = ITERM_RELAX_SETPOINT,
+    .acro_trainer_angle_limit = 20,
+    .acro_trainer_lookahead_ms = 50,
+    .acro_trainer_debug_axis = FD_ROLL,
+    .acro_trainer_gain = 75,
+    .abs_control_gain = 0,
+    .abs_control_limit = 90,
+    .abs_control_error_limit = 20,
+    .abs_control_cutoff = 11,
+    .antiGravityMode = ANTI_GRAVITY_SMOOTH,
+    .dterm_lowpass_hz = 150,    // NOTE: dynamic lpf is enabled by default so this setting is actually
+    // overridden and the static lowpass 1 is disabled. We can't set this
+    // value to 0 otherwise Configurator versions 10.4 and earlier will also
+    // reset the lowpass filter type to PT1 overriding the desired BIQUAD setting.
+    .dterm_lowpass2_hz = DTERM_LOWPASS_2_HZ_DEFAULT,   // second Dterm LPF ON by default
+    .dterm_filter_type = FILTER_PT1,
+    .dterm_filter2_type = FILTER_PT1,
+    .dyn_lpf_dterm_min_hz = DYN_LPF_DTERM_MIN_HZ_DEFAULT,
+    .dyn_lpf_dterm_max_hz = DYN_LPF_DTERM_MAX_HZ_DEFAULT,
+    .launchControlMode = LAUNCH_CONTROL_MODE_NORMAL,
+    .launchControlThrottlePercent = 20,
+    .launchControlAngleLimit = 0,
+    .launchControlGain = 40,
+    .launchControlAllowTriggerReset = true,
+    .use_integrated_yaw = false,
+    .integrated_yaw_relax = 200,
+    .thrustLinearization = 0,
+    .d_min = D_MIN_DEFAULT,
+    .d_min_gain = 37,
+    .d_min_advance = 20,
+    .motor_output_limit = 100,
+    .auto_profile_cell_count = AUTO_PROFILE_CELL_COUNT_STAY,
+    .transient_throttle_limit = 0,
+    .profileName = { 0 },
+    .dyn_idle_min_rpm = 0,
+    .dyn_idle_p_gain = 50,
+    .dyn_idle_i_gain = 50,
+    .dyn_idle_d_gain = 50,
+    .dyn_idle_max_increase = 150,
+    .ff_interpolate_sp = FF_INTERPOLATE_ON,
+    .ff_max_rate_limit = 100,
+    .ff_smooth_factor = 37,
+    .ff_boost = 15,
+    .dyn_lpf_curve_expo = 5,
+    .level_race_mode = false,
+    .vbat_sag_compensation = 0,
+    .simplified_pids_mode = PID_SIMPLIFIED_TUNING_OFF,
+    .simplified_master_multiplier = SIMPLIFIED_TUNING_DEFAULT,
+    .simplified_roll_pitch_ratio = SIMPLIFIED_TUNING_DEFAULT,
+    .simplified_i_gain = SIMPLIFIED_TUNING_DEFAULT,
+    .simplified_pd_ratio = SIMPLIFIED_TUNING_DEFAULT,
+    .simplified_pd_gain = SIMPLIFIED_TUNING_DEFAULT,
+    .simplified_dmin_ratio = SIMPLIFIED_TUNING_DEFAULT,
+    .simplified_ff_gain = SIMPLIFIED_TUNING_DEFAULT,
+    .simplified_dterm_filter = false,
+    .simplified_dterm_filter_multiplier = SIMPLIFIED_TUNING_DEFAULT,
+                );
 #ifndef USE_D_MIN
     pidProfile->pid[PID_ROLL].D = 30;
     pidProfile->pid[PID_PITCH].D = 32;
@@ -349,7 +350,8 @@ static float getLevelModeRcDeflection(uint8_t axis)
 STATIC_UNIT_TESTED float calcHorizonLevelStrength(void)
 {
     // start with 1.0 at center stick, 0.0 at max stick deflection:
-    float horizonLevelStrength = 1.0f - MAX(fabsf(getLevelModeRcDeflection(FD_ROLL)), fabsf(getLevelModeRcDeflection(FD_PITCH)));
+    float horizonLevelStrength = 1.0f - MAX(fabsf(getLevelModeRcDeflection(FD_ROLL)),
+                                            fabsf(getLevelModeRcDeflection(FD_PITCH)));
 
     // 0 at level, 90 at vertical, 180 at inverted (degrees):
     const float currentInclination = MAX(ABS(attitude.values.roll), ABS(attitude.values.pitch)) / 10.0f;
@@ -358,22 +360,23 @@ STATIC_UNIT_TESTED float calcHorizonLevelStrength(void)
     //                         1 = leveling can be totally off when inverted
     if (pidRuntime.horizonTiltExpertMode) {
         if (pidRuntime.horizonTransition > 0 && pidRuntime.horizonCutoffDegrees > 0) {
-                    // if d_level > 0 and horizonTiltEffect < 175
+            // if d_level > 0 and horizonTiltEffect < 175
             // horizonCutoffDegrees: 0 to 125 => 270 to 90 (represents where leveling goes to zero)
             // inclinationLevelRatio (0.0 to 1.0) is smaller (less leveling)
             //  for larger inclinations; 0.0 at horizonCutoffDegrees value:
-            const float inclinationLevelRatio = constrainf((pidRuntime.horizonCutoffDegrees-currentInclination) / pidRuntime.horizonCutoffDegrees, 0, 1);
+            const float inclinationLevelRatio = constrainf((pidRuntime.horizonCutoffDegrees - currentInclination) /
+                                                           pidRuntime.horizonCutoffDegrees, 0, 1);
             // apply configured horizon sensitivity:
-                // when stick is near center (horizonLevelStrength ~= 1.0)
-                //  H_sensitivity value has little effect,
-                // when stick is deflected (horizonLevelStrength near 0.0)
-                //  H_sensitivity value has more effect:
+            // when stick is near center (horizonLevelStrength ~= 1.0)
+            //  H_sensitivity value has little effect,
+            // when stick is deflected (horizonLevelStrength near 0.0)
+            //  H_sensitivity value has more effect:
             horizonLevelStrength = (horizonLevelStrength - 1) * 100 / pidRuntime.horizonTransition + 1;
             // apply inclination ratio, which may lower leveling
             //  to zero regardless of stick position:
             horizonLevelStrength *= inclinationLevelRatio;
         } else  { // d_level=0 or horizon_tilt_effect>=175 means no leveling
-          horizonLevelStrength = 0;
+            horizonLevelStrength = 0;
         }
     } else { // horizon_tilt_expert_mode = 0 (leveling always active when sticks centered)
         float sensitFact;
@@ -381,7 +384,8 @@ STATIC_UNIT_TESTED float calcHorizonLevelStrength(void)
             // horizonFactorRatio: 1.0 to 0.0 (larger means more leveling)
             // inclinationLevelRatio (0.0 to 1.0) is smaller (less leveling)
             //  for larger inclinations, goes to 1.0 at inclination==level:
-            const float inclinationLevelRatio = (180 - currentInclination) / 180 * (1.0f - pidRuntime.horizonFactorRatio) + pidRuntime.horizonFactorRatio;
+            const float inclinationLevelRatio = (180 - currentInclination) / 180 * (1.0f - pidRuntime.horizonFactorRatio) +
+                                                pidRuntime.horizonFactorRatio;
             // apply ratio to configured horizon sensitivity:
             sensitFact = pidRuntime.horizonTransition * inclinationLevelRatio;
         } else { // horizonTiltEffect=0 for "old" functionality
@@ -404,7 +408,9 @@ STATIC_UNIT_TESTED float calcHorizonLevelStrength(void)
 // Use the FAST_CODE_NOINLINE directive to avoid this code from being inlined into ITCM RAM to avoid overflow.
 // The impact is possibly slightly slower performance on F7/H7 but they have more than enough
 // processing power that it should be a non-issue.
-STATIC_UNIT_TESTED FAST_CODE_NOINLINE float pidLevel(int axis, const pidProfile_t *pidProfile, const rollAndPitchTrims_t *angleTrim, float currentPidSetpoint) {
+STATIC_UNIT_TESTED FAST_CODE_NOINLINE float pidLevel(int axis, const pidProfile_t *pidProfile,
+                                                     const rollAndPitchTrims_t *angleTrim, float currentPidSetpoint)
+{
     // calculate error angle and limit the angle to the max inclination
     // rcDeflection is in range [-1.0, 1.0]
     float angle = pidProfile->levelAngleLimit * getLevelModeRcDeflection(axis);
@@ -429,7 +435,8 @@ static void handleCrashRecovery(
     const pidCrashRecovery_e crash_recovery, const rollAndPitchTrims_t *angleTrim,
     const int axis, const timeUs_t currentTimeUs, const float gyroRate, float *currentPidSetpoint, float *errorRate)
 {
-    if (pidRuntime.inCrashRecoveryMode && cmpTimeUs(currentTimeUs, pidRuntime.crashDetectedAtUs) > pidRuntime.crashTimeDelayUs) {
+    if (pidRuntime.inCrashRecoveryMode
+        && cmpTimeUs(currentTimeUs, pidRuntime.crashDetectedAtUs) > pidRuntime.crashTimeDelayUs) {
         if (crash_recovery == PID_CRASH_RECOVERY_BEEP) {
             BEEP_ON;
         }
@@ -449,13 +456,13 @@ static void handleCrashRecovery(
         pidData[axis].I = 0.0f;
         if (cmpTimeUs(currentTimeUs, pidRuntime.crashDetectedAtUs) > pidRuntime.crashTimeLimitUs
             || (getMotorMixRange() < 1.0f
-                   && fabsf(gyro.gyroADCf[FD_ROLL]) < pidRuntime.crashRecoveryRate
-                   && fabsf(gyro.gyroADCf[FD_PITCH]) < pidRuntime.crashRecoveryRate
-                   && fabsf(gyro.gyroADCf[FD_YAW]) < pidRuntime.crashRecoveryRate)) {
+                && fabsf(gyro.gyroADCf[FD_ROLL]) < pidRuntime.crashRecoveryRate
+                && fabsf(gyro.gyroADCf[FD_PITCH]) < pidRuntime.crashRecoveryRate
+                && fabsf(gyro.gyroADCf[FD_YAW]) < pidRuntime.crashRecoveryRate)) {
             if (sensors(SENSOR_ACC)) {
                 // check aircraft nearly level
                 if (ABS(attitude.raw[FD_ROLL] - angleTrim->raw[FD_ROLL]) < pidRuntime.crashRecoveryAngleDeciDegrees
-                   && ABS(attitude.raw[FD_PITCH] - angleTrim->raw[FD_PITCH]) < pidRuntime.crashRecoveryAngleDeciDegrees) {
+                    && ABS(attitude.raw[FD_PITCH] - angleTrim->raw[FD_PITCH]) < pidRuntime.crashRecoveryAngleDeciDegrees) {
                     pidRuntime.inCrashRecoveryMode = false;
                     BEEP_OFF;
                 }
@@ -487,8 +494,10 @@ static void detectAndSetCrashRecovery(
                     pidRuntime.crashDetectedAtUs = currentTimeUs;
                 }
             }
-            if (pidRuntime.inCrashRecoveryMode && cmpTimeUs(currentTimeUs, pidRuntime.crashDetectedAtUs) < pidRuntime.crashTimeDelayUs && (fabsf(errorRate) < pidRuntime.crashGyroThreshold
-                || fabsf(getSetpointRate(axis)) > pidRuntime.crashSetpointThreshold)) {
+            if (pidRuntime.inCrashRecoveryMode
+                && cmpTimeUs(currentTimeUs, pidRuntime.crashDetectedAtUs) < pidRuntime.crashTimeDelayUs
+                && (fabsf(errorRate) < pidRuntime.crashGyroThreshold
+                    || fabsf(getSetpointRate(axis)) > pidRuntime.crashSetpointThreshold)) {
                 pidRuntime.inCrashRecoveryMode = false;
                 BEEP_OFF;
             }
@@ -529,7 +538,8 @@ static FAST_CODE_NOINLINE float applyAcroTrainer(int axis, const rollAndPitchTri
         const float currentAngle = (attitude.raw[axis] - angleTrim->raw[axis]) / 10.0f;
         const int angleSign = acroTrainerSign(currentAngle);
 
-        if ((pidRuntime.acroTrainerAxisState[axis] != 0) && (pidRuntime.acroTrainerAxisState[axis] != setpointSign)) {  // stick has reversed - stop limiting
+        if ((pidRuntime.acroTrainerAxisState[axis] != 0)
+            && (pidRuntime.acroTrainerAxisState[axis] != setpointSign)) {  // stick has reversed - stop limiting
             pidRuntime.acroTrainerAxisState[axis] = 0;
         }
 
@@ -542,14 +552,16 @@ static FAST_CODE_NOINLINE float applyAcroTrainer(int axis, const rollAndPitchTri
         }
 
         if (pidRuntime.acroTrainerAxisState[axis] != 0) {
-            ret = constrainf(((pidRuntime.acroTrainerAngleLimit * angleSign) - currentAngle) * pidRuntime.acroTrainerGain, -ACRO_TRAINER_SETPOINT_LIMIT, ACRO_TRAINER_SETPOINT_LIMIT);
+            ret = constrainf(((pidRuntime.acroTrainerAngleLimit * angleSign) - currentAngle) * pidRuntime.acroTrainerGain,
+                             -ACRO_TRAINER_SETPOINT_LIMIT, ACRO_TRAINER_SETPOINT_LIMIT);
         } else {
 
-        // Not currently over the limit so project the angle based on current angle and
-        // gyro angular rate using a sliding window based on gyro rate (faster rotation means larger window.
-        // If the projected angle exceeds the limit then apply limiting to minimize overshoot.
+            // Not currently over the limit so project the angle based on current angle and
+            // gyro angular rate using a sliding window based on gyro rate (faster rotation means larger window.
+            // If the projected angle exceeds the limit then apply limiting to minimize overshoot.
             // Calculate the lookahead window by scaling proportionally with gyro rate from 0-500dps
-            float checkInterval = constrainf(fabsf(gyro.gyroADCf[axis]) / ACRO_TRAINER_LOOKAHEAD_RATE_LIMIT, 0.0f, 1.0f) * pidRuntime.acroTrainerLookaheadTime;
+            float checkInterval = constrainf(fabsf(gyro.gyroADCf[axis]) / ACRO_TRAINER_LOOKAHEAD_RATE_LIMIT, 0.0f,
+                                             1.0f) * pidRuntime.acroTrainerLookaheadTime;
             projectedAngle = (gyro.gyroADCf[axis] * checkInterval) + currentAngle;
             const int projectedAngleSign = acroTrainerSign(projectedAngle);
             if ((fabsf(projectedAngle) > pidRuntime.acroTrainerAngleLimit) && (projectedAngleSign == setpointSign)) {
@@ -580,7 +592,8 @@ static float accelerationLimit(int axis, float currentPidSetpoint)
     const float currentVelocity = currentPidSetpoint - previousSetpoint[axis];
 
     if (fabsf(currentVelocity) > pidRuntime.maxVelocity[axis]) {
-        currentPidSetpoint = (currentVelocity > 0) ? previousSetpoint[axis] + pidRuntime.maxVelocity[axis] : previousSetpoint[axis] - pidRuntime.maxVelocity[axis];
+        currentPidSetpoint = (currentVelocity > 0) ? previousSetpoint[axis] + pidRuntime.maxVelocity[axis] :
+                             previousSetpoint[axis] - pidRuntime.maxVelocity[axis];
     }
 
     previousSetpoint[axis] = currentPidSetpoint;
@@ -606,7 +619,7 @@ STATIC_UNIT_TESTED void rotateItermAndAxisError()
 #if defined(USE_ABSOLUTE_CONTROL)
         || pidRuntime.acGain > 0 || debugMode == DEBUG_AC_ERROR
 #endif
-        ) {
+       ) {
         const float gyroToAngle = pidRuntime.dT * RAD;
         float rotationRads[XYZ_AXIS_COUNT];
         for (int i = FD_ROLL; i <= FD_YAW; i++) {
@@ -639,12 +652,12 @@ float FAST_CODE applyRcSmoothingDerivativeFilter(int axis, float pidSetpointDelt
     }
     if (pidRuntime.setpointDerivativeLpfInitialized) {
         switch (pidRuntime.rcSmoothingFilterType) {
-            case RC_SMOOTHING_DERIVATIVE_PT1:
-                ret = pt1FilterApply(&pidRuntime.setpointDerivativePt1[axis], pidSetpointDelta);
-                break;
-            case RC_SMOOTHING_DERIVATIVE_BIQUAD:
-                ret = biquadFilterApplyDF1(&pidRuntime.setpointDerivativeBiquad[axis], pidSetpointDelta);
-                break;
+        case RC_SMOOTHING_DERIVATIVE_PT1:
+            ret = pt1FilterApply(&pidRuntime.setpointDerivativePt1[axis], pidSetpointDelta);
+            break;
+        case RC_SMOOTHING_DERIVATIVE_BIQUAD:
+            ret = biquadFilterApplyDF1(&pidRuntime.setpointDerivativeBiquad[axis], pidSetpointDelta);
+            break;
         }
         if (axis == pidRuntime.rcSmoothingDebugAxis) {
             DEBUG_SET(DEBUG_RC_SMOOTHING, 2, lrintf(ret * 100.0f));
@@ -656,7 +669,8 @@ float FAST_CODE applyRcSmoothingDerivativeFilter(int axis, float pidSetpointDelt
 
 #if defined(USE_ITERM_RELAX)
 #if defined(USE_ABSOLUTE_CONTROL)
-STATIC_UNIT_TESTED void applyAbsoluteControl(const int axis, const float gyroRate, float *currentPidSetpoint, float *itermErrorRate)
+STATIC_UNIT_TESTED void applyAbsoluteControl(const int axis, const float gyroRate, float *currentPidSetpoint,
+                                             float *itermErrorRate)
 {
     if (pidRuntime.acGain > 0 || debugMode == DEBUG_AC_ERROR) {
         const float setpointLpf = pt1FilterApply(&pidRuntime.acLpf[axis], *currentPidSetpoint);
@@ -681,7 +695,7 @@ STATIC_UNIT_TESTED void applyAbsoluteControl(const int axis, const float gyroRat
 
         if (isAirmodeActivated()) {
             axisError[axis] = constrainf(axisError[axis] + acErrorRate * pidRuntime.dT,
-                -pidRuntime.acErrorLimit, pidRuntime.acErrorLimit);
+                                         -pidRuntime.acErrorLimit, pidRuntime.acErrorLimit);
             const float acCorrection = constrainf(axisError[axis] * pidRuntime.acGain, -pidRuntime.acLimit, pidRuntime.acLimit);
             *currentPidSetpoint += acCorrection;
             *itermErrorRate += acCorrection;
@@ -696,7 +710,7 @@ STATIC_UNIT_TESTED void applyAbsoluteControl(const int axis, const float gyroRat
 #endif
 
 STATIC_UNIT_TESTED void applyItermRelax(const int axis, const float iterm,
-    const float gyroRate, float *itermErrorRate, float *currentPidSetpoint)
+                                        const float gyroRate, float *itermErrorRate, float *currentPidSetpoint)
 {
     const float setpointLpf = pt1FilterApply(&pidRuntime.windupLpf[axis], *currentPidSetpoint);
     const float setpointHpf = fabsf(*currentPidSetpoint - setpointLpf);
@@ -743,10 +757,12 @@ void pidUpdateAirmodeLpf(float currentOffset)
     // During high frequency oscillation 2 * currentOffset averages to the offset required to avoid mirroring of the waveform
     pt1FilterApply(&pidRuntime.airmodeThrottleLpf1, offsetHpf);
     // Bring offset up immediately so the filter only applies to the decline
-    if (currentOffset * pidRuntime.airmodeThrottleLpf1.state >= 0 && fabsf(currentOffset) > pidRuntime.airmodeThrottleLpf1.state) {
+    if (currentOffset * pidRuntime.airmodeThrottleLpf1.state >= 0
+        && fabsf(currentOffset) > pidRuntime.airmodeThrottleLpf1.state) {
         pidRuntime.airmodeThrottleLpf1.state = currentOffset;
     }
-    pidRuntime.airmodeThrottleLpf1.state = constrainf(pidRuntime.airmodeThrottleLpf1.state, -pidRuntime.airmodeThrottleOffsetLimit, pidRuntime.airmodeThrottleOffsetLimit);
+    pidRuntime.airmodeThrottleLpf1.state = constrainf(pidRuntime.airmodeThrottleLpf1.state,
+                                                      -pidRuntime.airmodeThrottleOffsetLimit, pidRuntime.airmodeThrottleOffsetLimit);
 }
 
 float pidGetAirmodeThrottleOffset()
@@ -905,7 +921,8 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
 
         gyroRateDterm[axis] = pidRuntime.dtermNotchApplyFn((filter_t *) &pidRuntime.dtermNotch[axis], gyroRateDterm[axis]);
         gyroRateDterm[axis] = pidRuntime.dtermLowpassApplyFn((filter_t *) &pidRuntime.dtermLowpass[axis], gyroRateDterm[axis]);
-        gyroRateDterm[axis] = pidRuntime.dtermLowpass2ApplyFn((filter_t *) &pidRuntime.dtermLowpass2[axis], gyroRateDterm[axis]);
+        gyroRateDterm[axis] = pidRuntime.dtermLowpass2ApplyFn((filter_t *) &pidRuntime.dtermLowpass2[axis],
+                                                              gyroRateDterm[axis]);
     }
 
     rotateItermAndAxisError();
@@ -1023,7 +1040,8 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
             axisDynCi = (axis == FD_YAW) ? dynCi : pidRuntime.dT; // only apply windup protection to yaw
         }
 
-        pidData[axis].I = constrainf(previousIterm + (Ki * axisDynCi + agGain) * itermErrorRate, -pidRuntime.itermLimit, pidRuntime.itermLimit);
+        pidData[axis].I = constrainf(previousIterm + (Ki * axisDynCi + agGain) * itermErrorRate, -pidRuntime.itermLimit,
+                                     pidRuntime.itermLimit);
 
         // -----calculate pidSetpointDelta
         float pidSetpointDelta = 0;
@@ -1117,12 +1135,13 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
         const float feedforwardGain = (flightModeFlags || launchControlActive) ? 0.0f : pidRuntime.pidCoefficient[axis].Kf;
         if (feedforwardGain > 0) {
             // no transition if feedForwardTransition == 0
-            float transition = pidRuntime.feedForwardTransition > 0 ? MIN(1.f, getRcDeflectionAbs(axis) * pidRuntime.feedForwardTransition) : 1;
+            float transition = pidRuntime.feedForwardTransition > 0 ? MIN(1.f,
+                                                                          getRcDeflectionAbs(axis) * pidRuntime.feedForwardTransition) : 1;
             float feedForward = feedforwardGain * transition * pidSetpointDelta * pidRuntime.pidFrequency;
 
 #ifdef USE_INTERPOLATED_SP
             pidData[axis].F = shouldApplyFfLimits(axis) ?
-                applyFfLimit(axis, feedForward, pidRuntime.pidCoefficient[axis].Kp, currentPidSetpoint) : feedForward;
+                              applyFfLimit(axis, feedForward, pidRuntime.pidCoefficient[axis].Kp, currentPidSetpoint) : feedForward;
 #else
             pidData[axis].F = feedForward;
 #endif
@@ -1147,7 +1166,8 @@ void FAST_CODE pidController(const pidProfile_t *pidProfile, timeUs_t currentTim
         if (launchControlActive) {
             // if not using FULL mode then disable I accumulation on yaw as
             // yaw has a tendency to windup. Otherwise limit yaw iterm accumulation.
-            const int launchControlYawItermLimit = (pidRuntime.launchControlMode == LAUNCH_CONTROL_MODE_FULL) ? LAUNCH_CONTROL_YAW_ITERM_LIMIT : 0;
+            const int launchControlYawItermLimit = (pidRuntime.launchControlMode == LAUNCH_CONTROL_MODE_FULL) ?
+                                                   LAUNCH_CONTROL_YAW_ITERM_LIMIT : 0;
             pidData[FD_YAW].I = constrainf(pidData[FD_YAW].I, -launchControlYawItermLimit, launchControlYawItermLimit);
 
             // for pitch-only mode we disable everything except pitch P/I
@@ -1242,7 +1262,7 @@ void dynLpfDTermUpdate(float throttle)
             cutoffFreq = fmax(dynThrottle(throttle) * pidRuntime.dynLpfMax, pidRuntime.dynLpfMin);
         }
 
-         if (pidRuntime.dynLpfFilter == DYN_LPF_PT1) {
+        if (pidRuntime.dynLpfFilter == DYN_LPF_PT1) {
             for (int axis = 0; axis < XYZ_AXIS_COUNT; axis++) {
                 pt1FilterUpdateCutoff(&pidRuntime.dtermLowpass[axis].pt1Filter, pt1FilterGain(cutoffFreq, pidRuntime.dT));
             }
@@ -1255,7 +1275,8 @@ void dynLpfDTermUpdate(float throttle)
 }
 #endif
 
-float dynLpfCutoffFreq(float throttle, uint16_t dynLpfMin, uint16_t dynLpfMax, uint8_t expo) {
+float dynLpfCutoffFreq(float throttle, uint16_t dynLpfMin, uint16_t dynLpfMax, uint8_t expo)
+{
     const float expof = expo / 10.0f;
     static float curve;
     curve = throttle * (1 - throttle) * expof + throttle;

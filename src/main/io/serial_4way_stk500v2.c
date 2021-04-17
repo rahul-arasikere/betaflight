@@ -166,7 +166,7 @@ static uint8_t ReadByte(uint8_t *bt)
             *bt |= (1 << i);
         }
     }
-    ckSumIn ^=*bt;
+    ckSumIn ^= *bt;
     return 1;
 timeout:
     return 0;
@@ -182,15 +182,15 @@ static uint8_t StkReadLeader(void)
     uint32_t waitcycl; //250uS each
 
     if ((StkCmd == CMD_PROGRAM_EEPROM_ISP) || (StkCmd == CMD_CHIP_ERASE_ISP)) {
-         waitcycl = STK_WAITCYLCES_EXT;
+        waitcycl = STK_WAITCYLCES_EXT;
     } else if (StkCmd == CMD_SIGN_ON) {
         waitcycl = STK_WAITCYLCES_START;
     } else {
-        waitcycl= STK_WAITCYLCES;
+        waitcycl = STK_WAITCYLCES;
     }
-    for ( ; waitcycl >0 ; waitcycl--) {
+    for ( ; waitcycl > 0 ; waitcycl--) {
         //check is not timeout
-        if (ReadBit() >- 1) break;
+        if (ReadBit() > - 1) break;
     }
 
     //Skip the first bits
@@ -223,7 +223,7 @@ static uint8_t StkRcvPacket(uint8_t *pstring)
 
     IRQ_OFF;
     if (!StkReadLeader()) goto Err;
-    ckSumIn=0;
+    ckSumIn = 0;
     if (!ReadByte(&bt) || (bt != MESSAGE_START)) goto Err;
     if (!ReadByte(&bt) || (bt != SeqNumber)) goto Err;
     ReadByte(&Len.bytes[1]);
@@ -233,10 +233,9 @@ static uint8_t StkRcvPacket(uint8_t *pstring)
     if (!ReadByte(&bt) || (bt != TOKEN)) goto Err;
     if (!ReadByte(&bt) || (bt != StkCmd)) goto Err;
     if (!ReadByte(&bt) || (bt != STATUS_CMD_OK)) goto Err;
-    for (uint16_t i = 0; i < (Len.word - 2); i++)
-    {
-         if (!ReadByte(pstring)) goto Err;
-         pstring++;
+    for (uint16_t i = 0; i < (Len.word - 2); i++) {
+        if (!ReadByte(pstring)) goto Err;
+        pstring++;
     }
     ReadByte(&bt);
     if (ckSumIn != 0) goto Err;
@@ -247,9 +246,9 @@ Err:
     return 0;
 }
 
-static uint8_t _CMD_SPI_MULTI_EX(volatile uint8_t * ResByte,uint8_t Cmd,uint8_t AdrHi,uint8_t AdrLo)
+static uint8_t _CMD_SPI_MULTI_EX(volatile uint8_t *ResByte, uint8_t Cmd, uint8_t AdrHi, uint8_t AdrLo)
 {
-    StkCmd= CMD_SPI_MULTI;
+    StkCmd = CMD_SPI_MULTI;
     StkSendPacketHeader();
     StkSendByte(0); // hi byte Msg len
     StkSendByte(8); // lo byte Msg len
@@ -264,10 +263,11 @@ static uint8_t _CMD_SPI_MULTI_EX(volatile uint8_t * ResByte,uint8_t Cmd,uint8_t 
     StkSendByte(0); // {TxData} 0
     StkSendPacketFooter();
     if (StkRcvPacket((void *)StkInBuf)) { // NumRX + 3
-         if ((StkInBuf[0] == 0x00) && ((StkInBuf[1] == Cmd)||(StkInBuf[1] == 0x00)/* ignore  zero returns */) &&(StkInBuf[2] == 0x00)) {
+        if ((StkInBuf[0] == 0x00) && ((StkInBuf[1] == Cmd) || (StkInBuf[1] == 0x00)/* ignore  zero returns */)
+            && (StkInBuf[2] == 0x00)) {
             *ResByte = StkInBuf[3];
-         }
-         return 1;
+        }
+        return 1;
     }
     return 0;
 }
@@ -294,10 +294,10 @@ static uint8_t _CMD_LOAD_ADDRESS(ioMem_t *pMem)
 static uint8_t _CMD_READ_MEM_ISP(ioMem_t *pMem)
 {
     uint8_t LenHi;
-    if (pMem->D_NUM_BYTES>0) {
-        LenHi=0;
+    if (pMem->D_NUM_BYTES > 0) {
+        LenHi = 0;
     } else {
-        LenHi=1;
+        LenHi = 1;
     }
     StkSendPacketHeader();
     StkSendByte(0); // hi byte Msg len
@@ -348,7 +348,7 @@ static uint8_t _CMD_PROGRAM_MEM_ISP(ioMem_t *pMem)
 
 uint8_t Stk_SignOn(void)
 {
-    StkCmd=CMD_SIGN_ON;
+    StkCmd = CMD_SIGN_ON;
     StkSendPacketHeader();
     StkSendByte(0); // hi byte Msg len
     StkSendByte(1); // lo byte Msg len
@@ -361,8 +361,8 @@ uint8_t Stk_SignOn(void)
 uint8_t Stk_ConnectEx(uint8_32_u *pDeviceInfo)
 {
     if (Stk_SignOn()) {
-        if (_CMD_SPI_MULTI_EX(&pDeviceInfo->bytes[1], signature_r,0,1)) {
-            if (_CMD_SPI_MULTI_EX(&pDeviceInfo->bytes[0], signature_r,0,2)) {
+        if (_CMD_SPI_MULTI_EX(&pDeviceInfo->bytes[1], signature_r, 0, 1)) {
+            if (_CMD_SPI_MULTI_EX(&pDeviceInfo->bytes[0], signature_r, 0, 2)) {
                 return 1;
             }
         }

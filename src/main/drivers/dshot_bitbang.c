@@ -262,12 +262,12 @@ const resourceOwner_t *dshotBitbangTimerGetOwner(int8_t timerNumber, uint16_t ti
 static uint32_t getDshotBaseFrequency(motorPwmProtocolTypes_e pwmProtocolType)
 {
     switch (pwmProtocolType) {
-    case(PWM_TYPE_DSHOT600):
+    case (PWM_TYPE_DSHOT600):
         return MOTOR_DSHOT600_SYMBOL_RATE * MOTOR_DSHOT_STATE_PER_SYMBOL;
-    case(PWM_TYPE_DSHOT300):
+    case (PWM_TYPE_DSHOT300):
         return MOTOR_DSHOT300_SYMBOL_RATE * MOTOR_DSHOT_STATE_PER_SYMBOL;
     default:
-    case(PWM_TYPE_DSHOT150):
+    case (PWM_TYPE_DSHOT150):
         return MOTOR_DSHOT150_SYMBOL_RATE * MOTOR_DSHOT_STATE_PER_SYMBOL;
     }
 }
@@ -359,7 +359,7 @@ static void bbFindPacerTimer(void)
             }
 
             for (int index = 0; index < bbPortIndex; index++) {
-                const timerHardware_t* t = bbPorts[index].timhw;
+                const timerHardware_t *t = bbPorts[index].timhw;
                 if (timerGetTIMNumber(t->tim) == timNumber && timer->channel == t->channel) {
                     timerConflict = true;
                     break;
@@ -501,14 +501,14 @@ static bool bbUpdateStart(void)
 
 #ifdef STM32F4
             uint32_t value = decode_bb_bitband(
-                bbMotors[motorIndex].bbPort->portInputBuffer,
-                bbMotors[motorIndex].bbPort->portInputCount - bbDMA_Count(bbMotors[motorIndex].bbPort),
-                bbMotors[motorIndex].pinIndex);
+                                 bbMotors[motorIndex].bbPort->portInputBuffer,
+                                 bbMotors[motorIndex].bbPort->portInputCount - bbDMA_Count(bbMotors[motorIndex].bbPort),
+                                 bbMotors[motorIndex].pinIndex);
 #else
             uint32_t value = decode_bb(
-                bbMotors[motorIndex].bbPort->portInputBuffer,
-                bbMotors[motorIndex].bbPort->portInputCount - bbDMA_Count(bbMotors[motorIndex].bbPort),
-                bbMotors[motorIndex].pinIndex);
+                                 bbMotors[motorIndex].bbPort->portInputBuffer,
+                                 bbMotors[motorIndex].bbPort->portInputCount - bbDMA_Count(bbMotors[motorIndex].bbPort),
+                                 bbMotors[motorIndex].pinIndex);
 #endif
             if (value == BB_NOEDGE) {
                 continue;
@@ -547,7 +547,7 @@ static void bbWriteInt(uint8_t motorIndex, uint16_t value)
     }
 
     // fetch requestTelemetry from motors. Needs to be refactored.
-    motorDmaOutput_t * const motor = getMotorDmaOutput(motorIndex);
+    motorDmaOutput_t *const motor = getMotorDmaOutput(motorIndex);
     bbmotor->protocolControl.requestTelemetry = motor->protocolControl.requestTelemetry;
     motor->protocolControl.requestTelemetry = false;
 
@@ -713,7 +713,8 @@ motorDevice_t *dshotBitbangDevInit(const motorDevConfig_t *motorConfig, uint8_t 
         const timerHardware_t *timerHardware = timerGetByTag(motorConfig->ioTags[reorderedMotorIndex]);
         const IO_t io = IOGetByTag(motorConfig->ioTags[reorderedMotorIndex]);
 
-        uint8_t output = motorConfig->motorPwmInversion ?  timerHardware->output ^ TIMER_OUTPUT_INVERTED : timerHardware->output;
+        uint8_t output = motorConfig->motorPwmInversion ?  timerHardware->output ^ TIMER_OUTPUT_INVERTED :
+                         timerHardware->output;
         bbPuPdMode = (output & TIMER_OUTPUT_INVERTED) ? BB_GPIO_PULLDOWN : BB_GPIO_PULLUP;
 
 #ifdef USE_DSHOT_TELEMETRY

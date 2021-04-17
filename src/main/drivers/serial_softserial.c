@@ -207,7 +207,8 @@ static void serialTimerConfigureTimebase(const timerHardware_t *timerHardwarePtr
         timerPeriod = clock / baud;
         if (isTimerPeriodTooLarge(timerPeriod)) {
             if (clock > 1) {
-                clock = clock / 2;   // this is wrong - mhz stays the same ... This will double baudrate until ok (but minimum baudrate is < 1200)
+                clock = clock /
+                        2;   // this is wrong - mhz stays the same ... This will double baudrate until ok (but minimum baudrate is < 1200)
             } else {
                 // TODO unable to continue, unable to determine clock and timerPeriods for the given baud
             }
@@ -231,7 +232,8 @@ static void resetBuffers(softSerial_t *softSerial)
     softSerial->port.txBufferHead = 0;
 }
 
-serialPort_t *openSoftSerial(softSerialPortIndex_e portIndex, serialReceiveCallbackPtr rxCallback, void *rxCallbackData, uint32_t baud, portMode_e mode, portOptions_e options)
+serialPort_t *openSoftSerial(softSerialPortIndex_e portIndex, serialReceiveCallbackPtr rxCallback, void *rxCallbackData,
+                             uint32_t baud, portMode_e mode, portOptions_e options)
 {
     softSerial_t *softSerial = &(softSerialPorts[portIndex]);
 
@@ -240,8 +242,10 @@ serialPort_t *openSoftSerial(softSerialPortIndex_e portIndex, serialReceiveCallb
     ioTag_t tagRx = serialPinConfig()->ioTagRx[pinCfgIndex];
     ioTag_t tagTx = serialPinConfig()->ioTagTx[pinCfgIndex];
 
-    const timerHardware_t *timerTx = timerAllocate(tagTx, OWNER_SERIAL_TX, RESOURCE_INDEX(portIndex + RESOURCE_SOFT_OFFSET));
-    const timerHardware_t *timerRx = (tagTx == tagRx) ? timerTx : timerAllocate(tagRx, OWNER_SERIAL_RX, RESOURCE_INDEX(portIndex + RESOURCE_SOFT_OFFSET));
+    const timerHardware_t *timerTx = timerAllocate(tagTx, OWNER_SERIAL_TX,
+                                                   RESOURCE_INDEX(portIndex + RESOURCE_SOFT_OFFSET));
+    const timerHardware_t *timerRx = (tagTx == tagRx) ? timerTx : timerAllocate(tagRx, OWNER_SERIAL_RX,
+                                                                                RESOURCE_INDEX(portIndex + RESOURCE_SOFT_OFFSET));
 
     IO_t rxIO = IOGetByTag(tagRx);
     IO_t txIO = IOGetByTag(tagTx);
@@ -323,7 +327,8 @@ serialPort_t *openSoftSerial(softSerialPortIndex_e portIndex, serialReceiveCallb
     // for overflow interrupt.
     // Receiver input capture is configured when input is activated.
 
-    if ((mode & MODE_TX) && softSerial->exTimerHardware && softSerial->exTimerHardware->tim != softSerial->timerHardware->tim) {
+    if ((mode & MODE_TX) && softSerial->exTimerHardware
+        && softSerial->exTimerHardware->tim != softSerial->timerHardware->tim) {
         softSerial->timerMode = TIMER_MODE_DUAL;
         serialTimerConfigureTimebase(softSerial->exTimerHardware, baud);
         timerChConfigCallbacks(softSerial->exTimerHardware, NULL, &softSerial->overCb);
@@ -426,7 +431,8 @@ void prepareForNextRxByte(softSerial_t *softSerial)
     softSerial->isSearchingForStartBit = true;
     if (softSerial->rxEdge == LEADING) {
         softSerial->rxEdge = TRAILING;
-        timerChConfigIC(softSerial->timerHardware, (softSerial->port.options & SERIAL_INVERTED) ? ICPOLARITY_RISING : ICPOLARITY_FALLING, 0);
+        timerChConfigIC(softSerial->timerHardware,
+                        (softSerial->port.options & SERIAL_INVERTED) ? ICPOLARITY_RISING : ICPOLARITY_FALLING, 0);
         serialEnableCC(softSerial);
     }
 }

@@ -94,8 +94,7 @@ static const void *cms_menuGpsRescuePidOnExit(displayPort_t *pDisp, const OSD_En
     return NULL;
 }
 
-const OSD_Entry cms_menuGpsRescuePidEntries[] =
-{
+const OSD_Entry cms_menuGpsRescuePidEntries[] = {
     {"--- GPS RESCUE PID---", OME_Label, NULL, NULL, 0},
 
     { "THROTTLE P",        OME_UINT16, NULL, &(OSD_UINT16_t){ &gpsRescueConfig_throttleP, 0, 500, 1 }, REBOOT_REQUIRED },
@@ -170,14 +169,13 @@ static const void *cmsx_menuGpsRescueOnExit(displayPort_t *pDisp, const OSD_Entr
     return NULL;
 }
 
-const OSD_Entry cmsx_menuGpsRescueEntries[] =
-{
+const OSD_Entry cmsx_menuGpsRescueEntries[] = {
     {"--- GPS RESCUE ---", OME_Label, NULL, NULL, 0},
 
-    { "ANGLE",             OME_UINT16, NULL, &(OSD_UINT16_t){ &gpsRescueConfig_angle, 0, 200 ,1 }, REBOOT_REQUIRED },
-    { "MIN DIST HOME   M", OME_UINT16, NULL, &(OSD_UINT16_t){ &gpsRescueConfig_minRescueDth, 50, 1000 ,1 }, REBOOT_REQUIRED },
+    { "ANGLE",             OME_UINT16, NULL, &(OSD_UINT16_t){ &gpsRescueConfig_angle, 0, 200, 1 }, REBOOT_REQUIRED },
+    { "MIN DIST HOME   M", OME_UINT16, NULL, &(OSD_UINT16_t){ &gpsRescueConfig_minRescueDth, 50, 1000, 1 }, REBOOT_REQUIRED },
     { "INITAL ALT      M", OME_UINT16, NULL, &(OSD_UINT16_t){ &gpsRescueConfig_initialAltitudeM, 20, 100, 1 }, REBOOT_REQUIRED },
-    { "ALTITUDE MODE"    , OME_TAB, NULL, &(OSD_TAB_t) { &gpsRescueConfig_altitudeMode, 2, lookupTableRescueAltitudeMode}, REBOOT_REQUIRED },
+    { "ALTITUDE MODE", OME_TAB, NULL, &(OSD_TAB_t) { &gpsRescueConfig_altitudeMode, 2, lookupTableRescueAltitudeMode}, REBOOT_REQUIRED },
     { "DESCENT DIST    M", OME_UINT16, NULL, &(OSD_UINT16_t){ &gpsRescueConfig_descentDistanceM, 30, 500, 1 }, REBOOT_REQUIRED },
     { "LANDING ALT     M", OME_UINT16, NULL, &(OSD_UINT16_t){ &gpsRescueConfig_targetLandingAltitudeM, 3, 10, 1 }, REBOOT_REQUIRED },
     { "LANDING DIST    M", OME_UINT16, NULL, &(OSD_UINT16_t){ &gpsRescueConfig_targetLandingDistanceM, 5, 15, 1 }, REBOOT_REQUIRED },

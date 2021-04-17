@@ -47,7 +47,7 @@ static dmaResource_t *dmaRef = NULL;
 
 transponder_t transponder;
 
-static void TRANSPONDER_DMA_IRQHandler(dmaChannelDescriptor_t* descriptor)
+static void TRANSPONDER_DMA_IRQHandler(dmaChannelDescriptor_t *descriptor)
 {
     if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_TCIF)) {
         transponderIrDataTransferInProgress = 0;
@@ -95,7 +95,8 @@ void transponderIrHardwareInit(ioTag_t ioTag, transponder_t *transponder)
 
     transponderIO = IOGetByTag(ioTag);
     IOInit(transponderIO, OWNER_TRANSPONDER, 0);
-    IOConfigGPIOAF(transponderIO, IO_CONFIG(GPIO_Mode_AF, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_DOWN), timerHardware->alternateFunction);
+    IOConfigGPIOAF(transponderIO, IO_CONFIG(GPIO_Mode_AF, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_DOWN),
+                   timerHardware->alternateFunction);
 
     dmaInit(dmaGetIdentifier(dmaRef), OWNER_TRANSPONDER, 0);
     dmaSetHandler(dmaGetIdentifier(dmaRef), TRANSPONDER_DMA_IRQHandler, NVIC_PRIO_TRANSPONDER_DMA, 0);
@@ -125,7 +126,8 @@ void transponderIrHardwareInit(ioTag_t ioTag, transponder_t *transponder)
         TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
     }
 
-    TIM_OCInitStructure.TIM_OCPolarity =  (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCPolarity_Low : TIM_OCPolarity_High;
+    TIM_OCInitStructure.TIM_OCPolarity =  (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCPolarity_Low :
+                                          TIM_OCPolarity_High;
     TIM_OCInitStructure.TIM_Pulse = 0;
 
     timerOCInit(timer, timerHardware->channel, &TIM_OCInitStructure);
@@ -139,12 +141,12 @@ void transponderIrHardwareInit(ioTag_t ioTag, transponder_t *transponder)
     DMA_StructInit(&DMA_InitStructure);
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)timerCCR(timer, timerHardware->channel);
 #if defined(STM32F3)
-    DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)&(transponder->transponderIrDMABuffer);
+    DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t) & (transponder->transponderIrDMABuffer);
     DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
 #elif defined(STM32F4)
     DMA_InitStructure.DMA_Channel = dmaChannel;
-    DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&(transponder->transponderIrDMABuffer);
+    DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t) & (transponder->transponderIrDMABuffer);
     DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
 #endif
     DMA_InitStructure.DMA_BufferSize = transponder->dma_buffer_size;
@@ -175,17 +177,17 @@ bool transponderIrInit(const ioTag_t ioTag, const transponderProvider_e provider
     }
 
     switch (provider) {
-        case TRANSPONDER_ARCITIMER:
-            transponderIrInitArcitimer(&transponder);
-            break;
-        case TRANSPONDER_ILAP:
-            transponderIrInitIlap(&transponder);
-            break;
-        case TRANSPONDER_ERLT:
-            transponderIrInitERLT(&transponder);
-            break;
-        default:
-            return false;
+    case TRANSPONDER_ARCITIMER:
+        transponderIrInitArcitimer(&transponder);
+        break;
+    case TRANSPONDER_ILAP:
+        transponderIrInitIlap(&transponder);
+        break;
+    case TRANSPONDER_ERLT:
+        transponderIrInitERLT(&transponder);
+        break;
+    default:
+        return false;
     }
 
     transponderIrHardwareInit(ioTag, &transponder);
@@ -211,10 +213,10 @@ void transponderIrWaitForTransmitComplete(void)
     }
 }
 
-void transponderIrUpdateData(const uint8_t* transponderData)
+void transponderIrUpdateData(const uint8_t *transponderData)
 {
-     transponderIrWaitForTransmitComplete();
-     transponder.vTable->updateTransponderDMABuffer(&transponder, transponderData);
+    transponderIrWaitForTransmitComplete();
+    transponder.vTable->updateTransponderDMABuffer(&transponder, transponderData);
 }
 
 void transponderIrDMAEnable(transponder_t *transponder)
@@ -231,7 +233,8 @@ void transponderIrDisable(void)
     TIM_Cmd(timer, DISABLE);
 
     IOInit(transponderIO, OWNER_TRANSPONDER, 0);
-    IOConfigGPIOAF(transponderIO, IO_CONFIG(GPIO_Mode_AF, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_DOWN), alternateFunction);
+    IOConfigGPIOAF(transponderIO, IO_CONFIG(GPIO_Mode_AF, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_DOWN),
+                   alternateFunction);
 
 #ifdef TRANSPONDER_INVERTED
     IOHi(transponderIO);

@@ -149,7 +149,8 @@ int16_t adcInternalComputeTemperature(uint16_t tempAdcValue, uint16_t vrefValue)
     // This is essentially a tuned version of
     // __HAL_ADC_CALC_TEMPERATURE(vrefValue, tempAdcValue, ADC_RESOLUTION_12B);
 
-    return ((((int32_t)((tempAdcValue * vrefValue) / TEMPSENSOR_CAL_VREFANALOG) - adcTSCAL1) * adcTSSlopeK) + 500) / 1000 + TEMPSENSOR_CAL1_TEMP;
+    return ((((int32_t)((tempAdcValue * vrefValue) / TEMPSENSOR_CAL_VREFANALOG) - adcTSCAL1) * adcTSSlopeK) + 500) / 1000 +
+           TEMPSENSOR_CAL1_TEMP;
 }
 #endif // USE_ADC_INTERNAL
 

@@ -92,7 +92,8 @@ FAST_CODE float slewFilterApply(slewFilter_t *filter, float input)
 
 // get notch filter Q given center frequency (f0) and lower cutoff frequency (f1)
 // Q = f0 / (f2 - f1) ; f2 = f0^2 / f1
-float filterGetNotchQ(float centerFreq, float cutoffFreq) {
+float filterGetNotchQ(float centerFreq, float cutoffFreq)
+{
     return centerFreq * cutoffFreq / (centerFreq * centerFreq - cutoffFreq * cutoffFreq);
 }
 
@@ -102,7 +103,8 @@ void biquadFilterInitLPF(biquadFilter_t *filter, float filterFreq, uint32_t refr
     biquadFilterInit(filter, filterFreq, refreshRate, BIQUAD_Q, FILTER_LPF);
 }
 
-void biquadFilterInit(biquadFilter_t *filter, float filterFreq, uint32_t refreshRate, float Q, biquadFilterType_e filterType)
+void biquadFilterInit(biquadFilter_t *filter, float filterFreq, uint32_t refreshRate, float Q,
+                      biquadFilterType_e filterType)
 {
     // setup variables
     const float omega = 2.0f * M_PIf * filterFreq * refreshRate * 0.000001f;
@@ -153,7 +155,8 @@ void biquadFilterInit(biquadFilter_t *filter, float filterFreq, uint32_t refresh
     filter->y1 = filter->y2 = 0;
 }
 
-FAST_CODE void biquadFilterUpdate(biquadFilter_t *filter, float filterFreq, uint32_t refreshRate, float Q, biquadFilterType_e filterType)
+FAST_CODE void biquadFilterUpdate(biquadFilter_t *filter, float filterFreq, uint32_t refreshRate, float Q,
+                                  biquadFilterType_e filterType)
 {
     // backup state
     float x1 = filter->x1;
@@ -179,7 +182,8 @@ FAST_CODE void biquadFilterUpdateLPF(biquadFilter_t *filter, float filterFreq, u
 FAST_CODE float biquadFilterApplyDF1(biquadFilter_t *filter, float input)
 {
     /* compute result */
-    const float result = filter->b0 * input + filter->b1 * filter->x1 + filter->b2 * filter->x2 - filter->a1 * filter->y1 - filter->a2 * filter->y2;
+    const float result = filter->b0 * input + filter->b1 * filter->x1 + filter->b2 * filter->x2 - filter->a1 * filter->y1 -
+                         filter->a2 * filter->y2;
 
     /* shift x1 to x2, input to x1 */
     filter->x2 = filter->x1;

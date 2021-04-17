@@ -143,32 +143,30 @@ bool compassDetect(magDev_t *dev, uint8_t *alignment)
 #endif
 
 #ifdef USE_SPI
-    case BUSTYPE_SPI:
-        {
-            SPI_TypeDef *instance = spiInstanceByDevice(SPI_CFG_TO_DEV(compassConfig()->mag_spi_device));
-            if (!instance) {
-                return false;
-            }
-
-            busdev->bustype = BUSTYPE_SPI;
-            spiBusSetInstance(busdev, instance);
-            busdev->busdev_u.spi.csnPin = IOGetByTag(compassConfig()->mag_spi_csn);
+    case BUSTYPE_SPI: {
+        SPI_TypeDef *instance = spiInstanceByDevice(SPI_CFG_TO_DEV(compassConfig()->mag_spi_device));
+        if (!instance) {
+            return false;
         }
-        break;
+
+        busdev->bustype = BUSTYPE_SPI;
+        spiBusSetInstance(busdev, instance);
+        busdev->busdev_u.spi.csnPin = IOGetByTag(compassConfig()->mag_spi_csn);
+    }
+    break;
 #endif
 
 #if defined(USE_MAG_AK8963) && (defined(USE_GYRO_SPI_MPU6500) || defined(USE_GYRO_SPI_MPU9250))
-    case BUSTYPE_MPU_SLAVE:
-        {
-            if (gyroMpuDetectionResult()->sensor == MPU_9250_SPI) {
-                busdev->bustype = BUSTYPE_MPU_SLAVE;
-                busdev->busdev_u.mpuSlave.master = gyroSensorBus();
-                busdev->busdev_u.mpuSlave.address = compassConfig()->mag_i2c_address;
-            } else {
-                return false;
-            }
+    case BUSTYPE_MPU_SLAVE: {
+        if (gyroMpuDetectionResult()->sensor == MPU_9250_SPI) {
+            busdev->bustype = BUSTYPE_MPU_SLAVE;
+            busdev->busdev_u.mpuSlave.master = gyroSensorBus();
+            busdev->busdev_u.mpuSlave.address = compassConfig()->mag_i2c_address;
+        } else {
+            return false;
         }
-        break;
+    }
+    break;
 #endif
 
     default:
@@ -272,7 +270,7 @@ bool compassDetect(magDev_t *dev, uint8_t *alignment)
     // MAG_MPU925X_AK8963 is an MPU925x configured as I2C passthrough to the built-in AK8963 magnetometer
     // Passthrough mode disables the gyro/acc part of the MPU, so we only want to detect this sensor if mag_hardware was explicitly set to MAG_MPU925X_AK8963
 #ifdef USE_MAG_MPU925X_AK8963
-    if(compassConfig()->mag_hardware == MAG_MPU925X_AK8963){
+    if (compassConfig()->mag_hardware == MAG_MPU925X_AK8963) {
         if (mpu925Xak8963CompassDetect(dev)) {
             magHardware = MAG_MPU925X_AK8963;
         } else {

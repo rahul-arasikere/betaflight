@@ -350,20 +350,20 @@ uint8_t mpuGyroDLPF(gyroDev_t *gyro)
     if (gyro->gyroRateKHz <= GYRO_RATE_8_kHz) {
         switch (gyro->hardware_lpf) {
 #ifdef USE_GYRO_DLPF_EXPERIMENTAL
-            case GYRO_HARDWARE_LPF_EXPERIMENTAL:
-                // experimental mode not supported for MPU60x0 family
-                if ((gyro->gyroHardware != GYRO_MPU6050) && (gyro->gyroHardware != GYRO_MPU6000)) {
-                    ret = 7;
-                } else {
-                    ret = 0;
-                }
-                break;
+        case GYRO_HARDWARE_LPF_EXPERIMENTAL:
+            // experimental mode not supported for MPU60x0 family
+            if ((gyro->gyroHardware != GYRO_MPU6050) && (gyro->gyroHardware != GYRO_MPU6000)) {
+                ret = 7;
+            } else {
+                ret = 0;
+            }
+            break;
 #endif
 
-            case GYRO_HARDWARE_LPF_NORMAL:
-            default:
-                ret = 0;
-                break;
+        case GYRO_HARDWARE_LPF_NORMAL:
+        default:
+            ret = 0;
+            break;
         }
     }
     return ret;

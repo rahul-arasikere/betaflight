@@ -81,8 +81,7 @@ static timeMs_t timeTunedMs;
 static int8_t bindOffset_max = 0;
 static int8_t bindOffset_min = 0;
 
-const cc2500RegisterConfigElement_t cc2500SfhssConfigPart1[] =
-{
+const cc2500RegisterConfigElement_t cc2500SfhssConfigPart1[] = {
     { CC2500_02_IOCFG0,   0x01 },
     { CC2500_03_FIFOTHR,  0x07 },
     { CC2500_04_SYNC1,    0xD3 },
@@ -94,8 +93,7 @@ const cc2500RegisterConfigElement_t cc2500SfhssConfigPart1[] =
     { CC2500_0B_FSCTRL1,  0x06 }
 };
 
-const cc2500RegisterConfigElement_t cc2500SfhssConfigPart2[] =
-{
+const cc2500RegisterConfigElement_t cc2500SfhssConfigPart2[] = {
     { CC2500_0D_FREQ2,    0x5C },
     { CC2500_0E_FREQ1,    0x4E },
     { CC2500_0F_FREQ0,    0xC4 },
@@ -315,122 +313,122 @@ rx_spi_received_e sfhssSpiDataReceived(uint8_t *packet)
 
     currentPacketReceivedTime = micros();
     switch (protocolState) {
-        case STATE_INIT:
-            if ((millis() - start_time) > 10) {
-                rxSpiLedOff();
-                dataMissingFrame = 0;
-                initialise();
-                SET_STATE(STATE_BIND);
-                DEBUG_SET(DEBUG_RX_SFHSS_SPI, DEBUG_DATA_MISSING_FRAME, dataMissingFrame);
-            }
-            break;
-        case STATE_BIND:
-            if (rxSpiCheckBindRequested(true)) {
-                rxSpiLedOn();
+    case STATE_INIT:
+        if ((millis() - start_time) > 10) {
+            rxSpiLedOff();
+            dataMissingFrame = 0;
+            initialise();
+            SET_STATE(STATE_BIND);
+            DEBUG_SET(DEBUG_RX_SFHSS_SPI, DEBUG_DATA_MISSING_FRAME, dataMissingFrame);
+        }
+        break;
+    case STATE_BIND:
+        if (rxSpiCheckBindRequested(true)) {
+            rxSpiLedOn();
+            initTuneRx();
+            SET_STATE(STATE_BIND_TUNING1);
+        } else {
+            SET_STATE(STATE_HUNT);
+            sfhssnextChannel();
+            setRssiDirect(0, RSSI_SOURCE_RX_PROTOCOL);
+            nextFrameReceiveStartTime = currentPacketReceivedTime + NEXT_CH_TIME_HUNT;
+        }
+        break;
+    case STATE_BIND_TUNING1:
+        if (tune1Rx(packet)) {
+            SET_STATE(STATE_BIND_TUNING2);
+        }
+        break;
+    case STATE_BIND_TUNING2:
+        if (tune2Rx(packet)) {
+            SET_STATE(STATE_BIND_TUNING3);
+        }
+        break;
+    case STATE_BIND_TUNING3:
+        if (tune3Rx(packet)) {
+            if (((int16_t)bindOffset_max - (int16_t)bindOffset_min) <= 2) {
                 initTuneRx();
-                SET_STATE(STATE_BIND_TUNING1);
+                SET_STATE(STATE_BIND_TUNING1);    // retry
             } else {
-                SET_STATE(STATE_HUNT);
-                sfhssnextChannel();
-                setRssiDirect(0, RSSI_SOURCE_RX_PROTOCOL);
-                nextFrameReceiveStartTime = currentPacketReceivedTime + NEXT_CH_TIME_HUNT;
+                rxCc2500SpiConfigMutable()->bindOffset = ((int16_t)bindOffset_max + (int16_t)bindOffset_min) / 2 ;
+                SET_STATE(STATE_BIND_COMPLETE);
             }
-            break;
-        case STATE_BIND_TUNING1:
-            if (tune1Rx(packet)) {
-                SET_STATE(STATE_BIND_TUNING2);
-            }
-            break;
-        case STATE_BIND_TUNING2:
-            if (tune2Rx(packet)) {
-                SET_STATE(STATE_BIND_TUNING3);
-            }
-            break;
-        case STATE_BIND_TUNING3:
-            if (tune3Rx(packet)) {
-                if (((int16_t)bindOffset_max - (int16_t)bindOffset_min) <= 2) {
-                    initTuneRx();
-                    SET_STATE(STATE_BIND_TUNING1);    // retry
-                } else {
-                    rxCc2500SpiConfigMutable()->bindOffset = ((int16_t)bindOffset_max + (int16_t)bindOffset_min) / 2 ;
-                    SET_STATE(STATE_BIND_COMPLETE);
+        }
+        break;
+    case STATE_BIND_COMPLETE:
+        writeEEPROM();
+        ret = RX_SPI_RECEIVED_BIND;
+        SET_STATE(STATE_INIT);
+        break;
+    case STATE_HUNT:
+        if (sfhssRecv(packet)) {
+            if (sfhssPacketParse(packet, true)) {
+                if (GET_COMMAND(packet) & 0x8) {       /* ch=5-8 */
+                    missingPackets = 0;
+                    rxSpiLedOn();
+                    frame_recvd = 0x3;
+                    SET_STATE(STATE_SYNC);
+                    nextFrameReceiveStartTime = currentPacketReceivedTime + NEXT_CH_TIME_SYNC2;
+                    return RX_SPI_RECEIVED_NONE;
                 }
             }
-            break;
-        case STATE_BIND_COMPLETE:
-            writeEEPROM();
-            ret = RX_SPI_RECEIVED_BIND;
+            cc2500Strobe(CC2500_SRX);
+        } else if (cmpTimeUs(currentPacketReceivedTime, nextFrameReceiveStartTime) > 0) {
+            rxSpiLedBlink(500);
+#if defined(USE_RX_CC2500_SPI_PA_LNA) && defined(USE_RX_CC2500_SPI_DIVERSITY) // SE4311 chip
+            cc2500switchAntennae();
+#endif
+            sfhssnextChannel();
+            nextFrameReceiveStartTime += NEXT_CH_TIME_HUNT;
+        } else if (rxSpiCheckBindRequested(false)) {
             SET_STATE(STATE_INIT);
             break;
-        case STATE_HUNT:
-            if (sfhssRecv(packet)) {
-                if (sfhssPacketParse(packet, true)) {
-                    if (GET_COMMAND(packet) & 0x8) {       /* ch=5-8 */
-                        missingPackets = 0;
-                        rxSpiLedOn();
-                        frame_recvd = 0x3;
-                        SET_STATE(STATE_SYNC);
-                        nextFrameReceiveStartTime = currentPacketReceivedTime + NEXT_CH_TIME_SYNC2;
-                        return RX_SPI_RECEIVED_NONE;
-                    }
+        }
+        break;
+    case STATE_SYNC:
+        if (sfhssRecv(packet)) {
+            if (sfhssPacketParse(packet, true)) {
+                missingPackets = 0;
+                if ( GET_COMMAND(packet) & 0x8 ) {
+                    nextFrameReceiveStartTime = currentPacketReceivedTime + NEXT_CH_TIME_SYNC2;
+                    frame_recvd |= 0x2;     /* ch5-8 */
+                } else {
+                    nextFrameReceiveStartTime = currentPacketReceivedTime + NEXT_CH_TIME_SYNC1;
+                    cc2500Strobe(CC2500_SRX);
+                    frame_recvd |= 0x1;     /* ch1-4 */
                 }
-                cc2500Strobe(CC2500_SRX);
-            } else if (cmpTimeUs(currentPacketReceivedTime, nextFrameReceiveStartTime) > 0) {
-                rxSpiLedBlink(500);
-#if defined(USE_RX_CC2500_SPI_PA_LNA) && defined(USE_RX_CC2500_SPI_DIVERSITY) // SE4311 chip
-                cc2500switchAntennae();
-#endif
-                sfhssnextChannel();
-                nextFrameReceiveStartTime += NEXT_CH_TIME_HUNT;
-            } else if (rxSpiCheckBindRequested(false)) {
-                SET_STATE(STATE_INIT);
-                break;
+                if (GET_COMMAND(packet) & 0x4) {
+                    return RX_SPI_RECEIVED_NONE; /* failsafe data */
+                }
+                return RX_SPI_RECEIVED_DATA;
             }
-            break;
-        case STATE_SYNC:
-            if (sfhssRecv(packet)) {
-                if (sfhssPacketParse(packet, true)) {
-                    missingPackets = 0;
-                    if ( GET_COMMAND(packet) & 0x8 ) {
-                        nextFrameReceiveStartTime = currentPacketReceivedTime + NEXT_CH_TIME_SYNC2;
-                        frame_recvd |= 0x2;     /* ch5-8 */
-                    } else {
-                        nextFrameReceiveStartTime = currentPacketReceivedTime + NEXT_CH_TIME_SYNC1;
-                        cc2500Strobe(CC2500_SRX);
-                        frame_recvd |= 0x1;     /* ch1-4 */
-                    }
-                    if (GET_COMMAND(packet) & 0x4) {
-                        return RX_SPI_RECEIVED_NONE; /* failsafe data */
-                    }
-                    return RX_SPI_RECEIVED_DATA;
-                }
-                cc2500Strobe(CC2500_SRX);
-            } else if (cmpTimeUs(currentPacketReceivedTime, nextFrameReceiveStartTime) > 0) {
-                nextFrameReceiveStartTime += NEXT_CH_TIME_SYNC0;
-                if (frame_recvd != 0x3) {
-                    DEBUG_SET(DEBUG_RX_SFHSS_SPI, DEBUG_DATA_MISSING_FRAME, ++dataMissingFrame);
-                }
-                if (frame_recvd == 0) {
-                    if (++missingPackets > MAX_MISSING_PKT) {
-                        SET_STATE(STATE_HUNT);
-                        sfhssnextChannel();
-                        setRssiDirect(0, RSSI_SOURCE_RX_PROTOCOL);
-                        nextFrameReceiveStartTime = currentPacketReceivedTime + NEXT_CH_TIME_HUNT;
-                        break;
-                    }
-#if defined(USE_RX_CC2500_SPI_PA_LNA) && defined(USE_RX_CC2500_SPI_DIVERSITY) // SE4311 chip
-                    if (missingPackets >= 2) {
-                        cc2500switchAntennae();
-                    }
-#endif
-                }
-                frame_recvd = 0;
-                sfhssnextChannel();
-            } else if (rxSpiCheckBindRequested(false)) {
-                SET_STATE(STATE_INIT);
-                break;
+            cc2500Strobe(CC2500_SRX);
+        } else if (cmpTimeUs(currentPacketReceivedTime, nextFrameReceiveStartTime) > 0) {
+            nextFrameReceiveStartTime += NEXT_CH_TIME_SYNC0;
+            if (frame_recvd != 0x3) {
+                DEBUG_SET(DEBUG_RX_SFHSS_SPI, DEBUG_DATA_MISSING_FRAME, ++dataMissingFrame);
             }
+            if (frame_recvd == 0) {
+                if (++missingPackets > MAX_MISSING_PKT) {
+                    SET_STATE(STATE_HUNT);
+                    sfhssnextChannel();
+                    setRssiDirect(0, RSSI_SOURCE_RX_PROTOCOL);
+                    nextFrameReceiveStartTime = currentPacketReceivedTime + NEXT_CH_TIME_HUNT;
+                    break;
+                }
+#if defined(USE_RX_CC2500_SPI_PA_LNA) && defined(USE_RX_CC2500_SPI_DIVERSITY) // SE4311 chip
+                if (missingPackets >= 2) {
+                    cc2500switchAntennae();
+                }
+#endif
+            }
+            frame_recvd = 0;
+            sfhssnextChannel();
+        } else if (rxSpiCheckBindRequested(false)) {
+            SET_STATE(STATE_INIT);
             break;
+        }
+        break;
     }
 
     return ret;

@@ -101,7 +101,7 @@
 #define LIS3MDL_FAST_READ           0x80  // Default 0
 #define LIS3MDL_BDU                 0x40  // Default 0
 
-static bool lis3mdlRead(magDev_t * mag, int16_t *magData)
+static bool lis3mdlRead(magDev_t *mag, int16_t *magData)
 {
     uint8_t buf[6];
 
@@ -137,7 +137,7 @@ static bool lis3mdlInit(magDev_t *mag)
     return true;
 }
 
-bool lis3mdlDetect(magDev_t * mag)
+bool lis3mdlDetect(magDev_t *mag)
 {
     busDevice_t *busdev = &mag->busdev;
 

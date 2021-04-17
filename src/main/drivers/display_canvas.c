@@ -122,28 +122,32 @@ void displayCanvasResetDrawingState(displayCanvas_t *displayCanvas)
     }
 }
 
-void displayCanvasDrawCharacter(displayCanvas_t *displayCanvas, int x, int y, uint16_t chr, displayCanvasBitmapOption_t opts)
+void displayCanvasDrawCharacter(displayCanvas_t *displayCanvas, int x, int y, uint16_t chr,
+                                displayCanvasBitmapOption_t opts)
 {
     if (displayCanvas->vTable->drawCharacter) {
         displayCanvas->vTable->drawCharacter(displayCanvas, x, y, chr, opts);
     }
 }
 
-void displayCanvasDrawCharacterMask(displayCanvas_t *displayCanvas, int x, int y, uint16_t chr, displayCanvasColor_e color, displayCanvasBitmapOption_t opts)
+void displayCanvasDrawCharacterMask(displayCanvas_t *displayCanvas, int x, int y, uint16_t chr,
+                                    displayCanvasColor_e color, displayCanvasBitmapOption_t opts)
 {
     if (displayCanvas->vTable->drawCharacterMask) {
         displayCanvas->vTable->drawCharacterMask(displayCanvas, x, y, chr, color, opts);
     }
 }
 
-void displayCanvasDrawString(displayCanvas_t *displayCanvas, int x, int y, const char *s, displayCanvasBitmapOption_t opts)
+void displayCanvasDrawString(displayCanvas_t *displayCanvas, int x, int y, const char *s,
+                             displayCanvasBitmapOption_t opts)
 {
     if (displayCanvas->vTable->drawString) {
         displayCanvas->vTable->drawString(displayCanvas, x, y, s, opts);
     }
 }
 
-void displayCanvasDrawStringMask(displayCanvas_t *displayCanvas, int x, int y, const char *s, displayCanvasColor_e color, displayCanvasBitmapOption_t opts)
+void displayCanvasDrawStringMask(displayCanvas_t *displayCanvas, int x, int y, const char *s,
+                                 displayCanvasColor_e color, displayCanvasBitmapOption_t opts)
 {
     if (displayCanvas->vTable->drawStringMask) {
         displayCanvas->vTable->drawStringMask(displayCanvas, x, y, s, color, opts);
@@ -234,7 +238,8 @@ void displayCanvasCtmReset(displayCanvas_t *displayCanvas)
     }
 }
 
-void displayCanvasCtmSet(displayCanvas_t *displayCanvas, float m11, float m12, float m21, float m22, float m31, float m32)
+void displayCanvasCtmSet(displayCanvas_t *displayCanvas, float m11, float m12, float m21, float m22, float m31,
+                         float m32)
 {
     if (displayCanvas->vTable->ctmSet) {
         displayCanvas->vTable->ctmSet(displayCanvas, m11, m12, m21, m22, m31, m32);

@@ -207,7 +207,8 @@ void NRF24L01_SetTxMode(void)
 void NRF24L01_ClearAllInterrupts(void)
 {
     // Writing to the STATUS register clears the specified interrupt bits
-    NRF24L01_WriteReg(NRF24L01_07_STATUS, BV(NRF24L01_07_STATUS_RX_DR) | BV(NRF24L01_07_STATUS_TX_DS) | BV(NRF24L01_07_STATUS_MAX_RT));
+    NRF24L01_WriteReg(NRF24L01_07_STATUS,
+                      BV(NRF24L01_07_STATUS_RX_DR) | BV(NRF24L01_07_STATUS_TX_DS) | BV(NRF24L01_07_STATUS_MAX_RT));
 }
 
 void NRF24L01_SetChannel(uint8_t channel)

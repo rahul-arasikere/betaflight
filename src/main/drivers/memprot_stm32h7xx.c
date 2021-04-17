@@ -48,8 +48,8 @@ mpuRegion_t mpuRegions[] = {
     {
         // DMA transmit buffer in D2 SRAM1
         // Reading needs cache coherence operation
-        .start      = (uint32_t)&dmaram_start,
-        .end        = (uint32_t)&dmaram_end,
+        .start      = (uint32_t) &dmaram_start,
+        .end        = (uint32_t) &dmaram_end,
         .size       = 0,  // Size determined by ".end"
         .perm       = MPU_REGION_FULL_ACCESS,
         .exec       = MPU_INSTRUCTION_ACCESS_ENABLE,
@@ -60,8 +60,8 @@ mpuRegion_t mpuRegions[] = {
 #ifdef USE_SDCARD_SDIO
     {
         // A region in AXI RAM accessible from SDIO internal DMA
-        .start      = (uint32_t)&dmarwaxi_start,
-        .end        = (uint32_t)&dmarwaxi_end,
+        .start      = (uint32_t) &dmarwaxi_start,
+        .end        = (uint32_t) &dmarwaxi_end,
         .size       = 0,  // Size determined by ".end"
         .perm       = MPU_REGION_FULL_ACCESS,
         .exec       = MPU_INSTRUCTION_ACCESS_ENABLE,

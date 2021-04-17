@@ -149,7 +149,8 @@
 #include "msp.h"
 
 
-static const char * const flightControllerIdentifier = FC_FIRMWARE_IDENTIFIER; // 4 UPPER CASE alpha numeric characters that identify the flight controller.
+static const char *const flightControllerIdentifier =
+    FC_FIRMWARE_IDENTIFIER;  // 4 UPPER CASE alpha numeric characters that identify the flight controller.
 
 enum {
     MSP_REBOOT_FIRMWARE = 0,
@@ -246,13 +247,11 @@ static serialPort_t *mspFindPassthroughSerialPort(void)
     serialPortUsage_t *portUsage = NULL;
 
     switch (mspPassthroughMode) {
-    case MSP_PASSTHROUGH_SERIAL_ID:
-    {
+    case MSP_PASSTHROUGH_SERIAL_ID: {
         portUsage = findSerialPortUsageByIdentifier(mspPassthroughArgument);
         break;
     }
-    case MSP_PASSTHROUGH_SERIAL_FUNCTION_ID:
-    {
+    case MSP_PASSTHROUGH_SERIAL_FUNCTION_ID: {
         const serialPortConfig_t *portConfig = findSerialPortConfig(1 << mspPassthroughArgument);
         if (portConfig) {
             portUsage = findSerialPortUsageByIdentifier(portConfig->identifier);
@@ -312,7 +311,8 @@ static void mspFcSetPassthroughCommand(sbuf_t *dst, sbuf_t *src, mspPostProcessF
     case MSP_PASSTHROUGH_ESC_KISS:
     case MSP_PASSTHROUGH_ESC_KISSALL:
     case MSP_PASSTHROUGH_ESC_CASTLE:
-        if (mspPassthroughArgument < getMotorCount() || (mspPassthroughMode == MSP_PASSTHROUGH_ESC_KISS && mspPassthroughArgument == ALL_MOTORS)) {
+        if (mspPassthroughArgument < getMotorCount() || (mspPassthroughMode == MSP_PASSTHROUGH_ESC_KISS
+                                                         && mspPassthroughArgument == ALL_MOTORS)) {
             sbufWriteU8(dst, 1);
 
             if (mspPostProcessFn) {
@@ -364,8 +364,8 @@ static void mspRebootFn(serialPort_t *serialPort)
 #else
         systemResetToMsc(0);
 #endif
-        }
-        break;
+    }
+    break;
 #endif
 #if defined(USE_FLASH_BOOT_LOADER)
     case MSP_REBOOT_BOOTLOADER_FLASH:
@@ -406,12 +406,12 @@ static void serializeSDCardSummaryReply(sbuf_t *dst)
                 break;
 
             case AFATFS_FILESYSTEM_STATE_INITIALIZATION:
-             if (sdcard_isInitialized()) {
-                 state = MSP_SDCARD_STATE_FS_INIT;
-             } else {
-                 state = MSP_SDCARD_STATE_CARD_INIT;
-             }
-             break;
+                if (sdcard_isInitialized()) {
+                    state = MSP_SDCARD_STATE_FS_INIT;
+                } else {
+                    state = MSP_SDCARD_STATE_CARD_INIT;
+                }
+                break;
 
             case AFATFS_FILESYSTEM_STATE_FATAL:
             case AFATFS_FILESYSTEM_STATE_UNKNOWN:
@@ -453,7 +453,7 @@ static void serializeDataflashSummaryReply(sbuf_t *dst)
     } else
 #endif
 
-    // FlashFS is not configured or valid device is not detected
+        // FlashFS is not configured or valid device is not detected
     {
         sbufWriteU8(dst, 0);
         sbufWriteU32(dst, 0);
@@ -468,7 +468,8 @@ enum compressionType_e {
     HUFFMAN
 };
 
-static void serializeDataflashReadReply(sbuf_t *dst, uint32_t address, const uint16_t size, bool useLegacyFormat, bool allowCompression)
+static void serializeDataflashReadReply(sbuf_t *dst, uint32_t address, const uint16_t size, bool useLegacyFormat,
+                                        bool allowCompression)
 {
     STATIC_ASSERT(MSP_PORT_DATAFLASH_INFO_SIZE >= 16, MSP_PORT_DATAFLASH_INFO_SIZE_invalid);
 
@@ -535,7 +536,7 @@ static void serializeDataflashReadReply(sbuf_t *dst, uint32_t address, const uin
         // read until output buffer overflows or flash is exhausted
         while (state.bytesWritten < state.outBufLen && address + bytesReadTotal < flashfsSize) {
             const int bytesRead = flashfsReadAbs(address + bytesReadTotal, readBuffer,
-                MIN(sizeof(readBuffer), flashfsSize - address - bytesReadTotal));
+                                                 MIN(sizeof(readBuffer), flashfsSize - address - bytesReadTotal));
 
             const int status = huffmanEncodeBufStreaming(&state, readBuffer, bytesRead, huffmanTable);
             if (status == -1) {
@@ -586,8 +587,7 @@ static bool mspCommonProcessOutCommand(int16_t cmdMSP, sbuf_t *dst, mspPostProce
         sbufWriteU8(dst, FC_VERSION_PATCH_LEVEL);
         break;
 
-    case MSP_BOARD_INFO:
-    {
+    case MSP_BOARD_INFO: {
         sbufWriteData(dst, systemConfig()->boardIdentifier, BOARD_IDENTIFIER_LENGTH);
 #ifdef USE_HARDWARE_REVISION_DETECTION
         sbufWriteU16(dst, hardwareRevision);
@@ -670,7 +670,8 @@ static bool mspCommonProcessOutCommand(int16_t cmdMSP, sbuf_t *dst, mspPostProce
         sbufWriteU8(dst, systemConfig()->configurationState);
 
         // Added in API version 1.43
-        sbufWriteU16(dst, gyro.sampleRateHz); // informational so the configurator can display the correct gyro/pid frequencies in the drop-down
+        sbufWriteU16(dst,
+                     gyro.sampleRateHz); // informational so the configurator can display the correct gyro/pid frequencies in the drop-down
 
         // Configuration warnings / problems (uint32_t)
 #define PROBLEM_ACC_NEEDS_CALIBRATION 0
@@ -715,7 +716,8 @@ static bool mspCommonProcessOutCommand(int16_t cmdMSP, sbuf_t *dst, mspPostProce
         sbufWriteU8(dst, (uint8_t)constrain(getLegacyBatteryVoltage(), 0, 255));
         sbufWriteU16(dst, (uint16_t)constrain(getMAhDrawn(), 0, 0xFFFF)); // milliamp hours drawn from battery
         sbufWriteU16(dst, getRssi());
-        sbufWriteU16(dst, (int16_t)constrain(getAmperage(), -0x8000, 0x7FFF)); // send current in 0.01 A steps, range is -320A to 320A
+        sbufWriteU16(dst, (int16_t)constrain(getAmperage(), -0x8000,
+                                             0x7FFF)); // send current in 0.01 A steps, range is -320A to 320A
         sbufWriteU16(dst, getBatteryVoltage());
         break;
 
@@ -751,7 +753,8 @@ static bool mspCommonProcessOutCommand(int16_t cmdMSP, sbuf_t *dst, mspPostProce
         // battery state
         sbufWriteU8(dst, (uint8_t)constrain(getLegacyBatteryVoltage(), 0, 255)); // in 0.1V steps
         sbufWriteU16(dst, (uint16_t)constrain(getMAhDrawn(), 0, 0xFFFF)); // milliamp hours drawn from battery
-        sbufWriteU16(dst, (int16_t)constrain(getAmperage(), -0x8000, 0x7FFF)); // send current in 0.01 A steps, range is -320A to 320A
+        sbufWriteU16(dst, (int16_t)constrain(getAmperage(), -0x8000,
+                                             0x7FFF)); // send current in 0.01 A steps, range is -320A to 320A
 
         // battery alerts
         sbufWriteU8(dst, (uint8_t)getBatteryState());
@@ -793,33 +796,36 @@ static bool mspCommonProcessOutCommand(int16_t cmdMSP, sbuf_t *dst, mspPostProce
 
             sbufWriteU8(dst, id);
             sbufWriteU16(dst, (uint16_t)constrain(meter.mAhDrawn, 0, 0xFFFF)); // milliamp hours drawn from battery
-            sbufWriteU16(dst, (uint16_t)constrain(meter.amperage * 10, 0, 0xFFFF)); // send amperage in 0.001 A steps (mA). Negative range is truncated to zero
+            sbufWriteU16(dst, (uint16_t)constrain(meter.amperage * 10, 0,
+                                                  0xFFFF)); // send amperage in 0.001 A steps (mA). Negative range is truncated to zero
         }
         break;
     }
 
-    case MSP_VOLTAGE_METER_CONFIG:
-        {
-            // by using a sensor type and a sub-frame length it's possible to configure any type of voltage meter,
-            // e.g. an i2c/spi/can sensor or any sensor not built directly into the FC such as ESC/RX/SPort/SBus that has
-            // different configuration requirements.
-            STATIC_ASSERT(VOLTAGE_SENSOR_ADC_VBAT == 0, VOLTAGE_SENSOR_ADC_VBAT_incorrect); // VOLTAGE_SENSOR_ADC_VBAT should be the first index
-            sbufWriteU8(dst, MAX_VOLTAGE_SENSOR_ADC); // voltage meters in payload
-            for (int i = VOLTAGE_SENSOR_ADC_VBAT; i < MAX_VOLTAGE_SENSOR_ADC; i++) {
-                const uint8_t adcSensorSubframeLength = 1 + 1 + 1 + 1 + 1; // length of id, type, vbatscale, vbatresdivval, vbatresdivmultipler, in bytes
-                sbufWriteU8(dst, adcSensorSubframeLength); // ADC sensor sub-frame length
+    case MSP_VOLTAGE_METER_CONFIG: {
+        // by using a sensor type and a sub-frame length it's possible to configure any type of voltage meter,
+        // e.g. an i2c/spi/can sensor or any sensor not built directly into the FC such as ESC/RX/SPort/SBus that has
+        // different configuration requirements.
+        STATIC_ASSERT(VOLTAGE_SENSOR_ADC_VBAT == 0,
+                      VOLTAGE_SENSOR_ADC_VBAT_incorrect); // VOLTAGE_SENSOR_ADC_VBAT should be the first index
+        sbufWriteU8(dst, MAX_VOLTAGE_SENSOR_ADC); // voltage meters in payload
+        for (int i = VOLTAGE_SENSOR_ADC_VBAT; i < MAX_VOLTAGE_SENSOR_ADC; i++) {
+            const uint8_t adcSensorSubframeLength = 1 + 1 + 1 + 1 +
+                                                    1; // length of id, type, vbatscale, vbatresdivval, vbatresdivmultipler, in bytes
+            sbufWriteU8(dst, adcSensorSubframeLength); // ADC sensor sub-frame length
 
-                sbufWriteU8(dst, voltageMeterADCtoIDMap[i]); // id of the sensor
-                sbufWriteU8(dst, VOLTAGE_SENSOR_TYPE_ADC_RESISTOR_DIVIDER); // indicate the type of sensor that the next part of the payload is for
+            sbufWriteU8(dst, voltageMeterADCtoIDMap[i]); // id of the sensor
+            sbufWriteU8(dst,
+                        VOLTAGE_SENSOR_TYPE_ADC_RESISTOR_DIVIDER); // indicate the type of sensor that the next part of the payload is for
 
-                sbufWriteU8(dst, voltageSensorADCConfig(i)->vbatscale);
-                sbufWriteU8(dst, voltageSensorADCConfig(i)->vbatresdivval);
-                sbufWriteU8(dst, voltageSensorADCConfig(i)->vbatresdivmultiplier);
-            }
-            // if we had any other voltage sensors, this is where we would output any needed configuration
+            sbufWriteU8(dst, voltageSensorADCConfig(i)->vbatscale);
+            sbufWriteU8(dst, voltageSensorADCConfig(i)->vbatresdivval);
+            sbufWriteU8(dst, voltageSensorADCConfig(i)->vbatresdivmultiplier);
         }
+        // if we had any other voltage sensors, this is where we would output any needed configuration
+    }
 
-        break;
+    break;
     case MSP_CURRENT_METER_CONFIG: {
         // the ADC and VIRTUAL sensors have the same configuration requirements, however this API reflects
         // that this situation may change and allows us to support configuration of any current sensor with
@@ -1012,93 +1018,91 @@ static bool mspProcessOutCommand(int16_t cmdMSP, sbuf_t *dst)
 
     switch (cmdMSP) {
     case MSP_STATUS_EX:
-    case MSP_STATUS:
-        {
-            boxBitmask_t flightModeFlags;
-            const int flagBits = packFlightModeFlags(&flightModeFlags);
+    case MSP_STATUS: {
+        boxBitmask_t flightModeFlags;
+        const int flagBits = packFlightModeFlags(&flightModeFlags);
 
-            sbufWriteU16(dst, getTaskDeltaTimeUs(TASK_PID));
+        sbufWriteU16(dst, getTaskDeltaTimeUs(TASK_PID));
 #ifdef USE_I2C
-            sbufWriteU16(dst, i2cGetErrorCounter());
+        sbufWriteU16(dst, i2cGetErrorCounter());
+#else
+        sbufWriteU16(dst, 0);
+#endif
+        sbufWriteU16(dst, sensors(SENSOR_ACC) | sensors(SENSOR_BARO) << 1 | sensors(SENSOR_MAG) << 2 | sensors(
+                         SENSOR_GPS) << 3 | sensors(SENSOR_RANGEFINDER) << 4 | sensors(SENSOR_GYRO) << 5);
+        sbufWriteData(dst, &flightModeFlags, 4);        // unconditional part of flags, first 32 bits
+        sbufWriteU8(dst, getCurrentPidProfileIndex());
+        sbufWriteU16(dst, constrain(getAverageSystemLoadPercent(), 0, LOAD_PERCENTAGE_ONE));
+        if (cmdMSP == MSP_STATUS_EX) {
+            sbufWriteU8(dst, PID_PROFILE_COUNT);
+            sbufWriteU8(dst, getCurrentControlRateProfileIndex());
+        } else {  // MSP_STATUS
+            sbufWriteU16(dst, 0); // gyro cycle time
+        }
+
+        // write flightModeFlags header. Lowest 4 bits contain number of bytes that follow
+        // header is emited even when all bits fit into 32 bits to allow future extension
+        int byteCount = (flagBits - 32 + 7) / 8;        // 32 already stored, round up
+        byteCount = constrain(byteCount, 0, 15);        // limit to 16 bytes (128 bits)
+        sbufWriteU8(dst, byteCount);
+        sbufWriteData(dst, ((uint8_t *)&flightModeFlags) + 4, byteCount);
+
+        // Write arming disable flags
+        // 1 byte, flag count
+        sbufWriteU8(dst, ARMING_DISABLE_FLAGS_COUNT);
+        // 4 bytes, flags
+        const uint32_t armingDisableFlags = getArmingDisableFlags();
+        sbufWriteU32(dst, armingDisableFlags);
+
+        // config state flags - bits to indicate the state of the configuration, reboot required, etc.
+        // other flags can be added as needed
+        sbufWriteU8(dst, (getRebootRequired() << 0));
+    }
+    break;
+
+    case MSP_RAW_IMU: {
+#if defined(USE_ACC)
+        // Hack scale due to choice of units for sensor data in multiwii
+
+        uint8_t scale;
+        if (acc.dev.acc_1G > 512 * 4) {
+            scale = 8;
+        } else if (acc.dev.acc_1G > 512 * 2) {
+            scale = 4;
+        } else if (acc.dev.acc_1G >= 512) {
+            scale = 2;
+        } else {
+            scale = 1;
+        }
+#endif
+
+        for (int i = 0; i < 3; i++) {
+#if defined(USE_ACC)
+            sbufWriteU16(dst, lrintf(acc.accADC[i] / scale));
 #else
             sbufWriteU16(dst, 0);
 #endif
-            sbufWriteU16(dst, sensors(SENSOR_ACC) | sensors(SENSOR_BARO) << 1 | sensors(SENSOR_MAG) << 2 | sensors(SENSOR_GPS) << 3 | sensors(SENSOR_RANGEFINDER) << 4 | sensors(SENSOR_GYRO) << 5);
-            sbufWriteData(dst, &flightModeFlags, 4);        // unconditional part of flags, first 32 bits
-            sbufWriteU8(dst, getCurrentPidProfileIndex());
-            sbufWriteU16(dst, constrain(getAverageSystemLoadPercent(), 0, LOAD_PERCENTAGE_ONE));
-            if (cmdMSP == MSP_STATUS_EX) {
-                sbufWriteU8(dst, PID_PROFILE_COUNT);
-                sbufWriteU8(dst, getCurrentControlRateProfileIndex());
-            } else {  // MSP_STATUS
-                sbufWriteU16(dst, 0); // gyro cycle time
-            }
-
-            // write flightModeFlags header. Lowest 4 bits contain number of bytes that follow
-            // header is emited even when all bits fit into 32 bits to allow future extension
-            int byteCount = (flagBits - 32 + 7) / 8;        // 32 already stored, round up
-            byteCount = constrain(byteCount, 0, 15);        // limit to 16 bytes (128 bits)
-            sbufWriteU8(dst, byteCount);
-            sbufWriteData(dst, ((uint8_t*)&flightModeFlags) + 4, byteCount);
-
-            // Write arming disable flags
-            // 1 byte, flag count
-            sbufWriteU8(dst, ARMING_DISABLE_FLAGS_COUNT);
-            // 4 bytes, flags
-            const uint32_t armingDisableFlags = getArmingDisableFlags();
-            sbufWriteU32(dst, armingDisableFlags);
-
-            // config state flags - bits to indicate the state of the configuration, reboot required, etc.
-            // other flags can be added as needed
-            sbufWriteU8(dst, (getRebootRequired() << 0));
         }
-        break;
-
-    case MSP_RAW_IMU:
-        {
-#if defined(USE_ACC)
-            // Hack scale due to choice of units for sensor data in multiwii
-
-            uint8_t scale;
-            if (acc.dev.acc_1G > 512 * 4) {
-                scale = 8;
-            } else if (acc.dev.acc_1G > 512 * 2) {
-                scale = 4;
-            } else if (acc.dev.acc_1G >= 512) {
-                scale = 2;
-            } else {
-                scale = 1;
-            }
-#endif
-
-            for (int i = 0; i < 3; i++) {
-#if defined(USE_ACC)
-                sbufWriteU16(dst, lrintf(acc.accADC[i] / scale));
-#else
-                sbufWriteU16(dst, 0);
-#endif
-            }
-            for (int i = 0; i < 3; i++) {
-                sbufWriteU16(dst, gyroRateDps(i));
-            }
-            for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
+            sbufWriteU16(dst, gyroRateDps(i));
+        }
+        for (int i = 0; i < 3; i++) {
 #if defined(USE_MAG)
-                sbufWriteU16(dst, lrintf(mag.magADC[i]));
+            sbufWriteU16(dst, lrintf(mag.magADC[i]));
 #else
-                sbufWriteU16(dst, 0);
+            sbufWriteU16(dst, 0);
 #endif
-            }
         }
-        break;
+    }
+    break;
 
-    case MSP_NAME:
-        {
-            const int nameLen = strlen(pilotConfig()->name);
-            for (int i = 0; i < nameLen; i++) {
-                sbufWriteU8(dst, pilotConfig()->name[i]);
-            }
+    case MSP_NAME: {
+        const int nameLen = strlen(pilotConfig()->name);
+        for (int i = 0; i < nameLen; i++) {
+            sbufWriteU8(dst, pilotConfig()->name[i]);
         }
-        break;
+    }
+    break;
 
 #ifdef USE_SERVOS
     case MSP_SERVO:
@@ -1193,45 +1197,42 @@ static bool mspProcessOutCommand(int16_t cmdMSP, sbuf_t *dst)
         }
         break;
 
-    case MSP2_MOTOR_OUTPUT_REORDERING:
-        {
-            sbufWriteU8(dst, MAX_SUPPORTED_MOTORS);
+    case MSP2_MOTOR_OUTPUT_REORDERING: {
+        sbufWriteU8(dst, MAX_SUPPORTED_MOTORS);
 
-            for (unsigned i = 0; i < MAX_SUPPORTED_MOTORS; i++) {
-                sbufWriteU8(dst, motorConfig()->dev.motorOutputReordering[i]);
-            }
+        for (unsigned i = 0; i < MAX_SUPPORTED_MOTORS; i++) {
+            sbufWriteU8(dst, motorConfig()->dev.motorOutputReordering[i]);
         }
-        break;
+    }
+    break;
 
 #ifdef USE_VTX_COMMON
-    case MSP2_GET_VTX_DEVICE_STATUS:
-        {
-            const vtxDevice_t *vtxDevice = vtxCommonDevice();
-            vtxCommonSerializeDeviceStatus(vtxDevice, dst);
-        }
-        break;
+    case MSP2_GET_VTX_DEVICE_STATUS: {
+        const vtxDevice_t *vtxDevice = vtxCommonDevice();
+        vtxCommonSerializeDeviceStatus(vtxDevice, dst);
+    }
+    break;
 #endif
 
 #ifdef USE_OSD
-    case MSP2_GET_OSD_WARNINGS:
-        {
-            bool isBlinking;
-            uint8_t displayAttr;
-            char warningsBuffer[OSD_FORMAT_MESSAGE_BUFFER_SIZE];
+    case MSP2_GET_OSD_WARNINGS: {
+        bool isBlinking;
+        uint8_t displayAttr;
+        char warningsBuffer[OSD_FORMAT_MESSAGE_BUFFER_SIZE];
 
-            renderOsdWarning(warningsBuffer, &isBlinking, &displayAttr);
-            const uint8_t warningsLen = strlen(warningsBuffer);
+        renderOsdWarning(warningsBuffer, &isBlinking, &displayAttr);
+        const uint8_t warningsLen = strlen(warningsBuffer);
 
-            if (isBlinking) {
-                displayAttr |= DISPLAYPORT_ATTR_BLINK;
-            }
-            sbufWriteU8(dst, displayAttr);  // see displayPortAttr_e
-            sbufWriteU8(dst, warningsLen);  // length byte followed by the actual characters
-            for (unsigned i = 0; i < warningsLen; i++) {
-                sbufWriteU8(dst, warningsBuffer[i]);
-            }
-            break;
+        if (isBlinking) {
+            displayAttr |= DISPLAYPORT_ATTR_BLINK;
         }
+        sbufWriteU8(dst, displayAttr);  // see displayPortAttr_e
+        sbufWriteU8(dst, warningsLen);  // length byte followed by the actual characters
+        for (unsigned i = 0; i < warningsLen; i++) {
+            sbufWriteU8(dst, warningsBuffer[i]);
+        }
+        break;
+    }
 #endif
 
     case MSP_RC:
@@ -1412,10 +1413,11 @@ static bool mspProcessOutCommand(int16_t cmdMSP, sbuf_t *dst)
         sbufWriteU8(dst, gpsSol.numSat);
         sbufWriteU32(dst, gpsSol.llh.lat);
         sbufWriteU32(dst, gpsSol.llh.lon);
-        sbufWriteU16(dst, (uint16_t)constrain(gpsSol.llh.altCm / 100, 0, UINT16_MAX)); // alt changed from 1m to 0.01m per lsb since MSP API 1.39 by RTH. To maintain backwards compatibility compensate to 1m per lsb in MSP again.
+        sbufWriteU16(dst, (uint16_t)constrain(gpsSol.llh.altCm / 100, 0,
+                                              UINT16_MAX)); // alt changed from 1m to 0.01m per lsb since MSP API 1.39 by RTH. To maintain backwards compatibility compensate to 1m per lsb in MSP again.
         sbufWriteU16(dst, gpsSol.groundSpeed);
         sbufWriteU16(dst, gpsSol.groundCourse);
-        // Added in API version 1.44    
+        // Added in API version 1.44
         sbufWriteU16(dst, gpsSol.hdop);
         break;
 
@@ -1427,12 +1429,12 @@ static bool mspProcessOutCommand(int16_t cmdMSP, sbuf_t *dst)
 
     case MSP_GPSSVINFO:
         sbufWriteU8(dst, GPS_numCh);
-       for (int i = 0; i < GPS_numCh; i++) {
-           sbufWriteU8(dst, GPS_svinfo_chn[i]);
-           sbufWriteU8(dst, GPS_svinfo_svid[i]);
-           sbufWriteU8(dst, GPS_svinfo_quality[i]);
-           sbufWriteU8(dst, GPS_svinfo_cno[i]);
-       }
+        for (int i = 0; i < GPS_numCh; i++) {
+            sbufWriteU8(dst, GPS_svinfo_chn[i]);
+            sbufWriteU8(dst, GPS_svinfo_svid[i]);
+            sbufWriteU8(dst, GPS_svinfo_quality[i]);
+            sbufWriteU8(dst, GPS_svinfo_cno[i]);
+        }
         break;
 
 #ifdef USE_GPS_RESCUE
@@ -1687,7 +1689,7 @@ static bool mspProcessOutCommand(int16_t cmdMSP, sbuf_t *dst)
             gyroAlignment = gyroDeviceConfig(1)->alignment;
             break;
         case GYRO_CONFIG_USE_GYRO_BOTH:
-            // for dual-gyro in "BOTH" mode we only read/write gyro 0
+        // for dual-gyro in "BOTH" mode we only read/write gyro 0
         default:
             gyroAlignment = gyroDeviceConfig(0)->alignment;
             break;
@@ -1928,42 +1930,41 @@ static bool mspProcessOutCommand(int16_t cmdMSP, sbuf_t *dst)
         break;
 
 #if defined(USE_VTX_COMMON)
-    case MSP_VTX_CONFIG:
-        {
-            const vtxDevice_t *vtxDevice = vtxCommonDevice();
-            unsigned vtxStatus = 0;
-            vtxDevType_e vtxType = VTXDEV_UNKNOWN;
-            uint8_t deviceIsReady = 0;
-            if (vtxDevice) {
-                vtxCommonGetStatus(vtxDevice, &vtxStatus);
-                vtxType = vtxCommonGetDeviceType(vtxDevice);
-                deviceIsReady = vtxCommonDeviceIsReady(vtxDevice) ? 1 : 0;
-            }
-            sbufWriteU8(dst, vtxType);
-            sbufWriteU8(dst, vtxSettingsConfig()->band);
-            sbufWriteU8(dst, vtxSettingsConfig()->channel);
-            sbufWriteU8(dst, vtxSettingsConfig()->power);
-            sbufWriteU8(dst, (vtxStatus & VTX_STATUS_PIT_MODE) ? 1 : 0);
-            sbufWriteU16(dst, vtxSettingsConfig()->freq);
-            sbufWriteU8(dst, deviceIsReady);
-            sbufWriteU8(dst, vtxSettingsConfig()->lowPowerDisarm);
+    case MSP_VTX_CONFIG: {
+        const vtxDevice_t *vtxDevice = vtxCommonDevice();
+        unsigned vtxStatus = 0;
+        vtxDevType_e vtxType = VTXDEV_UNKNOWN;
+        uint8_t deviceIsReady = 0;
+        if (vtxDevice) {
+            vtxCommonGetStatus(vtxDevice, &vtxStatus);
+            vtxType = vtxCommonGetDeviceType(vtxDevice);
+            deviceIsReady = vtxCommonDeviceIsReady(vtxDevice) ? 1 : 0;
+        }
+        sbufWriteU8(dst, vtxType);
+        sbufWriteU8(dst, vtxSettingsConfig()->band);
+        sbufWriteU8(dst, vtxSettingsConfig()->channel);
+        sbufWriteU8(dst, vtxSettingsConfig()->power);
+        sbufWriteU8(dst, (vtxStatus & VTX_STATUS_PIT_MODE) ? 1 : 0);
+        sbufWriteU16(dst, vtxSettingsConfig()->freq);
+        sbufWriteU8(dst, deviceIsReady);
+        sbufWriteU8(dst, vtxSettingsConfig()->lowPowerDisarm);
 
-            // API version 1.42
-            sbufWriteU16(dst, vtxSettingsConfig()->pitModeFreq);
+        // API version 1.42
+        sbufWriteU16(dst, vtxSettingsConfig()->pitModeFreq);
 #ifdef USE_VTX_TABLE
-            sbufWriteU8(dst, 1);   // vtxtable is available
-            sbufWriteU8(dst, vtxTableConfig()->bands);
-            sbufWriteU8(dst, vtxTableConfig()->channels);
-            sbufWriteU8(dst, vtxTableConfig()->powerLevels);
+        sbufWriteU8(dst, 1);   // vtxtable is available
+        sbufWriteU8(dst, vtxTableConfig()->bands);
+        sbufWriteU8(dst, vtxTableConfig()->channels);
+        sbufWriteU8(dst, vtxTableConfig()->powerLevels);
 #else
-            sbufWriteU8(dst, 0);
-            sbufWriteU8(dst, 0);
-            sbufWriteU8(dst, 0);
-            sbufWriteU8(dst, 0);
+        sbufWriteU8(dst, 0);
+        sbufWriteU8(dst, 0);
+        sbufWriteU8(dst, 0);
+        sbufWriteU8(dst, 0);
 #endif
 
-        }
-        break;
+    }
+    break;
 #endif
 
     case MSP_TX_INFO:
@@ -1981,21 +1982,20 @@ static bool mspProcessOutCommand(int16_t cmdMSP, sbuf_t *dst)
 
         break;
 #ifdef USE_RTC_TIME
-    case MSP_RTC:
-        {
-            dateTime_t dt;
-            if (rtcGetDateTime(&dt)) {
-                sbufWriteU16(dst, dt.year);
-                sbufWriteU8(dst, dt.month);
-                sbufWriteU8(dst, dt.day);
-                sbufWriteU8(dst, dt.hours);
-                sbufWriteU8(dst, dt.minutes);
-                sbufWriteU8(dst, dt.seconds);
-                sbufWriteU16(dst, dt.millis);
-            }
+    case MSP_RTC: {
+        dateTime_t dt;
+        if (rtcGetDateTime(&dt)) {
+            sbufWriteU16(dst, dt.year);
+            sbufWriteU8(dst, dt.month);
+            sbufWriteU8(dst, dt.day);
+            sbufWriteU8(dst, dt.hours);
+            sbufWriteU8(dst, dt.minutes);
+            sbufWriteU8(dst, dt.seconds);
+            sbufWriteU16(dst, dt.millis);
         }
+    }
 
-        break;
+    break;
 #endif
     default:
         unsupportedCommand = true;
@@ -2003,22 +2003,21 @@ static bool mspProcessOutCommand(int16_t cmdMSP, sbuf_t *dst)
     return !unsupportedCommand;
 }
 
-static mspResult_e mspFcProcessOutCommandWithArg(mspDescriptor_t srcDesc, int16_t cmdMSP, sbuf_t *src, sbuf_t *dst, mspPostProcessFnPtr *mspPostProcessFn)
+static mspResult_e mspFcProcessOutCommandWithArg(mspDescriptor_t srcDesc, int16_t cmdMSP, sbuf_t *src, sbuf_t *dst,
+                                                 mspPostProcessFnPtr *mspPostProcessFn)
 {
 
     switch (cmdMSP) {
-    case MSP_BOXNAMES:
-        {
-            const int page = sbufBytesRemaining(src) ? sbufReadU8(src) : 0;
-            serializeBoxReply(dst, page, &serializeBoxNameFn);
-        }
-        break;
-    case MSP_BOXIDS:
-        {
-            const int page = sbufBytesRemaining(src) ? sbufReadU8(src) : 0;
-            serializeBoxReply(dst, page, &serializeBoxPermanentIdFn);
-        }
-        break;
+    case MSP_BOXNAMES: {
+        const int page = sbufBytesRemaining(src) ? sbufReadU8(src) : 0;
+        serializeBoxReply(dst, page, &serializeBoxNameFn);
+    }
+    break;
+    case MSP_BOXIDS: {
+        const int page = sbufBytesRemaining(src) ? sbufReadU8(src) : 0;
+        serializeBoxReply(dst, page, &serializeBoxPermanentIdFn);
+    }
+    break;
     case MSP_REBOOT:
         if (sbufBytesRemaining(src)) {
             rebootMode = sbufReadU8(src);
@@ -2027,7 +2026,7 @@ static mspResult_e mspFcProcessOutCommandWithArg(mspDescriptor_t srcDesc, int16_
 #if !defined(USE_USB_MSC)
                 || rebootMode == MSP_REBOOT_MSC || rebootMode == MSP_REBOOT_MSC_UTC
 #endif
-                ) {
+               ) {
                 return MSP_RESULT_ERROR;
             }
         } else {
@@ -2053,135 +2052,130 @@ static mspResult_e mspFcProcessOutCommandWithArg(mspDescriptor_t srcDesc, int16_
         }
 
         break;
-    case MSP_MULTIPLE_MSP:
-        {
-            uint8_t maxMSPs = 0;
-            if (sbufBytesRemaining(src) == 0) {
-                return MSP_RESULT_ERROR;
-            }
-            int bytesRemaining = sbufBytesRemaining(dst) - 1; // need to keep one byte for checksum
-            mspPacket_t packetIn, packetOut;
-            sbufInit(&packetIn.buf, src->end, src->end);
-            uint8_t* resetInputPtr = src->ptr;
-            while (sbufBytesRemaining(src) && bytesRemaining > 0) {
-                uint8_t newMSP = sbufReadU8(src);
-                sbufInit(&packetOut.buf, dst->ptr, dst->end);
-                packetIn.cmd = newMSP;
-                mspFcProcessCommand(srcDesc, &packetIn, &packetOut, NULL);
-                uint8_t mspSize = sbufPtr(&packetOut.buf) - dst->ptr;
-                mspSize++; // need to add length information for each MSP
-                bytesRemaining -= mspSize;
-                if (bytesRemaining >= 0) {
-                    maxMSPs++;
-                }
-            }
-            src->ptr = resetInputPtr;
-            sbufInit(&packetOut.buf, dst->ptr, dst->end);
-            for (int i = 0; i < maxMSPs; i++) {
-                uint8_t* sizePtr = sbufPtr(&packetOut.buf);
-                sbufWriteU8(&packetOut.buf, 0); // dummy
-                packetIn.cmd = sbufReadU8(src);
-                mspFcProcessCommand(srcDesc, &packetIn, &packetOut, NULL);
-                (*sizePtr) = sbufPtr(&packetOut.buf) - (sizePtr + 1);
-            }
-            dst->ptr = packetOut.buf.ptr;
+    case MSP_MULTIPLE_MSP: {
+        uint8_t maxMSPs = 0;
+        if (sbufBytesRemaining(src) == 0) {
+            return MSP_RESULT_ERROR;
         }
-        break;
+        int bytesRemaining = sbufBytesRemaining(dst) - 1; // need to keep one byte for checksum
+        mspPacket_t packetIn, packetOut;
+        sbufInit(&packetIn.buf, src->end, src->end);
+        uint8_t *resetInputPtr = src->ptr;
+        while (sbufBytesRemaining(src) && bytesRemaining > 0) {
+            uint8_t newMSP = sbufReadU8(src);
+            sbufInit(&packetOut.buf, dst->ptr, dst->end);
+            packetIn.cmd = newMSP;
+            mspFcProcessCommand(srcDesc, &packetIn, &packetOut, NULL);
+            uint8_t mspSize = sbufPtr(&packetOut.buf) - dst->ptr;
+            mspSize++; // need to add length information for each MSP
+            bytesRemaining -= mspSize;
+            if (bytesRemaining >= 0) {
+                maxMSPs++;
+            }
+        }
+        src->ptr = resetInputPtr;
+        sbufInit(&packetOut.buf, dst->ptr, dst->end);
+        for (int i = 0; i < maxMSPs; i++) {
+            uint8_t *sizePtr = sbufPtr(&packetOut.buf);
+            sbufWriteU8(&packetOut.buf, 0); // dummy
+            packetIn.cmd = sbufReadU8(src);
+            mspFcProcessCommand(srcDesc, &packetIn, &packetOut, NULL);
+            (*sizePtr) = sbufPtr(&packetOut.buf) - (sizePtr + 1);
+        }
+        dst->ptr = packetOut.buf.ptr;
+    }
+    break;
 
 #ifdef USE_VTX_TABLE
-    case MSP_VTXTABLE_BAND:
-        {
-            const uint8_t band = sbufBytesRemaining(src) ? sbufReadU8(src) : 0;
-            if (band > 0 && band <= VTX_TABLE_MAX_BANDS) {
-                sbufWriteU8(dst, band);  // band number (same as request)
-                sbufWriteU8(dst, VTX_TABLE_BAND_NAME_LENGTH); // band name length
-                for (int i = 0; i < VTX_TABLE_BAND_NAME_LENGTH; i++) { // band name bytes
-                    sbufWriteU8(dst, vtxTableConfig()->bandNames[band - 1][i]);
-                }
-                sbufWriteU8(dst, vtxTableConfig()->bandLetters[band - 1]); // band letter
-                sbufWriteU8(dst, vtxTableConfig()->isFactoryBand[band - 1]); // CUSTOM = 0; FACTORY = 1
-                sbufWriteU8(dst, vtxTableConfig()->channels); // number of channel frequencies to follow
-                for (int i = 0; i < vtxTableConfig()->channels; i++) { // the frequency for each channel
-                    sbufWriteU16(dst, vtxTableConfig()->frequency[band - 1][i]);
-                }
-            } else {
-                return MSP_RESULT_ERROR;
+    case MSP_VTXTABLE_BAND: {
+        const uint8_t band = sbufBytesRemaining(src) ? sbufReadU8(src) : 0;
+        if (band > 0 && band <= VTX_TABLE_MAX_BANDS) {
+            sbufWriteU8(dst, band);  // band number (same as request)
+            sbufWriteU8(dst, VTX_TABLE_BAND_NAME_LENGTH); // band name length
+            for (int i = 0; i < VTX_TABLE_BAND_NAME_LENGTH; i++) { // band name bytes
+                sbufWriteU8(dst, vtxTableConfig()->bandNames[band - 1][i]);
             }
+            sbufWriteU8(dst, vtxTableConfig()->bandLetters[band - 1]); // band letter
+            sbufWriteU8(dst, vtxTableConfig()->isFactoryBand[band - 1]); // CUSTOM = 0; FACTORY = 1
+            sbufWriteU8(dst, vtxTableConfig()->channels); // number of channel frequencies to follow
+            for (int i = 0; i < vtxTableConfig()->channels; i++) { // the frequency for each channel
+                sbufWriteU16(dst, vtxTableConfig()->frequency[band - 1][i]);
+            }
+        } else {
+            return MSP_RESULT_ERROR;
         }
-        break;
+    }
+    break;
 
-    case MSP_VTXTABLE_POWERLEVEL:
-        {
-            const uint8_t powerLevel = sbufBytesRemaining(src) ? sbufReadU8(src) : 0;
-            if (powerLevel > 0 && powerLevel <= VTX_TABLE_MAX_POWER_LEVELS) {
-                sbufWriteU8(dst, powerLevel);  // powerLevel number (same as request)
-                sbufWriteU16(dst, vtxTableConfig()->powerValues[powerLevel - 1]);
-                sbufWriteU8(dst, VTX_TABLE_POWER_LABEL_LENGTH); // powerLevel label length
-                for (int i = 0; i < VTX_TABLE_POWER_LABEL_LENGTH; i++) { // powerlevel label bytes
-                    sbufWriteU8(dst, vtxTableConfig()->powerLabels[powerLevel - 1][i]);
-                }
-            } else {
-                return MSP_RESULT_ERROR;
+    case MSP_VTXTABLE_POWERLEVEL: {
+        const uint8_t powerLevel = sbufBytesRemaining(src) ? sbufReadU8(src) : 0;
+        if (powerLevel > 0 && powerLevel <= VTX_TABLE_MAX_POWER_LEVELS) {
+            sbufWriteU8(dst, powerLevel);  // powerLevel number (same as request)
+            sbufWriteU16(dst, vtxTableConfig()->powerValues[powerLevel - 1]);
+            sbufWriteU8(dst, VTX_TABLE_POWER_LABEL_LENGTH); // powerLevel label length
+            for (int i = 0; i < VTX_TABLE_POWER_LABEL_LENGTH; i++) { // powerlevel label bytes
+                sbufWriteU8(dst, vtxTableConfig()->powerLabels[powerLevel - 1][i]);
             }
+        } else {
+            return MSP_RESULT_ERROR;
         }
-        break;
+    }
+    break;
 #endif // USE_VTX_TABLE
 
 #ifdef USE_SIMPLIFIED_TUNING
     // Added in MSP API 1.44
-    case MSP_SIMPLIFIED_TUNING:
-        {
-            sbufWriteU8(dst, currentPidProfile->simplified_pids_mode);
-            sbufWriteU8(dst, currentPidProfile->simplified_master_multiplier);
-            sbufWriteU8(dst, currentPidProfile->simplified_roll_pitch_ratio);
-            sbufWriteU8(dst, currentPidProfile->simplified_i_gain);
-            sbufWriteU8(dst, currentPidProfile->simplified_pd_ratio);
-            sbufWriteU8(dst, currentPidProfile->simplified_pd_gain);
-            sbufWriteU8(dst, currentPidProfile->simplified_dmin_ratio);
-            sbufWriteU8(dst, currentPidProfile->simplified_ff_gain);
+    case MSP_SIMPLIFIED_TUNING: {
+        sbufWriteU8(dst, currentPidProfile->simplified_pids_mode);
+        sbufWriteU8(dst, currentPidProfile->simplified_master_multiplier);
+        sbufWriteU8(dst, currentPidProfile->simplified_roll_pitch_ratio);
+        sbufWriteU8(dst, currentPidProfile->simplified_i_gain);
+        sbufWriteU8(dst, currentPidProfile->simplified_pd_ratio);
+        sbufWriteU8(dst, currentPidProfile->simplified_pd_gain);
+        sbufWriteU8(dst, currentPidProfile->simplified_dmin_ratio);
+        sbufWriteU8(dst, currentPidProfile->simplified_ff_gain);
 
-            sbufWriteU8(dst, currentPidProfile->simplified_dterm_filter);
-            sbufWriteU8(dst, currentPidProfile->simplified_dterm_filter_multiplier);
+        sbufWriteU8(dst, currentPidProfile->simplified_dterm_filter);
+        sbufWriteU8(dst, currentPidProfile->simplified_dterm_filter_multiplier);
 
-            sbufWriteU8(dst, gyroConfig()->simplified_gyro_filter);
-            sbufWriteU8(dst, gyroConfig()->simplified_gyro_filter_multiplier);
-        }
-        break;
+        sbufWriteU8(dst, gyroConfig()->simplified_gyro_filter);
+        sbufWriteU8(dst, gyroConfig()->simplified_gyro_filter_multiplier);
+    }
+    break;
 #endif
 
-    case MSP_RESET_CONF:
-        {
+    case MSP_RESET_CONF: {
 #if defined(USE_CUSTOM_DEFAULTS)
-            defaultsType_e defaultsType = DEFAULTS_TYPE_CUSTOM;
+        defaultsType_e defaultsType = DEFAULTS_TYPE_CUSTOM;
 #endif
-            if (sbufBytesRemaining(src) >= 1) {
-                // Added in MSP API 1.42
+        if (sbufBytesRemaining(src) >= 1) {
+            // Added in MSP API 1.42
 #if defined(USE_CUSTOM_DEFAULTS)
-                defaultsType = sbufReadU8(src);
+            defaultsType = sbufReadU8(src);
 #else
-                sbufReadU8(src);
+            sbufReadU8(src);
 #endif
-            }
-
-            bool success = false;
-            if (!ARMING_FLAG(ARMED)) {
-#if defined(USE_CUSTOM_DEFAULTS)
-                success = resetEEPROM(defaultsType == DEFAULTS_TYPE_CUSTOM);
-#else
-                success = resetEEPROM(false);
-#endif
-
-                if (success && mspPostProcessFn) {
-                    rebootMode = MSP_REBOOT_FIRMWARE;
-                    *mspPostProcessFn = mspRebootFn;
-                }
-            }
-
-            // Added in API version 1.42
-            sbufWriteU8(dst, success);
         }
 
-        break;
+        bool success = false;
+        if (!ARMING_FLAG(ARMED)) {
+#if defined(USE_CUSTOM_DEFAULTS)
+            success = resetEEPROM(defaultsType == DEFAULTS_TYPE_CUSTOM);
+#else
+            success = resetEEPROM(false);
+#endif
+
+            if (success && mspPostProcessFn) {
+                rebootMode = MSP_REBOOT_FIRMWARE;
+                *mspPostProcessFn = mspRebootFn;
+            }
+        }
+
+        // Added in API version 1.42
+        sbufWriteU8(dst, success);
+    }
+
+    break;
     default:
         return MSP_RESULT_CMD_UNKNOWN;
     }
@@ -2242,8 +2236,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         uint8_t srcProfileIndex = sbufReadU8(src);
         if (value == 0) {
             pidCopyProfile(dstProfileIndex, srcProfileIndex);
-        }
-        else if (value == 1) {
+        } else if (value == 1) {
             copyControlRateProfile(dstProfileIndex, srcProfileIndex);
         }
         break;
@@ -2256,20 +2249,20 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
 
     case MSP_SET_RAW_RC:
 #ifdef USE_RX_MSP
-        {
-            uint8_t channelCount = dataSize / sizeof(uint16_t);
-            if (channelCount > MAX_SUPPORTED_RC_CHANNEL_COUNT) {
-                return MSP_RESULT_ERROR;
-            } else {
-                uint16_t frame[MAX_SUPPORTED_RC_CHANNEL_COUNT];
-                for (int i = 0; i < channelCount; i++) {
-                    frame[i] = sbufReadU16(src);
-                }
-                rxMspFrameReceive(frame, channelCount);
+    {
+        uint8_t channelCount = dataSize / sizeof(uint16_t);
+        if (channelCount > MAX_SUPPORTED_RC_CHANNEL_COUNT) {
+            return MSP_RESULT_ERROR;
+        } else {
+            uint16_t frame[MAX_SUPPORTED_RC_CHANNEL_COUNT];
+            for (int i = 0; i < channelCount; i++) {
+                frame[i] = sbufReadU16(src);
             }
+            rxMspFrameReceive(frame, channelCount);
         }
+    }
 #endif
-        break;
+    break;
 #if defined(USE_ACC)
     case MSP_SET_ACC_TRIM:
         accelerometerConfigMutable()->accelerometerTrims.values.pitch = sbufReadU16(src);
@@ -2281,7 +2274,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         armingConfigMutable()->auto_disarm_delay = sbufReadU8(src);
         sbufReadU8(src); // reserved
         if (sbufBytesRemaining(src)) {
-          imuConfigMutable()->small_angle = sbufReadU8(src);
+            imuConfigMutable()->small_angle = sbufReadU8(src);
         }
         break;
 
@@ -2434,7 +2427,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         break;
 
 #ifdef USE_GPS_RESCUE
-        case MSP_SET_GPS_RESCUE:
+    case MSP_SET_GPS_RESCUE:
         gpsRescueConfigMutable()->angle = sbufReadU16(src);
         gpsRescueConfigMutable()->initialAltitudeM = sbufReadU16(src);
         gpsRescueConfigMutable()->descentDistanceM = sbufReadU16(src);
@@ -2554,7 +2547,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
                 gyroDeviceConfigMutable(1)->alignment = gyroAlignment;
                 break;
             case GYRO_CONFIG_USE_GYRO_BOTH:
-                // For dual-gyro in "BOTH" mode we'll only update gyro 0
+            // For dual-gyro in "BOTH" mode we'll only update gyro 0
             default:
                 gyroDeviceConfigMutable(0)->alignment = gyroAlignment;
                 break;
@@ -2771,7 +2764,7 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
             sbufReadU8(src);
 #endif
         }
-        if(sbufBytesRemaining(src) >= 1) {
+        if (sbufBytesRemaining(src) >= 1) {
             // Added in MSP API 1.42
 #if defined(USE_ITERM_RELAX)
             currentPidProfile->iterm_relax_cutoff = sbufReadU8(src);
@@ -2891,212 +2884,208 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
 #endif
 
 #ifdef USE_VTX_COMMON
-    case MSP_SET_VTX_CONFIG:
-        {
-            vtxDevice_t *vtxDevice = vtxCommonDevice();
-            vtxDevType_e vtxType = VTXDEV_UNKNOWN;
-            if (vtxDevice) {
-                vtxType = vtxCommonGetDeviceType(vtxDevice);
-            }
-            uint16_t newFrequency = sbufReadU16(src);
-            if (newFrequency <= VTXCOMMON_MSP_BANDCHAN_CHKVAL) {  // Value is band and channel
-                const uint8_t newBand = (newFrequency / 8) + 1;
-                const uint8_t newChannel = (newFrequency % 8) + 1;
-                vtxSettingsConfigMutable()->band = newBand;
-                vtxSettingsConfigMutable()->channel = newChannel;
-                vtxSettingsConfigMutable()->freq = vtxCommonLookupFrequency(vtxDevice, newBand, newChannel);
-            } else if (newFrequency <= VTX_SETTINGS_MAX_FREQUENCY_MHZ) { // Value is frequency in MHz
-                vtxSettingsConfigMutable()->band = 0;
-                vtxSettingsConfigMutable()->freq = newFrequency;
-            }
+    case MSP_SET_VTX_CONFIG: {
+        vtxDevice_t *vtxDevice = vtxCommonDevice();
+        vtxDevType_e vtxType = VTXDEV_UNKNOWN;
+        if (vtxDevice) {
+            vtxType = vtxCommonGetDeviceType(vtxDevice);
+        }
+        uint16_t newFrequency = sbufReadU16(src);
+        if (newFrequency <= VTXCOMMON_MSP_BANDCHAN_CHKVAL) {  // Value is band and channel
+            const uint8_t newBand = (newFrequency / 8) + 1;
+            const uint8_t newChannel = (newFrequency % 8) + 1;
+            vtxSettingsConfigMutable()->band = newBand;
+            vtxSettingsConfigMutable()->channel = newChannel;
+            vtxSettingsConfigMutable()->freq = vtxCommonLookupFrequency(vtxDevice, newBand, newChannel);
+        } else if (newFrequency <= VTX_SETTINGS_MAX_FREQUENCY_MHZ) { // Value is frequency in MHz
+            vtxSettingsConfigMutable()->band = 0;
+            vtxSettingsConfigMutable()->freq = newFrequency;
+        }
 
-            if (sbufBytesRemaining(src) >= 2) {
-                vtxSettingsConfigMutable()->power = sbufReadU8(src);
-                const uint8_t newPitmode = sbufReadU8(src);
-                if (vtxType != VTXDEV_UNKNOWN) {
-                    // Delegate pitmode to vtx directly
-                    unsigned vtxCurrentStatus;
-                    vtxCommonGetStatus(vtxDevice, &vtxCurrentStatus);
-                    if ((bool)(vtxCurrentStatus & VTX_STATUS_PIT_MODE) != (bool)newPitmode) {
-                        vtxCommonSetPitMode(vtxDevice, newPitmode);
-                    }
+        if (sbufBytesRemaining(src) >= 2) {
+            vtxSettingsConfigMutable()->power = sbufReadU8(src);
+            const uint8_t newPitmode = sbufReadU8(src);
+            if (vtxType != VTXDEV_UNKNOWN) {
+                // Delegate pitmode to vtx directly
+                unsigned vtxCurrentStatus;
+                vtxCommonGetStatus(vtxDevice, &vtxCurrentStatus);
+                if ((bool)(vtxCurrentStatus & VTX_STATUS_PIT_MODE) != (bool)newPitmode) {
+                    vtxCommonSetPitMode(vtxDevice, newPitmode);
                 }
             }
+        }
 
-            if (sbufBytesRemaining(src)) {
-                    vtxSettingsConfigMutable()->lowPowerDisarm = sbufReadU8(src);
+        if (sbufBytesRemaining(src)) {
+            vtxSettingsConfigMutable()->lowPowerDisarm = sbufReadU8(src);
+        }
+
+        // API version 1.42 - this parameter kept separate since clients may already be supplying
+        if (sbufBytesRemaining(src) >= 2) {
+            vtxSettingsConfigMutable()->pitModeFreq = sbufReadU16(src);
+        }
+
+        // API version 1.42 - extensions for non-encoded versions of the band, channel or frequency
+        if (sbufBytesRemaining(src) >= 4) {
+            // Added standalone values for band, channel and frequency to move
+            // away from the flawed encoded combined method originally implemented.
+            uint8_t newBand = sbufReadU8(src);
+            const uint8_t newChannel = sbufReadU8(src);
+            uint16_t newFreq = sbufReadU16(src);
+            if (newBand) {
+                newFreq = vtxCommonLookupFrequency(vtxDevice, newBand, newChannel);
             }
+            vtxSettingsConfigMutable()->band = newBand;
+            vtxSettingsConfigMutable()->channel = newChannel;
+            vtxSettingsConfigMutable()->freq = newFreq;
+        }
 
-            // API version 1.42 - this parameter kept separate since clients may already be supplying
-            if (sbufBytesRemaining(src) >= 2) {
-                vtxSettingsConfigMutable()->pitModeFreq = sbufReadU16(src);
+        // API version 1.42 - extensions for vtxtable support
+        if (sbufBytesRemaining(src) >= 4) {
+#ifdef USE_VTX_TABLE
+            const uint8_t newBandCount = sbufReadU8(src);
+            const uint8_t newChannelCount = sbufReadU8(src);
+            const uint8_t newPowerCount = sbufReadU8(src);
+
+            if ((newBandCount > VTX_TABLE_MAX_BANDS) ||
+                (newChannelCount > VTX_TABLE_MAX_CHANNELS) ||
+                (newPowerCount > VTX_TABLE_MAX_POWER_LEVELS)) {
+                return MSP_RESULT_ERROR;
             }
+            vtxTableConfigMutable()->bands = newBandCount;
+            vtxTableConfigMutable()->channels = newChannelCount;
+            vtxTableConfigMutable()->powerLevels = newPowerCount;
 
-            // API version 1.42 - extensions for non-encoded versions of the band, channel or frequency
-            if (sbufBytesRemaining(src) >= 4) {
-                // Added standalone values for band, channel and frequency to move
-                // away from the flawed encoded combined method originally implemented.
-                uint8_t newBand = sbufReadU8(src);
-                const uint8_t newChannel = sbufReadU8(src);
-                uint16_t newFreq = sbufReadU16(src);
-                if (newBand) {
-                    newFreq = vtxCommonLookupFrequency(vtxDevice, newBand, newChannel);
+            // boolean to determine whether the vtxtable should be cleared in
+            // expectation that the detailed band/channel and power level messages
+            // will follow to repopulate the tables
+            if (sbufReadU8(src)) {
+                for (int i = 0; i < VTX_TABLE_MAX_BANDS; i++) {
+                    vtxTableConfigClearBand(vtxTableConfigMutable(), i);
+                    vtxTableConfigClearChannels(vtxTableConfigMutable(), i, 0);
                 }
-                vtxSettingsConfigMutable()->band = newBand;
-                vtxSettingsConfigMutable()->channel = newChannel;
+                vtxTableConfigClearPowerLabels(vtxTableConfigMutable(), 0);
+                vtxTableConfigClearPowerValues(vtxTableConfigMutable(), 0);
+            }
+#else
+            sbufReadU8(src);
+            sbufReadU8(src);
+            sbufReadU8(src);
+            sbufReadU8(src);
+#endif
+        }
+    }
+    break;
+#endif
+
+#ifdef USE_VTX_TABLE
+    case MSP_SET_VTXTABLE_BAND: {
+        char bandName[VTX_TABLE_BAND_NAME_LENGTH + 1];
+        memset(bandName, 0, VTX_TABLE_BAND_NAME_LENGTH + 1);
+        uint16_t frequencies[VTX_TABLE_MAX_CHANNELS];
+        const uint8_t band = sbufReadU8(src);
+        const uint8_t bandNameLength = sbufReadU8(src);
+        for (int i = 0; i < bandNameLength; i++) {
+            const char nameChar = sbufReadU8(src);
+            if (i < VTX_TABLE_BAND_NAME_LENGTH) {
+                bandName[i] = toupper(nameChar);
+            }
+        }
+        const char bandLetter = toupper(sbufReadU8(src));
+        const bool isFactoryBand = (bool)sbufReadU8(src);
+        const uint8_t channelCount = sbufReadU8(src);
+        for (int i = 0; i < channelCount; i++) {
+            const uint16_t frequency = sbufReadU16(src);
+            if (i < vtxTableConfig()->channels) {
+                frequencies[i] = frequency;
+            }
+        }
+
+        if (band > 0 && band <= vtxTableConfig()->bands) {
+            vtxTableStrncpyWithPad(vtxTableConfigMutable()->bandNames[band - 1], bandName, VTX_TABLE_BAND_NAME_LENGTH);
+            vtxTableConfigMutable()->bandLetters[band - 1] = bandLetter;
+            vtxTableConfigMutable()->isFactoryBand[band - 1] = isFactoryBand;
+            for (int i = 0; i < vtxTableConfig()->channels; i++) {
+                vtxTableConfigMutable()->frequency[band - 1][i] = frequencies[i];
+            }
+            // If this is the currently selected band then reset the frequency
+            if (band == vtxSettingsConfig()->band) {
+                uint16_t newFreq = 0;
+                if (vtxSettingsConfig()->channel > 0 && vtxSettingsConfig()->channel <= vtxTableConfig()->channels) {
+                    newFreq = frequencies[vtxSettingsConfig()->channel - 1];
+                }
                 vtxSettingsConfigMutable()->freq = newFreq;
             }
+            vtxTableNeedsInit = true;  // reinintialize vtxtable after eeprom write
+        } else {
+            return MSP_RESULT_ERROR;
+        }
+    }
+    break;
 
-            // API version 1.42 - extensions for vtxtable support
-            if (sbufBytesRemaining(src) >= 4) {
-#ifdef USE_VTX_TABLE
-                const uint8_t newBandCount = sbufReadU8(src);
-                const uint8_t newChannelCount = sbufReadU8(src);
-                const uint8_t newPowerCount = sbufReadU8(src);
-
-                if ((newBandCount > VTX_TABLE_MAX_BANDS) ||
-                    (newChannelCount > VTX_TABLE_MAX_CHANNELS) ||
-                    (newPowerCount > VTX_TABLE_MAX_POWER_LEVELS)) {
-                    return MSP_RESULT_ERROR;
-                }
-                vtxTableConfigMutable()->bands = newBandCount;
-                vtxTableConfigMutable()->channels = newChannelCount;
-                vtxTableConfigMutable()->powerLevels = newPowerCount;
-
-                // boolean to determine whether the vtxtable should be cleared in
-                // expectation that the detailed band/channel and power level messages
-                // will follow to repopulate the tables
-                if (sbufReadU8(src)) {
-                    for (int i = 0; i < VTX_TABLE_MAX_BANDS; i++) {
-                        vtxTableConfigClearBand(vtxTableConfigMutable(), i);
-                        vtxTableConfigClearChannels(vtxTableConfigMutable(), i, 0);
-                    }
-                    vtxTableConfigClearPowerLabels(vtxTableConfigMutable(), 0);
-                    vtxTableConfigClearPowerValues(vtxTableConfigMutable(), 0);
-                }
-#else
-                sbufReadU8(src);
-                sbufReadU8(src);
-                sbufReadU8(src);
-                sbufReadU8(src);
-#endif
+    case MSP_SET_VTXTABLE_POWERLEVEL: {
+        char powerLevelLabel[VTX_TABLE_POWER_LABEL_LENGTH + 1];
+        memset(powerLevelLabel, 0, VTX_TABLE_POWER_LABEL_LENGTH + 1);
+        const uint8_t powerLevel = sbufReadU8(src);
+        const uint16_t powerValue = sbufReadU16(src);
+        const uint8_t powerLevelLabelLength = sbufReadU8(src);
+        for (int i = 0; i < powerLevelLabelLength; i++) {
+            const char labelChar = sbufReadU8(src);
+            if (i < VTX_TABLE_POWER_LABEL_LENGTH) {
+                powerLevelLabel[i] = toupper(labelChar);
             }
         }
-        break;
+
+        if (powerLevel > 0 && powerLevel <= vtxTableConfig()->powerLevels) {
+            vtxTableConfigMutable()->powerValues[powerLevel - 1] = powerValue;
+            vtxTableStrncpyWithPad(vtxTableConfigMutable()->powerLabels[powerLevel - 1], powerLevelLabel,
+                                   VTX_TABLE_POWER_LABEL_LENGTH);
+            vtxTableNeedsInit = true;  // reinintialize vtxtable after eeprom write
+        } else {
+            return MSP_RESULT_ERROR;
+        }
+    }
+    break;
 #endif
 
-#ifdef USE_VTX_TABLE
-    case MSP_SET_VTXTABLE_BAND:
-        {
-            char bandName[VTX_TABLE_BAND_NAME_LENGTH + 1];
-            memset(bandName, 0, VTX_TABLE_BAND_NAME_LENGTH + 1);
-            uint16_t frequencies[VTX_TABLE_MAX_CHANNELS];
-            const uint8_t band = sbufReadU8(src);
-            const uint8_t bandNameLength = sbufReadU8(src);
-            for (int i = 0; i < bandNameLength; i++) {
-                const char nameChar = sbufReadU8(src);
-                if (i < VTX_TABLE_BAND_NAME_LENGTH) {
-                    bandName[i] = toupper(nameChar);
-                }
-            }
-            const char bandLetter = toupper(sbufReadU8(src));
-            const bool isFactoryBand = (bool)sbufReadU8(src);
-            const uint8_t channelCount = sbufReadU8(src);
-            for (int i = 0; i < channelCount; i++) {
-                const uint16_t frequency = sbufReadU16(src);
-                if (i < vtxTableConfig()->channels) {
-                    frequencies[i] = frequency;
-                }
+    case MSP2_SET_MOTOR_OUTPUT_REORDERING: {
+        const uint8_t arraySize = sbufReadU8(src);
+
+        for (unsigned i = 0; i < MAX_SUPPORTED_MOTORS; i++) {
+            uint8_t value = i;
+
+            if (i < arraySize) {
+                value = sbufReadU8(src);
             }
 
-            if (band > 0 && band <= vtxTableConfig()->bands) {
-                vtxTableStrncpyWithPad(vtxTableConfigMutable()->bandNames[band - 1], bandName, VTX_TABLE_BAND_NAME_LENGTH);
-                vtxTableConfigMutable()->bandLetters[band - 1] = bandLetter;
-                vtxTableConfigMutable()->isFactoryBand[band - 1] = isFactoryBand;
-                for (int i = 0; i < vtxTableConfig()->channels; i++) {
-                    vtxTableConfigMutable()->frequency[band - 1][i] = frequencies[i];
-                }
-                // If this is the currently selected band then reset the frequency
-                if (band == vtxSettingsConfig()->band) {
-                    uint16_t newFreq = 0;
-                    if (vtxSettingsConfig()->channel > 0 && vtxSettingsConfig()->channel <= vtxTableConfig()->channels) {
-                        newFreq = frequencies[vtxSettingsConfig()->channel - 1];
-                    }
-                    vtxSettingsConfigMutable()->freq = newFreq;
-                }
-                vtxTableNeedsInit = true;  // reinintialize vtxtable after eeprom write
-            } else {
-                return MSP_RESULT_ERROR;
-            }
+            motorConfigMutable()->dev.motorOutputReordering[i] = value;
         }
-        break;
-
-    case MSP_SET_VTXTABLE_POWERLEVEL:
-        {
-            char powerLevelLabel[VTX_TABLE_POWER_LABEL_LENGTH + 1];
-            memset(powerLevelLabel, 0, VTX_TABLE_POWER_LABEL_LENGTH + 1);
-            const uint8_t powerLevel = sbufReadU8(src);
-            const uint16_t powerValue = sbufReadU16(src);
-            const uint8_t powerLevelLabelLength = sbufReadU8(src);
-            for (int i = 0; i < powerLevelLabelLength; i++) {
-                const char labelChar = sbufReadU8(src);
-                if (i < VTX_TABLE_POWER_LABEL_LENGTH) {
-                    powerLevelLabel[i] = toupper(labelChar);
-                }
-            }
-
-            if (powerLevel > 0 && powerLevel <= vtxTableConfig()->powerLevels) {
-                vtxTableConfigMutable()->powerValues[powerLevel - 1] = powerValue;
-                vtxTableStrncpyWithPad(vtxTableConfigMutable()->powerLabels[powerLevel - 1], powerLevelLabel, VTX_TABLE_POWER_LABEL_LENGTH);
-                vtxTableNeedsInit = true;  // reinintialize vtxtable after eeprom write
-            } else {
-                return MSP_RESULT_ERROR;
-            }
-        }
-        break;
-#endif
-
-    case MSP2_SET_MOTOR_OUTPUT_REORDERING:
-        {
-            const uint8_t arraySize = sbufReadU8(src);
-
-            for (unsigned i = 0; i < MAX_SUPPORTED_MOTORS; i++) {
-                uint8_t value = i;
-
-                if (i < arraySize) {
-                    value = sbufReadU8(src);
-                }
-
-                motorConfigMutable()->dev.motorOutputReordering[i] = value;
-            }
-        }
-        break;
+    }
+    break;
 
 #ifdef USE_DSHOT
-    case MSP2_SEND_DSHOT_COMMAND:
-        {
-            const bool armed = ARMING_FLAG(ARMED);
+    case MSP2_SEND_DSHOT_COMMAND: {
+        const bool armed = ARMING_FLAG(ARMED);
 
-            if (!armed) {
-                const uint8_t commandType = sbufReadU8(src);
-                const uint8_t motorIndex = sbufReadU8(src);
-                const uint8_t commandCount = sbufReadU8(src);
+        if (!armed) {
+            const uint8_t commandType = sbufReadU8(src);
+            const uint8_t motorIndex = sbufReadU8(src);
+            const uint8_t commandCount = sbufReadU8(src);
 
-                if (DSHOT_CMD_TYPE_BLOCKING == commandType) {
-                    motorDisable();
-                }
+            if (DSHOT_CMD_TYPE_BLOCKING == commandType) {
+                motorDisable();
+            }
 
-                for (uint8_t i = 0; i < commandCount; i++) {
-                    const uint8_t commandIndex = sbufReadU8(src);
-                    dshotCommandWrite(motorIndex, getMotorCount(), commandIndex, commandType);
-                }
+            for (uint8_t i = 0; i < commandCount; i++) {
+                const uint8_t commandIndex = sbufReadU8(src);
+                dshotCommandWrite(motorIndex, getMotorCount(), commandIndex, commandType);
+            }
 
-                if (DSHOT_CMD_TYPE_BLOCKING == commandType) {
-                    motorEnable();
-                }
+            if (DSHOT_CMD_TYPE_BLOCKING == commandType) {
+                motorEnable();
             }
         }
-        break;
+    }
+    break;
 #endif
 
 #ifdef USE_SIMPLIFIED_TUNING
@@ -3123,48 +3112,46 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
 #endif
 
 #ifdef USE_CAMERA_CONTROL
-    case MSP_CAMERA_CONTROL:
-        {
-            if (ARMING_FLAG(ARMED)) {
-                return MSP_RESULT_ERROR;
-            }
-
-            const uint8_t key = sbufReadU8(src);
-            cameraControlKeyPress(key, 0);
+    case MSP_CAMERA_CONTROL: {
+        if (ARMING_FLAG(ARMED)) {
+            return MSP_RESULT_ERROR;
         }
-        break;
+
+        const uint8_t key = sbufReadU8(src);
+        cameraControlKeyPress(key, 0);
+    }
+    break;
 #endif
 
-    case MSP_SET_ARMING_DISABLED:
-        {
-            const uint8_t command = sbufReadU8(src);
-            uint8_t disableRunawayTakeoff = 0;
+    case MSP_SET_ARMING_DISABLED: {
+        const uint8_t command = sbufReadU8(src);
+        uint8_t disableRunawayTakeoff = 0;
 #ifndef USE_RUNAWAY_TAKEOFF
-            UNUSED(disableRunawayTakeoff);
+        UNUSED(disableRunawayTakeoff);
 #endif
-            if (sbufBytesRemaining(src)) {
-                disableRunawayTakeoff = sbufReadU8(src);
+        if (sbufBytesRemaining(src)) {
+            disableRunawayTakeoff = sbufReadU8(src);
+        }
+        if (command) {
+            mspArmingDisableByDescriptor(srcDesc);
+            setArmingDisabled(ARMING_DISABLED_MSP);
+            if (ARMING_FLAG(ARMED)) {
+                disarm(DISARM_REASON_ARMING_DISABLED);
             }
-            if (command) {
-                mspArmingDisableByDescriptor(srcDesc);
-                setArmingDisabled(ARMING_DISABLED_MSP);
-                if (ARMING_FLAG(ARMED)) {
-                    disarm(DISARM_REASON_ARMING_DISABLED);
-                }
 #ifdef USE_RUNAWAY_TAKEOFF
-                runawayTakeoffTemporaryDisable(false);
+            runawayTakeoffTemporaryDisable(false);
 #endif
-            } else {
-                mspArmingEnableByDescriptor(srcDesc);
-                if (mspIsMspArmingEnabled()) {
-                    unsetArmingDisabled(ARMING_DISABLED_MSP);
+        } else {
+            mspArmingEnableByDescriptor(srcDesc);
+            if (mspIsMspArmingEnabled()) {
+                unsetArmingDisabled(ARMING_DISABLED_MSP);
 #ifdef USE_RUNAWAY_TAKEOFF
-                    runawayTakeoffTemporaryDisable(disableRunawayTakeoff);
+                runawayTakeoffTemporaryDisable(disableRunawayTakeoff);
 #endif
-                }
             }
         }
-        break;
+    }
+    break;
 
 #ifdef USE_FLASHFS
     case MSP_DATAFLASH_ERASE:
@@ -3183,7 +3170,8 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         gpsSol.numSat = sbufReadU8(src);
         gpsSol.llh.lat = sbufReadU32(src);
         gpsSol.llh.lon = sbufReadU32(src);
-        gpsSol.llh.altCm = sbufReadU16(src) * 100; // alt changed from 1m to 0.01m per lsb since MSP API 1.39 by RTH. Received MSP altitudes in 1m per lsb have to upscaled.
+        gpsSol.llh.altCm = sbufReadU16(src) *
+                           100; // alt changed from 1m to 0.01m per lsb since MSP API 1.39 by RTH. Received MSP altitudes in 1m per lsb have to upscaled.
         gpsSol.groundSpeed = sbufReadU16(src);
         GPS_update |= GPS_MSP_UPDATE;        // MSP data signalisation to GPS functions
         break;
@@ -3283,7 +3271,8 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
             // the 10.6 configurator where it was possible to submit an invalid out-of-range value. We might be
             // able to remove the constraint at some point in the future once the affected versions are deprecated
             // enough that the risk is low.
-            configRebootUpdateCheckU8(&rxConfigMutable()->rc_smoothing_auto_factor, constrain(sbufReadU8(src), RC_SMOOTHING_AUTO_FACTOR_MIN, RC_SMOOTHING_AUTO_FACTOR_MAX));
+            configRebootUpdateCheckU8(&rxConfigMutable()->rc_smoothing_auto_factor, constrain(sbufReadU8(src),
+                                      RC_SMOOTHING_AUTO_FACTOR_MIN, RC_SMOOTHING_AUTO_FACTOR_MAX));
 #else
             sbufReadU8(src);
 #endif
@@ -3319,34 +3308,33 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         }
         break;
 
-    case MSP_SET_CF_SERIAL_CONFIG:
-        {
-            uint8_t portConfigSize = sizeof(uint8_t) + sizeof(uint16_t) + (sizeof(uint8_t) * 4);
+    case MSP_SET_CF_SERIAL_CONFIG: {
+        uint8_t portConfigSize = sizeof(uint8_t) + sizeof(uint16_t) + (sizeof(uint8_t) * 4);
 
-            if (dataSize % portConfigSize != 0) {
+        if (dataSize % portConfigSize != 0) {
+            return MSP_RESULT_ERROR;
+        }
+
+        uint8_t remainingPortsInPacket = dataSize / portConfigSize;
+
+        while (remainingPortsInPacket--) {
+            uint8_t identifier = sbufReadU8(src);
+
+            serialPortConfig_t *portConfig = serialFindPortConfigurationMutable(identifier);
+
+            if (!portConfig) {
                 return MSP_RESULT_ERROR;
             }
 
-            uint8_t remainingPortsInPacket = dataSize / portConfigSize;
-
-            while (remainingPortsInPacket--) {
-                uint8_t identifier = sbufReadU8(src);
-
-                serialPortConfig_t *portConfig = serialFindPortConfigurationMutable(identifier);
-
-                if (!portConfig) {
-                    return MSP_RESULT_ERROR;
-                }
-
-                portConfig->identifier = identifier;
-                portConfig->functionMask = sbufReadU16(src);
-                portConfig->msp_baudrateIndex = sbufReadU8(src);
-                portConfig->gps_baudrateIndex = sbufReadU8(src);
-                portConfig->telemetry_baudrateIndex = sbufReadU8(src);
-                portConfig->blackbox_baudrateIndex = sbufReadU8(src);
-            }
+            portConfig->identifier = identifier;
+            portConfig->functionMask = sbufReadU16(src);
+            portConfig->msp_baudrateIndex = sbufReadU8(src);
+            portConfig->gps_baudrateIndex = sbufReadU8(src);
+            portConfig->telemetry_baudrateIndex = sbufReadU8(src);
+            portConfig->blackbox_baudrateIndex = sbufReadU8(src);
         }
-        break;
+    }
+    break;
     case MSP2_COMMON_SET_SERIAL_CONFIG: {
         if (dataSize < 1) {
             return MSP_RESULT_ERROR;
@@ -3392,39 +3380,37 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
 #endif
 
 #ifdef USE_LED_STRIP
-    case MSP_SET_LED_STRIP_CONFIG:
-        {
-            i = sbufReadU8(src);
-            if (i >= LED_MAX_STRIP_LENGTH || dataSize != (1 + 4)) {
-                return MSP_RESULT_ERROR;
-            }
+    case MSP_SET_LED_STRIP_CONFIG: {
+        i = sbufReadU8(src);
+        if (i >= LED_MAX_STRIP_LENGTH || dataSize != (1 + 4)) {
+            return MSP_RESULT_ERROR;
+        }
 #ifdef USE_LED_STRIP_STATUS_MODE
-            ledConfig_t *ledConfig = &ledStripStatusModeConfigMutable()->ledConfigs[i];
-            *ledConfig = sbufReadU32(src);
-            reevaluateLedConfig();
+        ledConfig_t *ledConfig = &ledStripStatusModeConfigMutable()->ledConfigs[i];
+        *ledConfig = sbufReadU32(src);
+        reevaluateLedConfig();
 #else
-            sbufReadU32(src);
+        sbufReadU32(src);
 #endif
-            // API 1.41 - selected ledstrip_profile
-            if (sbufBytesRemaining(src) >= 1) {
-                ledStripConfigMutable()->ledstrip_profile = sbufReadU8(src);
-            }
+        // API 1.41 - selected ledstrip_profile
+        if (sbufBytesRemaining(src) >= 1) {
+            ledStripConfigMutable()->ledstrip_profile = sbufReadU8(src);
         }
-        break;
+    }
+    break;
 #endif
 
 #ifdef USE_LED_STRIP_STATUS_MODE
-    case MSP_SET_LED_STRIP_MODECOLOR:
-        {
-            ledModeIndex_e modeIdx = sbufReadU8(src);
-            int funIdx = sbufReadU8(src);
-            int color = sbufReadU8(src);
+    case MSP_SET_LED_STRIP_MODECOLOR: {
+        ledModeIndex_e modeIdx = sbufReadU8(src);
+        int funIdx = sbufReadU8(src);
+        int color = sbufReadU8(src);
 
-            if (!setModeColor(modeIdx, funIdx, color)) {
-                return MSP_RESULT_ERROR;
-            }
+        if (!setModeColor(modeIdx, funIdx, color)) {
+            return MSP_RESULT_ERROR;
         }
-        break;
+    }
+    break;
 #endif
 
     case MSP_SET_NAME:
@@ -3438,18 +3424,17 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
         break;
 
 #ifdef USE_RTC_TIME
-    case MSP_SET_RTC:
-        {
-            // Use seconds and milliseconds to make senders
-            // easier to implement. Generating a 64 bit value
-            // might not be trivial in some platforms.
-            int32_t secs = (int32_t)sbufReadU32(src);
-            uint16_t millis = sbufReadU16(src);
-            rtcTime_t t = rtcTimeMake(secs, millis);
-            rtcSet(&t);
-        }
+    case MSP_SET_RTC: {
+        // Use seconds and milliseconds to make senders
+        // easier to implement. Generating a 64 bit value
+        // might not be trivial in some platforms.
+        int32_t secs = (int32_t)sbufReadU32(src);
+        uint16_t millis = sbufReadU16(src);
+        rtcTime_t t = rtcTimeMake(secs, millis);
+        rtcSet(&t);
+    }
 
-        break;
+    break;
 #endif
 
     case MSP_SET_TX_INFO:
@@ -3512,7 +3497,8 @@ static mspResult_e mspProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, 
     return MSP_RESULT_ACK;
 }
 
-static mspResult_e mspCommonProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, sbuf_t *src, mspPostProcessFnPtr *mspPostProcessFn)
+static mspResult_e mspCommonProcessInCommand(mspDescriptor_t srcDesc, int16_t cmdMSP, sbuf_t *src,
+                                             mspPostProcessFnPtr *mspPostProcessFn)
 {
     UNUSED(mspPostProcessFn);
     const unsigned int dataSize = sbufBytesRemaining(src);
@@ -3587,20 +3573,20 @@ static mspResult_e mspCommonProcessInCommand(mspDescriptor_t srcDesc, int16_t cm
         int id = sbufReadU8(src);
 
         switch (id) {
-            case CURRENT_METER_ID_BATTERY_1:
-                currentSensorADCConfigMutable()->scale = sbufReadU16(src);
-                currentSensorADCConfigMutable()->offset = sbufReadU16(src);
-                break;
+        case CURRENT_METER_ID_BATTERY_1:
+            currentSensorADCConfigMutable()->scale = sbufReadU16(src);
+            currentSensorADCConfigMutable()->offset = sbufReadU16(src);
+            break;
 #ifdef USE_VIRTUAL_CURRENT_METER
-            case CURRENT_METER_ID_VIRTUAL_1:
-                currentSensorVirtualConfigMutable()->scale = sbufReadU16(src);
-                currentSensorVirtualConfigMutable()->offset = sbufReadU16(src);
-                break;
+        case CURRENT_METER_ID_VIRTUAL_1:
+            currentSensorVirtualConfigMutable()->scale = sbufReadU16(src);
+            currentSensorVirtualConfigMutable()->offset = sbufReadU16(src);
+            break;
 #endif
-            default:
-                sbufReadU16(src);
-                sbufReadU16(src);
-                break;
+        default:
+            sbufReadU16(src);
+            sbufReadU16(src);
+            break;
         }
         break;
     }
@@ -3620,137 +3606,135 @@ static mspResult_e mspCommonProcessInCommand(mspDescriptor_t srcDesc, int16_t cm
         break;
 
 #if defined(USE_OSD)
-    case MSP_SET_OSD_CONFIG:
-        {
-            const uint8_t addr = sbufReadU8(src);
+    case MSP_SET_OSD_CONFIG: {
+        const uint8_t addr = sbufReadU8(src);
 
-            if ((int8_t)addr == -1) {
-                /* Set general OSD settings */
+        if ((int8_t)addr == -1) {
+            /* Set general OSD settings */
 #ifdef USE_MAX7456
-                vcdProfileMutable()->video_system = sbufReadU8(src);
+            vcdProfileMutable()->video_system = sbufReadU8(src);
 #else
-                sbufReadU8(src); // Skip video system
+            sbufReadU8(src); // Skip video system
 #endif
 #if defined(USE_OSD)
-                osdConfigMutable()->units = sbufReadU8(src);
+            osdConfigMutable()->units = sbufReadU8(src);
 
-                // Alarms
-                osdConfigMutable()->rssi_alarm = sbufReadU8(src);
-                osdConfigMutable()->cap_alarm = sbufReadU16(src);
-                sbufReadU16(src); // Skip unused (previously fly timer)
-                osdConfigMutable()->alt_alarm = sbufReadU16(src);
+            // Alarms
+            osdConfigMutable()->rssi_alarm = sbufReadU8(src);
+            osdConfigMutable()->cap_alarm = sbufReadU16(src);
+            sbufReadU16(src); // Skip unused (previously fly timer)
+            osdConfigMutable()->alt_alarm = sbufReadU16(src);
 
-                if (sbufBytesRemaining(src) >= 2) {
-                    /* Enabled warnings */
-                    // API < 1.41 supports only the low 16 bits
-                    osdConfigMutable()->enabledWarnings = sbufReadU16(src);
-                }
+            if (sbufBytesRemaining(src) >= 2) {
+                /* Enabled warnings */
+                // API < 1.41 supports only the low 16 bits
+                osdConfigMutable()->enabledWarnings = sbufReadU16(src);
+            }
 
-                if (sbufBytesRemaining(src) >= 4) {
-                    // 32bit version of enabled warnings (API >= 1.41)
-                    osdConfigMutable()->enabledWarnings = sbufReadU32(src);
-                }
+            if (sbufBytesRemaining(src) >= 4) {
+                // 32bit version of enabled warnings (API >= 1.41)
+                osdConfigMutable()->enabledWarnings = sbufReadU32(src);
+            }
 
-                if (sbufBytesRemaining(src) >= 1) {
-                    // API >= 1.41
-                    // selected OSD profile
+            if (sbufBytesRemaining(src) >= 1) {
+                // API >= 1.41
+                // selected OSD profile
 #ifdef USE_OSD_PROFILES
-                    changeOsdProfileIndex(sbufReadU8(src));
+                changeOsdProfileIndex(sbufReadU8(src));
 #else
-                    sbufReadU8(src);
+                sbufReadU8(src);
 #endif // USE_OSD_PROFILES
-                }
+            }
 
-                if (sbufBytesRemaining(src) >= 1) {
-                    // API >= 1.41
-                    // OSD stick overlay mode
+            if (sbufBytesRemaining(src) >= 1) {
+                // API >= 1.41
+                // OSD stick overlay mode
 
 #ifdef USE_OSD_STICK_OVERLAY
-                    osdConfigMutable()->overlay_radio_mode = sbufReadU8(src);
+                osdConfigMutable()->overlay_radio_mode = sbufReadU8(src);
 #else
-                    sbufReadU8(src);
+                sbufReadU8(src);
 #endif // USE_OSD_STICK_OVERLAY
 
-                }
-
-                if (sbufBytesRemaining(src) >= 2) {
-                    // API >= 1.43
-                    // OSD camera frame element width/height
-                    osdConfigMutable()->camera_frame_width = sbufReadU8(src);
-                    osdConfigMutable()->camera_frame_height = sbufReadU8(src);
-                }
-#endif
-            } else if ((int8_t)addr == -2) {
-#if defined(USE_OSD)
-                // Timers
-                uint8_t index = sbufReadU8(src);
-                if (index > OSD_TIMER_COUNT) {
-                  return MSP_RESULT_ERROR;
-                }
-                osdConfigMutable()->timers[index] = sbufReadU16(src);
-#endif
-                return MSP_RESULT_ERROR;
-            } else {
-#if defined(USE_OSD)
-                const uint16_t value = sbufReadU16(src);
-
-                /* Get screen index, 0 is post flight statistics, 1 and above are in flight OSD screens */
-                const uint8_t screen = (sbufBytesRemaining(src) >= 1) ? sbufReadU8(src) : 1;
-
-                if (screen == 0 && addr < OSD_STAT_COUNT) {
-                    /* Set statistic item enable */
-                    osdStatSetState(addr, (value != 0));
-                } else if (addr < OSD_ITEM_COUNT) {
-                    /* Set element positions */
-                    osdElementConfigMutable()->item_pos[addr] = value;
-                    osdAnalyzeActiveElements();
-                } else {
-                  return MSP_RESULT_ERROR;
-                }
-#else
-                return MSP_RESULT_ERROR;
-#endif
             }
-        }
-        break;
 
-    case MSP_OSD_CHAR_WRITE:
-        {
-            osdCharacter_t chr;
-            size_t osdCharacterBytes;
-            uint16_t addr;
-            if (dataSize >= OSD_CHAR_VISIBLE_BYTES + 2) {
-                if (dataSize >= OSD_CHAR_BYTES + 2) {
-                    // 16 bit address, full char with metadata
-                    addr = sbufReadU16(src);
-                    osdCharacterBytes = OSD_CHAR_BYTES;
-                } else if (dataSize >= OSD_CHAR_BYTES + 1) {
-                    // 8 bit address, full char with metadata
-                    addr = sbufReadU8(src);
-                    osdCharacterBytes = OSD_CHAR_BYTES;
-                } else {
-                    // 16 bit character address, only visible char bytes
-                    addr = sbufReadU16(src);
-                    osdCharacterBytes = OSD_CHAR_VISIBLE_BYTES;
-                }
+            if (sbufBytesRemaining(src) >= 2) {
+                // API >= 1.43
+                // OSD camera frame element width/height
+                osdConfigMutable()->camera_frame_width = sbufReadU8(src);
+                osdConfigMutable()->camera_frame_height = sbufReadU8(src);
+            }
+#endif
+        } else if ((int8_t)addr == -2) {
+#if defined(USE_OSD)
+            // Timers
+            uint8_t index = sbufReadU8(src);
+            if (index > OSD_TIMER_COUNT) {
+                return MSP_RESULT_ERROR;
+            }
+            osdConfigMutable()->timers[index] = sbufReadU16(src);
+#endif
+            return MSP_RESULT_ERROR;
+        } else {
+#if defined(USE_OSD)
+            const uint16_t value = sbufReadU16(src);
+
+            /* Get screen index, 0 is post flight statistics, 1 and above are in flight OSD screens */
+            const uint8_t screen = (sbufBytesRemaining(src) >= 1) ? sbufReadU8(src) : 1;
+
+            if (screen == 0 && addr < OSD_STAT_COUNT) {
+                /* Set statistic item enable */
+                osdStatSetState(addr, (value != 0));
+            } else if (addr < OSD_ITEM_COUNT) {
+                /* Set element positions */
+                osdElementConfigMutable()->item_pos[addr] = value;
+                osdAnalyzeActiveElements();
             } else {
-                // 8 bit character address, only visible char bytes
+                return MSP_RESULT_ERROR;
+            }
+#else
+            return MSP_RESULT_ERROR;
+#endif
+        }
+    }
+    break;
+
+    case MSP_OSD_CHAR_WRITE: {
+        osdCharacter_t chr;
+        size_t osdCharacterBytes;
+        uint16_t addr;
+        if (dataSize >= OSD_CHAR_VISIBLE_BYTES + 2) {
+            if (dataSize >= OSD_CHAR_BYTES + 2) {
+                // 16 bit address, full char with metadata
+                addr = sbufReadU16(src);
+                osdCharacterBytes = OSD_CHAR_BYTES;
+            } else if (dataSize >= OSD_CHAR_BYTES + 1) {
+                // 8 bit address, full char with metadata
                 addr = sbufReadU8(src);
+                osdCharacterBytes = OSD_CHAR_BYTES;
+            } else {
+                // 16 bit character address, only visible char bytes
+                addr = sbufReadU16(src);
                 osdCharacterBytes = OSD_CHAR_VISIBLE_BYTES;
             }
-            for (unsigned ii = 0; ii < MIN(osdCharacterBytes, sizeof(chr.data)); ii++) {
-                chr.data[ii] = sbufReadU8(src);
-            }
-            displayPort_t *osdDisplayPort = osdGetDisplayPort(NULL);
-            if (!osdDisplayPort) {
-                return MSP_RESULT_ERROR;
-            }
-
-            if (!displayWriteFontCharacter(osdDisplayPort, addr, &chr)) {
-                return MSP_RESULT_ERROR;
-            }
+        } else {
+            // 8 bit character address, only visible char bytes
+            addr = sbufReadU8(src);
+            osdCharacterBytes = OSD_CHAR_VISIBLE_BYTES;
         }
-        break;
+        for (unsigned ii = 0; ii < MIN(osdCharacterBytes, sizeof(chr.data)); ii++) {
+            chr.data[ii] = sbufReadU8(src);
+        }
+        displayPort_t *osdDisplayPort = osdGetDisplayPort(NULL);
+        if (!osdDisplayPort) {
+            return MSP_RESULT_ERROR;
+        }
+
+        if (!displayWriteFontCharacter(osdDisplayPort, addr, &chr)) {
+            return MSP_RESULT_ERROR;
+        }
+    }
+    break;
 #endif // OSD
 
     default:
@@ -3762,7 +3746,8 @@ static mspResult_e mspCommonProcessInCommand(mspDescriptor_t srcDesc, int16_t cm
 /*
  * Returns MSP_RESULT_ACK, MSP_RESULT_ERROR or MSP_RESULT_NO_REPLY
  */
-mspResult_e mspFcProcessCommand(mspDescriptor_t srcDesc, mspPacket_t *cmd, mspPacket_t *reply, mspPostProcessFnPtr *mspPostProcessFn)
+mspResult_e mspFcProcessCommand(mspDescriptor_t srcDesc, mspPacket_t *cmd, mspPacket_t *reply,
+                                mspPostProcessFnPtr *mspPostProcessFn)
 {
     int ret = MSP_RESULT_ACK;
     sbuf_t *dst = &reply->buf;
@@ -3775,7 +3760,8 @@ mspResult_e mspFcProcessCommand(mspDescriptor_t srcDesc, mspPacket_t *cmd, mspPa
         ret = MSP_RESULT_ACK;
     } else if (mspProcessOutCommand(cmdMSP, dst)) {
         ret = MSP_RESULT_ACK;
-    } else if ((ret = mspFcProcessOutCommandWithArg(srcDesc, cmdMSP, src, dst, mspPostProcessFn)) != MSP_RESULT_CMD_UNKNOWN) {
+    } else if ((ret = mspFcProcessOutCommandWithArg(srcDesc, cmdMSP, src, dst,
+                                                    mspPostProcessFn)) != MSP_RESULT_CMD_UNKNOWN) {
         /* ret */;
     } else if (cmdMSP == MSP_SET_PASSTHROUGH) {
         mspFcSetPassthroughCommand(dst, src, mspPostProcessFn);
@@ -3798,23 +3784,22 @@ void mspFcProcessReply(mspPacket_t *reply)
     UNUSED(src); // potentially unused depending on compile options.
 
     switch (reply->cmd) {
-    case MSP_ANALOG:
-        {
-            uint8_t batteryVoltage = sbufReadU8(src);
-            uint16_t mAhDrawn = sbufReadU16(src);
-            uint16_t rssi = sbufReadU16(src);
-            uint16_t amperage = sbufReadU16(src);
+    case MSP_ANALOG: {
+        uint8_t batteryVoltage = sbufReadU8(src);
+        uint16_t mAhDrawn = sbufReadU16(src);
+        uint16_t rssi = sbufReadU16(src);
+        uint16_t amperage = sbufReadU16(src);
 
-            UNUSED(rssi);
-            UNUSED(batteryVoltage);
-            UNUSED(amperage);
-            UNUSED(mAhDrawn);
+        UNUSED(rssi);
+        UNUSED(batteryVoltage);
+        UNUSED(amperage);
+        UNUSED(mAhDrawn);
 
 #ifdef USE_MSP_CURRENT_METER
-            currentMeterMSPSet(amperage, mAhDrawn);
+        currentMeterMSPSet(amperage, mAhDrawn);
 #endif
-        }
-        break;
+    }
+    break;
     }
 }
 

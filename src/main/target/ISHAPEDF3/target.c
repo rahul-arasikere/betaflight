@@ -29,7 +29,7 @@
 
 // Production boards swapped RC_CH3/4 swapped to make it easier to use SerialRX using supplied cables - compared to first prototype.
 const timerHardware_t timerHardware[USABLE_TIMER_CHANNEL_COUNT] = {
-    DEF_TIM(TIM2,  CH1, PA0,  TIM_USE_PWM |TIM_USE_PPM, 0), // RC_CH1 - PA0  - *TIM2_CH1
+    DEF_TIM(TIM2,  CH1, PA0,  TIM_USE_PWM | TIM_USE_PPM, 0), // RC_CH1 - PA0  - *TIM2_CH1
     DEF_TIM(TIM2,  CH2, PA1,  TIM_USE_PWM,              0), // RC_CH2 - PA1  - *TIM2_CH2, TIM15_CH1N
     DEF_TIM(TIM2,  CH4, PB11, TIM_USE_PWM,              0), // RC_CH3 - PB11 - *TIM2_CH4, UART3_RX (AF7)
     DEF_TIM(TIM2,  CH3, PB10, TIM_USE_PWM,              0), // RC_CH4 - PB10 - *TIM2_CH3, UART3_TX (AF7)

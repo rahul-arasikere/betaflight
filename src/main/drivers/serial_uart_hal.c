@@ -46,18 +46,16 @@
 #include "drivers/serial_uart.h"
 #include "drivers/serial_uart_impl.h"
 
-static void usartConfigurePinInversion(uartPort_t *uartPort) {
+static void usartConfigurePinInversion(uartPort_t *uartPort)
+{
     bool inverted = uartPort->port.options & SERIAL_INVERTED;
 
-    if (inverted)
-    {
-        if (uartPort->port.mode & MODE_RX)
-        {
+    if (inverted) {
+        if (uartPort->port.mode & MODE_RX) {
             uartPort->Handle.AdvancedInit.AdvFeatureInit |= UART_ADVFEATURE_RXINVERT_INIT;
             uartPort->Handle.AdvancedInit.RxPinLevelInvert = UART_ADVFEATURE_RXINV_ENABLE;
         }
-        if (uartPort->port.mode & MODE_TX)
-        {
+        if (uartPort->port.mode & MODE_TX) {
             uartPort->Handle.AdvancedInit.AdvFeatureInit |= UART_ADVFEATURE_TXINVERT_INIT;
             uartPort->Handle.AdvancedInit.TxPinLevelInvert = UART_ADVFEATURE_TXINV_ENABLE;
         }
@@ -72,7 +70,8 @@ void uartReconfigure(uartPort_t *uartPort)
     uartPort->Handle.Init.BaudRate = uartPort->port.baudRate;
     // according to the stm32 documentation wordlen has to be 9 for parity bits
     // this does not seem to matter for rx but will give bad data on tx!
-    uartPort->Handle.Init.WordLength = (uartPort->port.options & SERIAL_PARITY_EVEN) ? UART_WORDLENGTH_9B : UART_WORDLENGTH_8B;
+    uartPort->Handle.Init.WordLength = (uartPort->port.options & SERIAL_PARITY_EVEN) ? UART_WORDLENGTH_9B :
+                                       UART_WORDLENGTH_8B;
     uartPort->Handle.Init.StopBits = (uartPort->port.options & SERIAL_STOPBITS_2) ? USART_STOPBITS_2 : USART_STOPBITS_1;
     uartPort->Handle.Init.Parity = (uartPort->port.options & SERIAL_PARITY_EVEN) ? USART_PARITY_EVEN : USART_PARITY_NONE;
     uartPort->Handle.Init.HwFlowCtl = UART_HWCONTROL_NONE;
@@ -97,21 +96,16 @@ void uartReconfigure(uartPort_t *uartPort)
     usartTargetConfigure(uartPort);
 #endif
 
-    if (uartPort->port.options & SERIAL_BIDIR)
-    {
+    if (uartPort->port.options & SERIAL_BIDIR) {
         HAL_HalfDuplex_Init(&uartPort->Handle);
-    }
-    else
-    {
+    } else {
         HAL_UART_Init(&uartPort->Handle);
     }
 
     // Receive DMA or IRQ
-    if (uartPort->port.mode & MODE_RX)
-    {
+    if (uartPort->port.mode & MODE_RX) {
 #ifdef USE_DMA
-        if (uartPort->rxDMAResource)
-        {
+        if (uartPort->rxDMAResource) {
             uartPort->rxDMAHandle.Instance = (DMA_ARCH_TYPE *)uartPort->rxDMAResource;
 #if !(defined(STM32H7) || defined(STM32G4))
             uartPort->rxDMAHandle.Init.Channel = uartPort->rxDMAChannel;
@@ -138,7 +132,7 @@ void uartReconfigure(uartPort_t *uartPort)
             /* Associate the initialized DMA handle to the UART handle */
             __HAL_LINKDMA(&uartPort->Handle, hdmarx, uartPort->rxDMAHandle);
 
-            HAL_UART_Receive_DMA(&uartPort->Handle, (uint8_t*)uartPort->port.rxBuffer, uartPort->port.rxBufferSize);
+            HAL_UART_Receive_DMA(&uartPort->Handle, (uint8_t *)uartPort->port.rxBuffer, uartPort->port.rxBufferSize);
 
             uartPort->rxDMAPos = __HAL_DMA_GET_COUNTER(&uartPort->rxDMAHandle);
         } else
@@ -186,8 +180,7 @@ void uartReconfigure(uartPort_t *uartPort)
 
             HAL_DMA_DeInit(&uartPort->txDMAHandle);
             HAL_StatusTypeDef status = HAL_DMA_Init(&uartPort->txDMAHandle);
-            if (status != HAL_OK)
-            {
+            if (status != HAL_OK) {
                 while (1);
             }
             /* Associate the initialized DMA handle to the UART handle */
@@ -247,9 +240,9 @@ static void handleUsartTxDma(uartPort_t *s)
     uartTryStartTxDMA(s);
 }
 
-void uartDmaIrqHandler(dmaChannelDescriptor_t* descriptor)
+void uartDmaIrqHandler(dmaChannelDescriptor_t *descriptor)
 {
-    uartPort_t *s = &(((uartDevice_t*)(descriptor->userParam))->port);
+    uartPort_t *s = &(((uartDevice_t *)(descriptor->userParam))->port);
 
     HAL_DMA_IRQHandler(&s->txDMAHandle);
 

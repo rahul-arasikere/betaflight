@@ -200,13 +200,13 @@ bool sbusInit(const rxConfig_t *rxConfig, rxRuntimeState_t *rxRuntimeState)
 #endif
 
     serialPort_t *sBusPort = openSerialPort(portConfig->identifier,
-        FUNCTION_RX_SERIAL,
-        sbusDataReceive,
-        &sbusFrameData,
-        sbusBaudRate,
-        portShared ? MODE_RXTX : MODE_RX,
-        SBUS_PORT_OPTIONS | (rxConfig->serialrx_inverted ? 0 : SERIAL_INVERTED) | (rxConfig->halfDuplex ? SERIAL_BIDIR : 0)
-        );
+                                            FUNCTION_RX_SERIAL,
+                                            sbusDataReceive,
+                                            &sbusFrameData,
+                                            sbusBaudRate,
+                                            portShared ? MODE_RXTX : MODE_RX,
+                                            SBUS_PORT_OPTIONS | (rxConfig->serialrx_inverted ? 0 : SERIAL_INVERTED) | (rxConfig->halfDuplex ? SERIAL_BIDIR : 0)
+                                           );
 
     if (rxConfig->rssi_src_frame_errors) {
         rssiSource = RSSI_SOURCE_FRAME_ERRORS;

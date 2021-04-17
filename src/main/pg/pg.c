@@ -28,7 +28,7 @@
 
 #include "pg.h"
 
-const pgRegistry_t* pgFind(pgn_t pgn)
+const pgRegistry_t *pgFind(pgn_t pgn)
 {
     PG_FOREACH(reg) {
         if (pgN(reg) == pgn) {
@@ -38,7 +38,7 @@ const pgRegistry_t* pgFind(pgn_t pgn)
     return NULL;
 }
 
-static uint8_t *pgOffset(const pgRegistry_t* reg)
+static uint8_t *pgOffset(const pgRegistry_t *reg)
 {
     return reg->address;
 }
@@ -48,7 +48,7 @@ void pgResetInstance(const pgRegistry_t *reg, uint8_t *base)
     const uint16_t regSize = pgSize(reg);
 
     memset(base, 0, regSize);
-    if (reg->reset.ptr >= (void*)__pg_resetdata_start && reg->reset.ptr < (void*)__pg_resetdata_end) {
+    if (reg->reset.ptr >= (void *)__pg_resetdata_start && reg->reset.ptr < (void *)__pg_resetdata_end) {
         // pointer points to resetdata section, to it is data template
         memcpy(base, reg->reset.ptr, regSize);
     } else if (reg->reset.fn) {
@@ -57,7 +57,7 @@ void pgResetInstance(const pgRegistry_t *reg, uint8_t *base)
     }
 }
 
-void pgReset(const pgRegistry_t* reg)
+void pgReset(const pgRegistry_t *reg)
 {
     pgResetInstance(reg, pgOffset(reg));
 }
@@ -72,7 +72,7 @@ bool pgResetCopy(void *copy, pgn_t pgn)
     return false;
 }
 
-bool pgLoad(const pgRegistry_t* reg, const void *from, int size, int version)
+bool pgLoad(const pgRegistry_t *reg, const void *from, int size, int version)
 {
     pgResetInstance(reg, pgOffset(reg));
     // restore only matching version, keep defaults otherwise
@@ -86,7 +86,7 @@ bool pgLoad(const pgRegistry_t* reg, const void *from, int size, int version)
     return false;
 }
 
-int pgStore(const pgRegistry_t* reg, void *to, int size)
+int pgStore(const pgRegistry_t *reg, void *to, int size)
 {
     const int take = MIN(size, pgSize(reg));
     memcpy(to, pgOffset(reg), take);

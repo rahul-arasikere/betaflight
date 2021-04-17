@@ -59,7 +59,7 @@ transponder_t transponder;
 #endif
 bool transponderInitialised = false;
 
-static void TRANSPONDER_DMA_IRQHandler(dmaChannelDescriptor_t* descriptor)
+static void TRANSPONDER_DMA_IRQHandler(dmaChannelDescriptor_t *descriptor)
 {
     HAL_DMA_IRQHandler(TimHandle.hdma[descriptor->userParam]);
     TIM_DMACmd(&TimHandle, timerChannel, DISABLE);
@@ -120,7 +120,8 @@ void transponderIrHardwareInit(ioTag_t ioTag, transponder_t *transponder)
 
     transponderIO = IOGetByTag(ioTag);
     IOInit(transponderIO, OWNER_TRANSPONDER, 0);
-    IOConfigGPIOAF(transponderIO, IO_CONFIG(GPIO_MODE_AF_PP, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_PULLDOWN), timerHardware->alternateFunction);
+    IOConfigGPIOAF(transponderIO, IO_CONFIG(GPIO_MODE_AF_PP, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_PULLDOWN),
+                   timerHardware->alternateFunction);
 
     __DMA1_CLK_ENABLE();
     __DMA2_CLK_ENABLE();
@@ -170,9 +171,11 @@ void transponderIrHardwareInit(ioTag_t ioTag, transponder_t *transponder)
 
     TIM_OCInitStructure.OCMode = TIM_OCMODE_PWM1;
     TIM_OCInitStructure.OCIdleState = TIM_OCIDLESTATE_RESET;
-    TIM_OCInitStructure.OCPolarity = (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCPOLARITY_LOW : TIM_OCPOLARITY_HIGH;
+    TIM_OCInitStructure.OCPolarity = (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCPOLARITY_LOW :
+                                     TIM_OCPOLARITY_HIGH;
     TIM_OCInitStructure.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-    TIM_OCInitStructure.OCNPolarity = (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCNPOLARITY_LOW : TIM_OCNPOLARITY_HIGH;
+    TIM_OCInitStructure.OCNPolarity = (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCNPOLARITY_LOW :
+                                      TIM_OCNPOLARITY_HIGH;
     TIM_OCInitStructure.Pulse = 0;
     TIM_OCInitStructure.OCFastMode = TIM_OCFAST_DISABLE;
     if (HAL_TIM_PWM_ConfigChannel(&TimHandle, &TIM_OCInitStructure, timerChannel) != HAL_OK) {
@@ -201,17 +204,17 @@ bool transponderIrInit(const ioTag_t ioTag, const transponderProvider_e provider
     }
 
     switch (provider) {
-        case TRANSPONDER_ARCITIMER:
-            transponderIrInitArcitimer(&transponder);
-            break;
-        case TRANSPONDER_ILAP:
-            transponderIrInitIlap(&transponder);
-            break;
-        case TRANSPONDER_ERLT:
-            transponderIrInitERLT(&transponder);
-            break;
-        default:
-            return false;
+    case TRANSPONDER_ARCITIMER:
+        transponderIrInitArcitimer(&transponder);
+        break;
+    case TRANSPONDER_ILAP:
+        transponderIrInitIlap(&transponder);
+        break;
+    case TRANSPONDER_ERLT:
+        transponderIrInitERLT(&transponder);
+        break;
+    default:
+        return false;
     }
 
     transponderIrHardwareInit(ioTag, &transponder);
@@ -237,10 +240,10 @@ void transponderIrWaitForTransmitComplete(void)
     }
 }
 
-void transponderIrUpdateData(const uint8_t* transponderData)
+void transponderIrUpdateData(const uint8_t *transponderData)
 {
-     transponderIrWaitForTransmitComplete();
-     transponder.vTable->updateTransponderDMABuffer(&transponder, transponderData);
+    transponderIrWaitForTransmitComplete();
+    transponder.vTable->updateTransponderDMABuffer(&transponder, transponderData);
 }
 
 void transponderIrDMAEnable(transponder_t *transponder)
@@ -249,7 +252,8 @@ void transponderIrDMAEnable(transponder_t *transponder)
         return;
     }
 
-    if (DMA_SetCurrDataCounter(&TimHandle, timerChannel, transponder->transponderIrDMABuffer.ilap, transponder->dma_buffer_size) != HAL_OK) {
+    if (DMA_SetCurrDataCounter(&TimHandle, timerChannel, transponder->transponderIrDMABuffer.ilap,
+                               transponder->dma_buffer_size) != HAL_OK) {
         /* DMA set error */
         transponderIrDataTransferInProgress = 0;
         return;

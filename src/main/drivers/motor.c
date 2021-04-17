@@ -84,7 +84,9 @@ motorVTable_t motorGetVTable(void)
 }
 
 // This is not motor generic anymore; should be moved to analog pwm module
-static void analogInitEndpoints(const motorConfig_t *motorConfig, float outputLimit, float *outputLow, float *outputHigh, float *disarm, float *deadbandMotor3dHigh, float *deadbandMotor3dLow) {
+static void analogInitEndpoints(const motorConfig_t *motorConfig, float outputLimit, float *outputLow,
+                                float *outputHigh, float *disarm, float *deadbandMotor3dHigh, float *deadbandMotor3dLow)
+{
     if (featureIsEnabled(FEATURE_3D)) {
         float outputLimitOffset = (flight3DConfig()->limit3d_high - flight3DConfig()->limit3d_low) * (1 - outputLimit) / 2;
         *disarm = flight3DConfig()->neutral3d;
@@ -142,7 +144,8 @@ static void checkMotorProtocol(const motorDevConfig_t *motorDevConfig)
 }
 
 // End point initialization is called from mixerInit before motorDevInit; can't use vtable...
-void motorInitEndpoints(const motorConfig_t *motorConfig, float outputLimit, float *outputLow, float *outputHigh, float *disarm, float *deadbandMotor3dHigh, float *deadbandMotor3dLow)
+void motorInitEndpoints(const motorConfig_t *motorConfig, float outputLimit, float *outputLow, float *outputHigh,
+                        float *disarm, float *deadbandMotor3dHigh, float *deadbandMotor3dLow)
 {
     checkMotorProtocol(&motorConfig->dev);
 
@@ -259,7 +262,8 @@ bool isMotorProtocolDshot(void)
     return motorProtocolDshot;
 }
 
-void motorDevInit(const motorDevConfig_t *motorDevConfig, uint16_t idlePulse, uint8_t motorCount) {
+void motorDevInit(const motorDevConfig_t *motorDevConfig, uint16_t idlePulse, uint8_t motorCount)
+{
     memset(motors, 0, sizeof(motors));
 
     bool useUnsyncedPwm = motorDevConfig->useUnsyncedPwm;
@@ -329,7 +333,8 @@ timeMs_t motorGetMotorEnableTimeMs(void)
 bool isDshotBitbangActive(const motorDevConfig_t *motorDevConfig)
 {
     return motorDevConfig->useDshotBitbang == DSHOT_BITBANG_ON ||
-        (motorDevConfig->useDshotBitbang == DSHOT_BITBANG_AUTO && motorDevConfig->useDshotTelemetry && motorDevConfig->motorPwmProtocol != PWM_TYPE_PROSHOT1000);
+           (motorDevConfig->useDshotBitbang == DSHOT_BITBANG_AUTO && motorDevConfig->useDshotTelemetry
+            && motorDevConfig->motorPwmProtocol != PWM_TYPE_PROSHOT1000);
 }
 #endif
 

@@ -161,16 +161,15 @@ static void commitTransaction(displayPort_t *instance)
 
 static frskyOsdColor_e frskyOsdGetColor(displayCanvasColor_e color)
 {
-    switch (color)
-    {
-        case DISPLAY_CANVAS_COLOR_BLACK:
-            return FRSKY_OSD_COLOR_BLACK;
-        case DISPLAY_CANVAS_COLOR_TRANSPARENT:
-            return FRSKY_OSD_COLOR_TRANSPARENT;
-        case DISPLAY_CANVAS_COLOR_WHITE:
-            return FRSKY_OSD_COLOR_WHITE;
-        case DISPLAY_CANVAS_COLOR_GRAY:
-            return FRSKY_OSD_COLOR_GRAY;
+    switch (color) {
+    case DISPLAY_CANVAS_COLOR_BLACK:
+        return FRSKY_OSD_COLOR_BLACK;
+    case DISPLAY_CANVAS_COLOR_TRANSPARENT:
+        return FRSKY_OSD_COLOR_TRANSPARENT;
+    case DISPLAY_CANVAS_COLOR_WHITE:
+        return FRSKY_OSD_COLOR_WHITE;
+    case DISPLAY_CANVAS_COLOR_GRAY:
+        return FRSKY_OSD_COLOR_GRAY;
     }
     return FRSKY_OSD_COLOR_BLACK;
 }
@@ -273,7 +272,8 @@ static void drawCharacter(displayCanvas_t *displayCanvas, int x, int y, uint16_t
     frskyOsdDrawCharacter(x, y, chr, opts);
 }
 
-static void drawCharacterMask(displayCanvas_t *displayCanvas, int x, int y, uint16_t chr, displayCanvasColor_e color, displayCanvasBitmapOption_t opts)
+static void drawCharacterMask(displayCanvas_t *displayCanvas, int x, int y, uint16_t chr, displayCanvasColor_e color,
+                              displayCanvasBitmapOption_t opts)
 {
     UNUSED(displayCanvas);
 
@@ -287,7 +287,8 @@ static void drawString(displayCanvas_t *displayCanvas, int x, int y, const char 
     frskyOsdDrawString(x, y, s, opts);
 }
 
-static void drawStringMask(displayCanvas_t *displayCanvas, int x, int y, const char *s, displayCanvasColor_e color, displayCanvasBitmapOption_t opts)
+static void drawStringMask(displayCanvas_t *displayCanvas, int x, int y, const char *s, displayCanvasColor_e color,
+                           displayCanvasBitmapOption_t opts)
 {
     UNUSED(displayCanvas);
 

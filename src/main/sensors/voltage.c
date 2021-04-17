@@ -46,7 +46,7 @@
 
 #include "voltage.h"
 
-const char * const voltageMeterSourceNames[VOLTAGE_METER_COUNT] = {
+const char *const voltageMeterSourceNames[VOLTAGE_METER_COUNT] = {
     "NONE", "ADC", "ESC"
 };
 
@@ -128,16 +128,17 @@ voltageMeterADCState_t *getVoltageMeterADC(uint8_t index)
     return &voltageMeterADCStates[index];
 }
 
-PG_REGISTER_ARRAY_WITH_RESET_FN(voltageSensorADCConfig_t, MAX_VOLTAGE_SENSOR_ADC, voltageSensorADCConfig, PG_VOLTAGE_SENSOR_ADC_CONFIG, 0);
+PG_REGISTER_ARRAY_WITH_RESET_FN(voltageSensorADCConfig_t, MAX_VOLTAGE_SENSOR_ADC, voltageSensorADCConfig,
+                                PG_VOLTAGE_SENSOR_ADC_CONFIG, 0);
 
 void pgResetFn_voltageSensorADCConfig(voltageSensorADCConfig_t *instance)
 {
     for (int i = 0; i < MAX_VOLTAGE_SENSOR_ADC; i++) {
         RESET_CONFIG(voltageSensorADCConfig_t, &instance[i],
-            .vbatscale = VBAT_SCALE_DEFAULT,
-            .vbatresdivval = VBAT_RESDIVVAL_DEFAULT,
-            .vbatresdivmultiplier = VBAT_RESDIVMULTIPLIER_DEFAULT,
-        );
+                     .vbatscale = VBAT_SCALE_DEFAULT,
+                     .vbatresdivval = VBAT_RESDIVVAL_DEFAULT,
+                     .vbatresdivmultiplier = VBAT_RESDIVMULTIPLIER_DEFAULT,
+                    );
     }
 }
 
@@ -159,7 +160,8 @@ STATIC_UNIT_TESTED uint16_t voltageAdcToVoltage(const uint16_t src, const voltag
 {
     // calculate battery voltage based on ADC reading
     // result is Vbatt in 0.01V steps. 3.3V = ADC Vref, 0xFFF = 12bit adc, 110 = 10:1 voltage divider (10k:1k) * 100 for 0.01V
-    return ((((uint32_t)src * config->vbatscale * getVrefMv() / 10 + (0xFFF * 5)) / (0xFFF * config->vbatresdivval)) / config->vbatresdivmultiplier);
+    return ((((uint32_t)src * config->vbatscale * getVrefMv() / 10 + (0xFFF * 5)) / (0xFFF * config->vbatresdivval)) /
+            config->vbatresdivmultiplier);
 }
 
 void voltageMeterADCRefresh(void)
@@ -221,10 +223,12 @@ void voltageMeterADCInit(void)
         voltageMeterADCState_t *state = &voltageMeterADCStates[i];
         memset(state, 0, sizeof(voltageMeterADCState_t));
 
-        pt1FilterInit(&state->displayFilter, pt1FilterGain(GET_BATTERY_LPF_FREQUENCY(batteryConfig()->vbatDisplayLpfPeriod), HZ_TO_INTERVAL(isSagCompensationConfigured() ? FAST_VOLTAGE_TASK_FREQ_HZ : SLOW_VOLTAGE_TASK_FREQ_HZ)));
+        pt1FilterInit(&state->displayFilter, pt1FilterGain(GET_BATTERY_LPF_FREQUENCY(batteryConfig()->vbatDisplayLpfPeriod),
+                                                           HZ_TO_INTERVAL(isSagCompensationConfigured() ? FAST_VOLTAGE_TASK_FREQ_HZ : SLOW_VOLTAGE_TASK_FREQ_HZ)));
 #if defined(USE_BATTERY_VOLTAGE_SAG_COMPENSATION)
         if (isSagCompensationConfigured()) {
-            pt1FilterInit(&state->sagFilter, pt1FilterGain(GET_BATTERY_LPF_FREQUENCY(batteryConfig()->vbatSagLpfPeriod), HZ_TO_INTERVAL(FAST_VOLTAGE_TASK_FREQ_HZ)));
+            pt1FilterInit(&state->sagFilter, pt1FilterGain(GET_BATTERY_LPF_FREQUENCY(batteryConfig()->vbatSagLpfPeriod),
+                                                           HZ_TO_INTERVAL(FAST_VOLTAGE_TASK_FREQ_HZ)));
         }
 #endif
     }
@@ -262,7 +266,9 @@ void voltageMeterESCInit(void)
 {
 #ifdef USE_ESC_SENSOR
     memset(&voltageMeterESCState, 0, sizeof(voltageMeterESCState_t));
-    pt1FilterInit(&voltageMeterESCState.displayFilter, pt1FilterGain(GET_BATTERY_LPF_FREQUENCY(batteryConfig()->vbatDisplayLpfPeriod), HZ_TO_INTERVAL(isSagCompensationConfigured() ? FAST_VOLTAGE_TASK_FREQ_HZ : SLOW_VOLTAGE_TASK_FREQ_HZ)));
+    pt1FilterInit(&voltageMeterESCState.displayFilter,
+                  pt1FilterGain(GET_BATTERY_LPF_FREQUENCY(batteryConfig()->vbatDisplayLpfPeriod),
+                                HZ_TO_INTERVAL(isSagCompensationConfigured() ? FAST_VOLTAGE_TASK_FREQ_HZ : SLOW_VOLTAGE_TASK_FREQ_HZ)));
 #endif
 }
 
@@ -272,7 +278,8 @@ void voltageMeterESCRefresh(void)
     escSensorData_t *escData = getEscSensorData(ESC_SENSOR_COMBINED);
     if (escData) {
         voltageMeterESCState.voltageUnfiltered = escData->dataAge <= ESC_BATTERY_AGE_MAX ? escData->voltage : 0;
-        voltageMeterESCState.voltageDisplayFiltered = pt1FilterApply(&voltageMeterESCState.displayFilter, voltageMeterESCState.voltageUnfiltered);
+        voltageMeterESCState.voltageDisplayFiltered = pt1FilterApply(&voltageMeterESCState.displayFilter,
+                                                                     voltageMeterESCState.voltageUnfiltered);
     }
 #endif
 }
@@ -331,30 +338,29 @@ void voltageMeterRead(voltageMeterId_e id, voltageMeter_t *meter)
         voltageMeterADCRead(VOLTAGE_SENSOR_ADC_VBAT, meter);
     } else
 #ifdef ADC_POWER_12V
-    if (id == VOLTAGE_METER_ID_12V_1) {
-        voltageMeterADCRead(VOLTAGE_SENSOR_ADC_12V, meter);
-    } else
+        if (id == VOLTAGE_METER_ID_12V_1) {
+            voltageMeterADCRead(VOLTAGE_SENSOR_ADC_12V, meter);
+        } else
 #endif
 #ifdef ADC_POWER_9V
-    if (id == VOLTAGE_METER_ID_9V_1) {
-        voltageMeterADCRead(VOLTAGE_SENSOR_ADC_9V, meter);
-    } else
+            if (id == VOLTAGE_METER_ID_9V_1) {
+                voltageMeterADCRead(VOLTAGE_SENSOR_ADC_9V, meter);
+            } else
 #endif
 #ifdef ADC_POWER_5V
-    if (id == VOLTAGE_METER_ID_5V_1) {
-        voltageMeterADCRead(VOLTAGE_SENSOR_ADC_5V, meter);
-    } else
+                if (id == VOLTAGE_METER_ID_5V_1) {
+                    voltageMeterADCRead(VOLTAGE_SENSOR_ADC_5V, meter);
+                } else
 #endif
 #ifdef USE_ESC_SENSOR
-    if (id == VOLTAGE_METER_ID_ESC_COMBINED_1) {
-        voltageMeterESCReadCombined(meter);
-    } else
-    if (id >= VOLTAGE_METER_ID_ESC_MOTOR_1 && id <= VOLTAGE_METER_ID_ESC_MOTOR_20 ) {
-        int motor = id - VOLTAGE_METER_ID_ESC_MOTOR_1;
-        voltageMeterESCReadMotor(motor, meter);
-    } else
+                    if (id == VOLTAGE_METER_ID_ESC_COMBINED_1) {
+                        voltageMeterESCReadCombined(meter);
+                    } else if (id >= VOLTAGE_METER_ID_ESC_MOTOR_1 && id <= VOLTAGE_METER_ID_ESC_MOTOR_20 ) {
+                        int motor = id - VOLTAGE_METER_ID_ESC_MOTOR_1;
+                        voltageMeterESCReadMotor(motor, meter);
+                    } else
 #endif
-    {
-        voltageMeterReset(meter);
-    }
+                    {
+                        voltageMeterReset(meter);
+                    }
 }

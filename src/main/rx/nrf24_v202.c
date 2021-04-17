@@ -90,14 +90,22 @@ enum {
 // The pattern is defined by 5 least significant bits of
 // sum of 3 bytes comprising TX id
 static const uint8_t v2x2_freq_hopping[][V2X2_NFREQCHANNELS] = {
- { 0x27, 0x1B, 0x39, 0x28, 0x24, 0x22, 0x2E, 0x36,
-   0x19, 0x21, 0x29, 0x14, 0x1E, 0x12, 0x2D, 0x18 }, //  00
- { 0x2E, 0x33, 0x25, 0x38, 0x19, 0x12, 0x18, 0x16,
-   0x2A, 0x1C, 0x1F, 0x37, 0x2F, 0x23, 0x34, 0x10 }, //  01
- { 0x11, 0x1A, 0x35, 0x24, 0x28, 0x18, 0x25, 0x2A,
-   0x32, 0x2C, 0x14, 0x27, 0x36, 0x34, 0x1C, 0x17 }, //  02
- { 0x22, 0x27, 0x17, 0x39, 0x34, 0x28, 0x2B, 0x1D,
-   0x18, 0x2A, 0x21, 0x38, 0x10, 0x26, 0x20, 0x1F }  //  03
+    {
+        0x27, 0x1B, 0x39, 0x28, 0x24, 0x22, 0x2E, 0x36,
+        0x19, 0x21, 0x29, 0x14, 0x1E, 0x12, 0x2D, 0x18
+    }, //  00
+    {
+        0x2E, 0x33, 0x25, 0x38, 0x19, 0x12, 0x18, 0x16,
+        0x2A, 0x1C, 0x1F, 0x37, 0x2F, 0x23, 0x34, 0x10
+    }, //  01
+    {
+        0x11, 0x1A, 0x35, 0x24, 0x28, 0x18, 0x25, 0x2A,
+        0x32, 0x2C, 0x14, 0x27, 0x36, 0x34, 0x1C, 0x17
+    }, //  02
+    {
+        0x22, 0x27, 0x17, 0x39, 0x34, 0x28, 0x2B, 0x1D,
+        0x18, 0x2A, 0x21, 0x38, 0x10, 0x26, 0x20, 0x1F
+    }  //  03
 };
 
 STATIC_UNIT_TESTED uint8_t rf_channels[V2X2_NFREQCHANNELS];
@@ -108,8 +116,9 @@ STATIC_UNIT_TESTED uint8_t txid[TXIDSIZE];
 static uint32_t rx_timeout;
 extern uint16_t rxSpiRcData[];
 
-static const unsigned char v2x2_channelindex[] = {RC_SPI_THROTTLE,RC_SPI_YAW,RC_SPI_PITCH,RC_SPI_ROLL,
-        RC_SPI_AUX1,RC_SPI_AUX2,RC_SPI_AUX3,RC_SPI_AUX4,RC_SPI_AUX5,RC_SPI_AUX6,RC_SPI_AUX7};
+static const unsigned char v2x2_channelindex[] = {RC_SPI_THROTTLE, RC_SPI_YAW, RC_SPI_PITCH, RC_SPI_ROLL,
+                                                  RC_SPI_AUX1, RC_SPI_AUX2, RC_SPI_AUX3, RC_SPI_AUX4, RC_SPI_AUX5, RC_SPI_AUX6, RC_SPI_AUX7
+                                                 };
 
 static void prepare_to_bind(void)
 {
@@ -183,11 +192,11 @@ static rx_spi_received_e decode_packet(uint8_t *packet)
     }
     const uint8_t flags[] = {V2X2_FLAG_LED, V2X2_FLAG_FLIP, V2X2_FLAG_CAMERA, V2X2_FLAG_VIDEO}; // two more unknown bits
     for (int i = 4; i < 8; ++i) {
-        rxSpiRcData[v2x2_channelindex[i]] = (packet[14] & flags[i-4]) ? PWM_RANGE_MAX : PWM_RANGE_MIN;
+        rxSpiRcData[v2x2_channelindex[i]] = (packet[14] & flags[i - 4]) ? PWM_RANGE_MAX : PWM_RANGE_MIN;
     }
     const uint8_t flags10[] = {V2X2_FLAG_HEADLESS, V2X2_FLAG_MAG_CAL_X, V2X2_FLAG_MAG_CAL_Y};
     for (int i = 8; i < 11; ++i) {
-        rxSpiRcData[v2x2_channelindex[i]] = (packet[10] & flags10[i-8]) ? PWM_RANGE_MAX : PWM_RANGE_MIN;
+        rxSpiRcData[v2x2_channelindex[i]] = (packet[10] & flags10[i - 8]) ? PWM_RANGE_MAX : PWM_RANGE_MIN;
     }
     packet_timer = micros();
     return RX_SPI_RECEIVED_DATA;
@@ -241,7 +250,9 @@ static void v202Nrf24Setup(rx_spi_protocol_e protocol)
     } else {
         NRF24L01_WriteReg(NRF24L01_06_RF_SETUP, NRF24L01_06_RF_SETUP_RF_DR_1Mbps | NRF24L01_06_RF_SETUP_RF_PWR_n12dbm);
     }
-    NRF24L01_WriteReg(NRF24L01_07_STATUS, BV(NRF24L01_07_STATUS_RX_DR) | BV(NRF24L01_07_STATUS_TX_DS) | BV(NRF24L01_07_STATUS_MAX_RT));     // Clear data ready, data sent, and retransmit
+    NRF24L01_WriteReg(NRF24L01_07_STATUS,
+                      BV(NRF24L01_07_STATUS_RX_DR) | BV(NRF24L01_07_STATUS_TX_DS) | BV(
+                          NRF24L01_07_STATUS_MAX_RT));     // Clear data ready, data sent, and retransmit
     NRF24L01_WriteReg(NRF24L01_11_RX_PW_P0, V2X2_PAYLOAD_SIZE);  // bytes of data payload for pipe 0
     NRF24L01_WriteReg(NRF24L01_17_FIFO_STATUS, 0x00); // Just in case, no real bits to write here
 #define RX_TX_ADDR_LEN 5

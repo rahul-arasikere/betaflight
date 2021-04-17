@@ -93,8 +93,10 @@ static inline void mma8451ConfigureInterrupt(void)
     IOConfigGPIO(IOGetByTag(IO_TAG(MMA8451_INT_PIN)), IOCFG_IN_FLOATING);
 #endif
 
-    i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_CTRL_REG3, MMA8452_CTRL_REG3_IPOL); // Interrupt polarity (active HIGH)
-    i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_CTRL_REG4, MMA8452_CTRL_REG4_INT_EN_DRDY); // Enable DRDY interrupt (unused by this driver)
+    i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_CTRL_REG3,
+             MMA8452_CTRL_REG3_IPOL); // Interrupt polarity (active HIGH)
+    i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_CTRL_REG4,
+             MMA8452_CTRL_REG4_INT_EN_DRDY); // Enable DRDY interrupt (unused by this driver)
     i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_CTRL_REG5, 0); // DRDY routed to INT2
 }
 
@@ -104,11 +106,14 @@ static void mma8452Init(accDev_t *acc)
     i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_CTRL_REG1, 0); // Put device in standby to configure stuff
     i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_XYZ_DATA_CFG, MMA8452_FS_RANGE_8G);
     i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_HP_FILTER_CUTOFF, MMA8452_HPF_CUTOFF_LV4);
-    i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_CTRL_REG2, MMA8452_CTRL_REG2_MODS_HR | MMA8452_CTRL_REG2_MODS_HR << 3); // High resolution measurement in both sleep and active modes
+    i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_CTRL_REG2,
+             MMA8452_CTRL_REG2_MODS_HR | MMA8452_CTRL_REG2_MODS_HR <<
+             3); // High resolution measurement in both sleep and active modes
 
     mma8451ConfigureInterrupt();
 
-    i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_CTRL_REG1, MMA8452_CTRL_REG1_LNOISE | MMA8452_CTRL_REG1_ACTIVE); // Turn on measurements, low noise at max scale mode, Data Rate 800Hz. LNoise mode makes range +-4G.
+    i2cWrite(MPU_I2C_INSTANCE, MMA8452_ADDRESS, MMA8452_CTRL_REG1,
+             MMA8452_CTRL_REG1_LNOISE | MMA8452_CTRL_REG1_ACTIVE); // Turn on measurements, low noise at max scale mode, Data Rate 800Hz. LNoise mode makes range +-4G.
 
     acc->acc_1G = 256;
 }

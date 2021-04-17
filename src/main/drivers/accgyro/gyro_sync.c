@@ -40,7 +40,7 @@ bool gyroSyncCheckUpdate(gyroDev_t *gyro)
     bool ret;
     if (gyro->dataReady) {
         ret = true;
-        gyro->dataReady= false;
+        gyro->dataReady = false;
     } else {
         ret = false;
     }
@@ -53,42 +53,42 @@ uint16_t gyroSetSampleRate(gyroDev_t *gyro)
     uint16_t accSampleRateHz;
 
     switch (gyro->mpuDetectionResult.sensor) {
-        case BMI_160_SPI:
+    case BMI_160_SPI:
+        gyro->gyroRateKHz = GYRO_RATE_3200_Hz;
+        gyroSampleRateHz = 3200;
+        accSampleRateHz = 800;
+        break;
+    case BMI_270_SPI:
+#ifdef USE_GYRO_DLPF_EXPERIMENTAL
+        if (gyro->hardware_lpf == GYRO_HARDWARE_LPF_EXPERIMENTAL) {
+            // 6.4KHz sampling, but data is unfiltered (no hardware DLPF)
+            gyro->gyroRateKHz = GYRO_RATE_6400_Hz;
+            gyroSampleRateHz = 6400;
+        } else
+#endif
+        {
             gyro->gyroRateKHz = GYRO_RATE_3200_Hz;
             gyroSampleRateHz = 3200;
-            accSampleRateHz = 800;
-            break;
-        case BMI_270_SPI:
-#ifdef USE_GYRO_DLPF_EXPERIMENTAL
-            if (gyro->hardware_lpf == GYRO_HARDWARE_LPF_EXPERIMENTAL) {
-                // 6.4KHz sampling, but data is unfiltered (no hardware DLPF)
-                gyro->gyroRateKHz = GYRO_RATE_6400_Hz;
-                gyroSampleRateHz = 6400;
-            } else
-#endif
-            {
-                gyro->gyroRateKHz = GYRO_RATE_3200_Hz;
-                gyroSampleRateHz = 3200;
-            }
-            accSampleRateHz = 800;
-            break;
-        case ICM_20649_SPI:
-            gyro->gyroRateKHz = GYRO_RATE_9_kHz;
-            gyroSampleRateHz = 9000;
-            accSampleRateHz = 1125;
-            break;
+        }
+        accSampleRateHz = 800;
+        break;
+    case ICM_20649_SPI:
+        gyro->gyroRateKHz = GYRO_RATE_9_kHz;
+        gyroSampleRateHz = 9000;
+        accSampleRateHz = 1125;
+        break;
 #ifdef USE_ACCGYRO_LSM6DSO
-        case LSM6DSO_SPI:
-            gyro->gyroRateKHz = GYRO_RATE_6664_Hz;
-            gyroSampleRateHz = 6664;   // Yes, this is correct per the datasheet. Will effectively round to 150us and 6.67KHz.
-            accSampleRateHz = 833;
-            break;
+    case LSM6DSO_SPI:
+        gyro->gyroRateKHz = GYRO_RATE_6664_Hz;
+        gyroSampleRateHz = 6664;   // Yes, this is correct per the datasheet. Will effectively round to 150us and 6.67KHz.
+        accSampleRateHz = 833;
+        break;
 #endif
-        default:
-            gyro->gyroRateKHz = GYRO_RATE_8_kHz;
-            gyroSampleRateHz = 8000;
-            accSampleRateHz = 1000;
-            break;
+    default:
+        gyro->gyroRateKHz = GYRO_RATE_8_kHz;
+        gyroSampleRateHz = 8000;
+        accSampleRateHz = 1000;
+        break;
     }
 
     gyro->mpuDividerDrops  = 0; // we no longer use the gyro's sample divider

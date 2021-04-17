@@ -285,7 +285,8 @@ void tasksInit(void)
 
     const bool useBatteryCurrent = batteryConfig()->currentMeterSource != CURRENT_METER_NONE;
     setTaskEnabled(TASK_BATTERY_CURRENT, useBatteryCurrent);
-    const bool useBatteryAlerts = batteryConfig()->useVBatAlerts || batteryConfig()->useConsumptionAlerts || featureIsEnabled(FEATURE_OSD);
+    const bool useBatteryAlerts = batteryConfig()->useVBatAlerts || batteryConfig()->useConsumptionAlerts
+                                  || featureIsEnabled(FEATURE_OSD);
     setTaskEnabled(TASK_BATTERY_ALERTS, (useBatteryVoltage || useBatteryCurrent) && useBatteryAlerts);
 
 #ifdef USE_STACK_CHECK
@@ -463,7 +464,7 @@ task_t tasks[TASK_COUNT] = {
 #endif
 
 #ifdef USE_MAG
-    [TASK_COMPASS] = DEFINE_TASK("COMPASS", NULL, NULL, compassUpdate,TASK_PERIOD_HZ(10), TASK_PRIORITY_LOW),
+    [TASK_COMPASS] = DEFINE_TASK("COMPASS", NULL, NULL, compassUpdate, TASK_PERIOD_HZ(10), TASK_PRIORITY_LOW),
 #endif
 
 #ifdef USE_BARO

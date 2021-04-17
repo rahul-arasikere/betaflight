@@ -30,7 +30,7 @@
 #include "pin_pull_up_down.h"
 
 
-static void initPin(const pinPullUpDownConfig_t* config, resourceOwner_e owner, uint8_t index)
+static void initPin(const pinPullUpDownConfig_t *config, resourceOwner_e owner, uint8_t index)
 {
     IO_t io = IOGetByTag(config->ioTag);
     if (!io) {

@@ -68,7 +68,7 @@ void sdftInit(sdft_t *sdft, const uint8_t startBin, const uint8_t endBin, const 
 FAST_CODE void sdftPush(sdft_t *sdft, const float *sample)
 {
     const float delta = *sample - rPowerN * sdft->samples[sdft->idx];
-    
+
     sdft->samples[sdft->idx] = *sample;
     sdft->idx = (sdft->idx + 1) % SDFT_SAMPLE_SIZE;
 
@@ -79,7 +79,7 @@ FAST_CODE void sdftPush(sdft_t *sdft, const float *sample)
 
 
 // Add new sample to frequency spectrum in parts
-FAST_CODE void sdftPushBatch(sdft_t* sdft, const float *sample, const uint8_t *batchIdx)
+FAST_CODE void sdftPushBatch(sdft_t *sdft, const float *sample, const uint8_t *batchIdx)
 {
     const uint8_t batchStart = sdft->batchSize * *batchIdx;
     uint8_t batchEnd = batchStart;

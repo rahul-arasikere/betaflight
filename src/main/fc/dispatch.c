@@ -62,7 +62,7 @@ void dispatchAdd(dispatchEntry_t *entry, int delayUs)
     dispatchEntry_t **p = &head;
 
     if (entry->inQue) {
-      return;    // Allready in Queue, abort
+        return;    // Allready in Queue, abort
     }
 
     while (*p && cmp32((*p)->delayedUntil, delayedUntil) < 0)

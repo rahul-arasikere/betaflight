@@ -129,13 +129,14 @@ void cameraControlInit(void)
             return;
         }
 
-        #ifdef STM32F1
-            IOConfigGPIO(cameraControlRuntime.io, IOCFG_AF_PP);
-        #else
-            IOConfigGPIOAF(cameraControlRuntime.io, IOCFG_AF_PP, timerHardware->alternateFunction);
-        #endif
+#ifdef STM32F1
+        IOConfigGPIO(cameraControlRuntime.io, IOCFG_AF_PP);
+#else
+        IOConfigGPIOAF(cameraControlRuntime.io, IOCFG_AF_PP, timerHardware->alternateFunction);
+#endif
 
-        pwmOutConfig(&cameraControlRuntime.channel, timerHardware, timerClock(TIM6), CAMERA_CONTROL_PWM_RESOLUTION, 0, cameraControlRuntime.inverted);
+        pwmOutConfig(&cameraControlRuntime.channel, timerHardware, timerClock(TIM6), CAMERA_CONTROL_PWM_RESOLUTION, 0,
+                     cameraControlRuntime.inverted);
 
         cameraControlRuntime.period = CAMERA_CONTROL_PWM_RESOLUTION;
         *cameraControlRuntime.channel.ccr = cameraControlRuntime.period;
@@ -184,7 +185,8 @@ void cameraControlProcess(uint32_t currentTimeUs)
 static float calculateKeyPressVoltage(const cameraControlKey_e key)
 {
     const int buttonResistance = cameraControlConfig()->buttonResistanceValues[key] * 100;
-    return 1.0e-2f * cameraControlConfig()->refVoltage * buttonResistance / (100 * cameraControlConfig()->internalResistance + buttonResistance);
+    return 1.0e-2f * cameraControlConfig()->refVoltage * buttonResistance / (100 * cameraControlConfig()->internalResistance
+                                                                             + buttonResistance);
 }
 
 #if defined(CAMERA_CONTROL_HARDWARE_PWM_AVAILABLE) || defined(CAMERA_CONTROL_SOFTWARE_PWM_AVAILABLE)

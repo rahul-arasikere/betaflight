@@ -132,17 +132,17 @@ void forcedSystemResetWithoutDisablingCaches(void);
 /** @addtogroup STM32H7xx_System_Private_Variables
   * @{
   */
-  /* This variable is updated in three ways:
-      1) by calling CMSIS function SystemCoreClockUpdate()
-      2) by calling HAL API function HAL_RCC_GetHCLKFreq()
-      3) each time HAL_RCC_ClockConfig() is called to configure the system clock frequency
-         Note: If you use this function to configure the system clock; then there
-               is no need to call the 2 first functions listed above, since SystemCoreClock
-               variable is updated automatically.
-  */
-  uint32_t SystemCoreClock = 64000000;
-  uint32_t SystemD2Clock = 64000000;
-  const  uint8_t D1CorePrescTable[16] = {0, 0, 0, 0, 1, 2, 3, 4, 1, 2, 3, 4, 6, 7, 8, 9};
+/* This variable is updated in three ways:
+    1) by calling CMSIS function SystemCoreClockUpdate()
+    2) by calling HAL API function HAL_RCC_GetHCLKFreq()
+    3) each time HAL_RCC_ClockConfig() is called to configure the system clock frequency
+       Note: If you use this function to configure the system clock; then there
+             is no need to call the 2 first functions listed above, since SystemCoreClock
+             variable is updated automatically.
+*/
+uint32_t SystemCoreClock = 64000000;
+uint32_t SystemD2Clock = 64000000;
+const  uint8_t D1CorePrescTable[16] = {0, 0, 0, 0, 1, 2, 3, 4, 1, 2, 3, 4, 6, 7, 8, 9};
 
 /**
   * @}
@@ -258,7 +258,7 @@ pllConfig_t pll1ConfigRevV = {
 
 // Nominal max 280MHz with 8MHz HSE
 // (340 is okay, 360 doesn't work.)
-// 
+//
 
 pllConfig_t pll1Config7A3 = {
     .clockMhz = 280,
@@ -299,7 +299,7 @@ pllConfig_t pll1Config72x = {
 
 #define MCU_HCLK_DIVIDER RCC_HCLK_DIV2
 
-// RM0468 (Rev.2) Table 16. 
+// RM0468 (Rev.2) Table 16.
 // 550MHz (AXI Interface clock) at VOS0 is 3WS
 #define MCU_FLASH_LATENCY FLASH_LATENCY_3
 
@@ -416,12 +416,12 @@ static void SystemClockHSE_Config(void)
     //   RCC_CLOCKTYPE_D3PCLK1          APB4 (rcc_pclk4)
 
     RCC_ClkInitStruct.ClockType = ( \
-        RCC_CLOCKTYPE_SYSCLK | \
-        RCC_CLOCKTYPE_HCLK | \
-        RCC_CLOCKTYPE_D1PCLK1 | \
-        RCC_CLOCKTYPE_PCLK1 | \
-        RCC_CLOCKTYPE_PCLK2  | \
-        RCC_CLOCKTYPE_D3PCLK1);
+                                    RCC_CLOCKTYPE_SYSCLK | \
+                                    RCC_CLOCKTYPE_HCLK | \
+                                    RCC_CLOCKTYPE_D1PCLK1 | \
+                                    RCC_CLOCKTYPE_PCLK1 | \
+                                    RCC_CLOCKTYPE_PCLK2  | \
+                                    RCC_CLOCKTYPE_D3PCLK1);
     RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
     RCC_ClkInitStruct.SYSCLKDivider = RCC_SYSCLK_DIV1;
 
@@ -530,7 +530,7 @@ void SystemClock_Config(void)
     // Turn on USE_CRS_INTERRUPTS to see CRS in action
     HAL_NVIC_SetPriority(CRS_IRQn, 6, 0);
     HAL_NVIC_EnableIRQ(CRS_IRQn);
-    __HAL_RCC_CRS_ENABLE_IT(RCC_CRS_IT_SYNCOK|RCC_CRS_IT_SYNCWARN|RCC_CRS_IT_ESYNC|RCC_CRS_IT_ERR);
+    __HAL_RCC_CRS_ENABLE_IT(RCC_CRS_IT_SYNCOK | RCC_CRS_IT_SYNCWARN | RCC_CRS_IT_ESYNC | RCC_CRS_IT_ERR);
 #endif
 
     // Configure UART peripheral clock sources
@@ -543,7 +543,7 @@ void SystemClock_Config(void)
     //   HSI (hsi_ck),
     //   CSI (csi_ck),LSE(lse_ck);
 
-    RCC_PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART16|RCC_PERIPHCLK_USART234578;
+    RCC_PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART16 | RCC_PERIPHCLK_USART234578;
     RCC_PeriphClkInit.Usart16ClockSelection = RCC_USART16CLKSOURCE_D2PCLK2;
     RCC_PeriphClkInit.Usart234578ClockSelection = RCC_USART234578CLKSOURCE_D2PCLK1;
     HAL_RCCEx_PeriphCLKConfig(&RCC_PeriphClkInit);
@@ -573,7 +573,7 @@ void SystemClock_Config(void)
 
     // We use 100MHz for Rev.Y and 120MHz for Rev.V from various sources
 
-    RCC_PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SPI123|RCC_PERIPHCLK_SPI45|RCC_PERIPHCLK_SPI6;
+    RCC_PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_SPI123 | RCC_PERIPHCLK_SPI45 | RCC_PERIPHCLK_SPI6;
     RCC_PeriphClkInit.Spi123ClockSelection = RCC_SPI123CLKSOURCE_PLL;
     RCC_PeriphClkInit.Spi45ClockSelection = RCC_SPI45CLKSOURCE_D2PCLK1;
     RCC_PeriphClkInit.Spi6ClockSelection = RCC_SPI6CLKSOURCE_D3PCLK1;
@@ -589,7 +589,7 @@ void SystemClock_Config(void)
     //
     // Note that peripheral clock determination in bus_i2c_hal_init.c must be modified when the sources are modified.
 
-    RCC_PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C123|RCC_PERIPHCLK_I2C4;
+    RCC_PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C123 | RCC_PERIPHCLK_I2C4;
     RCC_PeriphClkInit.I2c123ClockSelection = RCC_I2C123CLKSOURCE_D2PCLK1;
     RCC_PeriphClkInit.I2c4ClockSelection = RCC_I2C4CLKSOURCE_D3PCLK1;
     HAL_RCCEx_PeriphCLKConfig(&RCC_PeriphClkInit);
@@ -599,8 +599,10 @@ void SystemClock_Config(void)
     RCC_PeriphClkInit.PLL2.PLL2M = 5;
     RCC_PeriphClkInit.PLL2.PLL2N = 500;
     RCC_PeriphClkInit.PLL2.PLL2P = 2; // 500Mhz
-    RCC_PeriphClkInit.PLL2.PLL2Q = 3; // 266Mhz - 133Mhz can be derived from this for for QSPI if flash chip supports the speed.
-    RCC_PeriphClkInit.PLL2.PLL2R = 4; // 200Mhz HAL LIBS REQUIRE 200MHZ SDMMC CLOCK, see HAL_SD_ConfigWideBusOperation, SDMMC_HSpeed_CLK_DIV, SDMMC_NSpeed_CLK_DIV
+    RCC_PeriphClkInit.PLL2.PLL2Q =
+        3; // 266Mhz - 133Mhz can be derived from this for for QSPI if flash chip supports the speed.
+    RCC_PeriphClkInit.PLL2.PLL2R =
+        4; // 200Mhz HAL LIBS REQUIRE 200MHZ SDMMC CLOCK, see HAL_SD_ConfigWideBusOperation, SDMMC_HSpeed_CLK_DIV, SDMMC_NSpeed_CLK_DIV
     RCC_PeriphClkInit.PLL2.PLL2RGE = RCC_PLL2VCIRANGE_0;
     RCC_PeriphClkInit.PLL2.PLL2VCOSEL = RCC_PLL2VCOWIDE;
     RCC_PeriphClkInit.PLL2.PLL2FRACN = 0;
@@ -683,7 +685,7 @@ void SystemInit (void)
 
     // FPU settings
 #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
-    SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  // Set CP10 and CP11 Full Access
+    SCB->CPACR |= ((3UL << 10 * 2) | (3UL << 11 * 2)); // Set CP10 and CP11 Full Access
 #endif
 
     // Reset the RCC clock configuration to the default reset state
@@ -714,14 +716,14 @@ void SystemInit (void)
     /* Reset D3CFGR register */
     RCC->D3CFGR = 0x00000000;
 #elif defined(STM32H7A3xx) || defined(STM32H7A3xxQ)
-  /* Reset CDCFGR1 register */
-  RCC->CDCFGR1 = 0x00000000;
+    /* Reset CDCFGR1 register */
+    RCC->CDCFGR1 = 0x00000000;
 
-  /* Reset CDCFGR2 register */
-  RCC->CDCFGR2 = 0x00000000;
+    /* Reset CDCFGR2 register */
+    RCC->CDCFGR2 = 0x00000000;
 
-  /* Reset SRDCFGR register */
-  RCC->SRDCFGR = 0x00000000;
+    /* Reset SRDCFGR register */
+    RCC->SRDCFGR = 0x00000000;
 #endif
 
     /* Reset PLLCKSELR register */
@@ -753,7 +755,7 @@ void SystemInit (void)
     RCC->CIER = 0x00000000;
 
     /* Change  the switch matrix read issuing capability to 1 for the AXI SRAM target (Target 7) */
-  *((__IO uint32_t*)0x51008108) = 0x00000001;
+    *((__IO uint32_t *)0x51008108) = 0x00000001;
 
 #if defined (DATA_IN_ExtSRAM) || defined (DATA_IN_ExtSDRAM)
     SystemInit_ExtMemCtl();
@@ -860,11 +862,11 @@ void SystemInit_ExtMemCtl(void)
     /* Configure PDx pins Output type to push-pull */
     GPIOD->OTYPER  = 0x00000000;
     /* No pull-up, pull-down for PDx pins */
-     GPIOD->PUPDR   = 0x55555505;
+    GPIOD->PUPDR   = 0x55555505;
     /* Connect PEx pins to FMC Alternate function */
     GPIOE->AFR[0]  = 0xC00000CC;
     GPIOE->AFR[1]  = 0xCCCCCCCC;
-      /* Configure PEx pins in Alternate function mode */
+    /* Configure PEx pins in Alternate function mode */
     GPIOE->MODER   = 0xAAAABFFA;
     /* Configure PEx pins speed to 50 MHz */
     GPIOE->OSPEEDR = 0xAAAA800A;
@@ -888,7 +890,7 @@ void SystemInit_ExtMemCtl(void)
     GPIOG->AFR[1]  = 0xC000000C;
     /* Configure PGx pins in Alternate function mode */
     GPIOG->MODER   = 0xBFFEFAAA;
- /* Configure PGx pins speed to 50 MHz */
+    /* Configure PGx pins speed to 50 MHz */
     GPIOG->OSPEEDR = 0x80020AAA;
     /* Configure PGx pins Output type to push-pull */
     GPIOG->OTYPER  = 0x00000000;
@@ -916,7 +918,7 @@ void SystemInit_ExtMemCtl(void)
     GPIOI->OTYPER  = 0x00000000;
     /* No pull-up, pull-down for PIx pins */
     GPIOI->PUPDR   = 0x00145555;
-/*-- FMC Configuration ------------------------------------------------------*/
+    /*-- FMC Configuration ------------------------------------------------------*/
     /* Enable the FMC interface clock */
     (RCC->AHB3ENR |= (RCC_AHB3ENR_FMCEN));
     /*SDRAM Timing and access interface configuration*/
@@ -947,38 +949,34 @@ void SystemInit_ExtMemCtl(void)
     /* Clock enable command */
     FMC_Bank5_6->SDCMR = 0x00000009;
     tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
-    while((tmpreg != 0) && (timeout-- > 0))
-    {
-      tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
+    while ((tmpreg != 0) && (timeout-- > 0)) {
+        tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
     }
 
     /* Delay */
-    for (index = 0; index<1000; index++);
+    for (index = 0; index < 1000; index++);
 
     /* PALL command */
-      FMC_Bank5_6->SDCMR = 0x0000000A;
+    FMC_Bank5_6->SDCMR = 0x0000000A;
     timeout = 0xFFFF;
-    while((tmpreg != 0) && (timeout-- > 0))
-    {
-      tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
+    while ((tmpreg != 0) && (timeout-- > 0)) {
+        tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
     }
 
     FMC_Bank5_6->SDCMR = 0x000000EB;
     timeout = 0xFFFF;
-    while((tmpreg != 0) && (timeout-- > 0))
-    {
-      tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
+    while ((tmpreg != 0) && (timeout-- > 0)) {
+        tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
     }
 
     FMC_Bank5_6->SDCMR = 0x0004400C;
     timeout = 0xFFFF;
-    while((tmpreg != 0) && (timeout-- > 0))
-    {
-      tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
+    while ((tmpreg != 0) && (timeout-- > 0)) {
+        tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
     }
     /* Set refresh count */
     tmpreg = FMC_Bank5_6->SDRTR;
-    FMC_Bank5_6->SDRTR = (tmpreg | (0x00000603<<1));
+    FMC_Bank5_6->SDRTR = (tmpreg | (0x00000603 << 1));
 
     /* Disable write protection */
     tmpreg = FMC_Bank5_6->SDCR[1];
@@ -991,8 +989,8 @@ void SystemInit_ExtMemCtl(void)
 #endif /* DATA_IN_ExtSDRAM */
 
 #if defined(DATA_IN_ExtSRAM)
-/*-- GPIOs Configuration -----------------------------------------------------*/
-     /* Enable GPIOD, GPIOE, GPIOF and GPIOG interface clock */
+    /*-- GPIOs Configuration -----------------------------------------------------*/
+    /* Enable GPIOD, GPIOE, GPIOF and GPIOG interface clock */
     RCC->AHB4ENR   |= 0x00000078;
 
     /* Connect PDx pins to FMC Alternate function */
@@ -1043,7 +1041,7 @@ void SystemInit_ExtMemCtl(void)
     /* No pull-up, pull-down for PGx pins */
     GPIOG->PUPDR   = 0x00100555;
 
-/*-- FMC/FSMC Configuration --------------------------------------------------*/
+    /*-- FMC/FSMC Configuration --------------------------------------------------*/
     /* Enable the FMC/FSMC interface clock */
     (RCC->AHB3ENR |= (RCC_AHB3ENR_FMCEN));
 

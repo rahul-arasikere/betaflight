@@ -61,15 +61,15 @@ int toupper(int c)
     return islower(c) ? (c) - 'a' + 'A' : c;
 }
 
-int strcasecmp(const char * s1, const char * s2)
+int strcasecmp(const char *s1, const char *s2)
 {
     return strncasecmp(s1, s2, (size_t)INT_MAX);
 }
 
-int strncasecmp(const char * s1, const char * s2, size_t n)
+int strncasecmp(const char *s1, const char *s2, size_t n)
 {
-    const unsigned char * ucs1 = (const unsigned char *) s1;
-    const unsigned char * ucs2 = (const unsigned char *) s2;
+    const unsigned char *ucs1 = (const unsigned char *) s1;
+    const unsigned char *ucs2 = (const unsigned char *) s2;
 
     int d = 0;
 

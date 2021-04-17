@@ -74,8 +74,7 @@ static char accCalibrationStatus[CALIBRATION_STATUS_MAX_LENGTH];
 
 // Features
 
-static const OSD_Entry menuFeaturesEntries[] =
-{
+static const OSD_Entry menuFeaturesEntries[] = {
     {"--- FEATURES ---", OME_Label, NULL, NULL, 0},
 
 #if defined(USE_BLACKBOX)
@@ -135,7 +134,8 @@ static bool setupPopupMenuBuild(void)
     // Add menu entries for uncompleted setup tasks
 #if defined(USE_ACC)
     if (sensors(SENSOR_ACC) && (getArmingDisableFlags() & ARMING_DISABLED_ACC_CALIBRATION)) {
-        cmsAddMenuEntry(&setupPopupMenuEntries[++menuIndex], "CALIBRATE ACC", OME_Funcall, cmsCalibrateAccMenu, accCalibrationStatus, DYNAMIC);
+        cmsAddMenuEntry(&setupPopupMenuEntries[++menuIndex], "CALIBRATE ACC", OME_Funcall, cmsCalibrateAccMenu,
+                        accCalibrationStatus, DYNAMIC);
     }
 #endif
 
@@ -152,7 +152,8 @@ static const void *setupPopupMenuOnDisplayUpdate(displayPort_t *pDisp, const OSD
 
 #if defined(USE_ACC)
     // Update the ACC calibration status message.
-    tfp_sprintf(accCalibrationStatus, accIsCalibrationComplete() ? accHasBeenCalibrated() ? CALIBRATION_STATUS_COMPLETE : CALIBRATION_STATUS_REQUIRED : CALIBRATION_STATUS_ACTIVE);
+    tfp_sprintf(accCalibrationStatus, accIsCalibrationComplete() ? accHasBeenCalibrated() ? CALIBRATION_STATUS_COMPLETE :
+                CALIBRATION_STATUS_REQUIRED : CALIBRATION_STATUS_ACTIVE);
 #endif
 
     return NULL;
@@ -179,8 +180,7 @@ static const void *mainMenuOnEnter(displayPort_t *pDisp)
     return NULL;
 }
 
-static const OSD_Entry menuMainEntries[] =
-{
+static const OSD_Entry menuMainEntries[] = {
     {"-- MAIN --",  OME_Label, NULL, NULL, 0},
 
     {"PROFILE",     OME_Submenu,  cmsMenuChange, &cmsx_menuImu, 0},

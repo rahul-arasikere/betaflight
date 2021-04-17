@@ -203,7 +203,7 @@ static int32_t BMI160_do_foc(const busDevice_t *bus)
     spiBusWriteRegister(bus, BMI160_REG_CMD, BMI160_CMD_START_FOC);
 
     // Wait for FOC to complete
-    for (int i=0; i<50; i++) {
+    for (int i = 0; i < 50; i++) {
         val = spiBusReadRegister(bus, BMI160_REG_STATUS);
         if (val & BMI160_REG_STATUS_FOC_RDY) {
             break;
@@ -221,7 +221,7 @@ static int32_t BMI160_do_foc(const busDevice_t *bus)
     spiBusWriteRegister(bus, BMI160_REG_CMD, BMI160_CMD_PROG_NVM);
 
     // Wait for NVM programming to complete
-    for (int i=0; i<50; i++) {
+    for (int i = 0; i < 50; i++) {
         val = spiBusReadRegister(bus, BMI160_REG_STATUS);
         if (val & BMI160_REG_STATUS_NVM_RDY) {
             break;
@@ -254,7 +254,8 @@ static void bmi160IntExtiInit(gyroDev_t *gyro)
 
     IOInit(mpuIntIO, OWNER_GYRO_EXTI, 0);
     EXTIHandlerInit(&gyro->exti, bmi160ExtiHandler);
-    EXTIConfig(mpuIntIO, &gyro->exti, NVIC_PRIO_MPU_INT_EXTI, IOCFG_IN_FLOATING, BETAFLIGHT_EXTI_TRIGGER_RISING); // TODO - maybe pullup / pulldown ?
+    EXTIConfig(mpuIntIO, &gyro->exti, NVIC_PRIO_MPU_INT_EXTI, IOCFG_IN_FLOATING,
+               BETAFLIGHT_EXTI_TRIGGER_RISING); // TODO - maybe pullup / pulldown ?
     EXTIEnable(mpuIntIO, true);
 }
 #endif

@@ -74,7 +74,7 @@ static FAST_CODE void GYRO_FILTER_FUNCTION_NAME(void)
 
             gyroDataAnalysePush(&gyro.gyroAnalyseState, axis, gyroADCf);
             for (uint8_t p = 0; p < gyro.notchFilterDynCount; p++) {
-                gyroADCf = gyro.notchFilterDynApplyFn((filter_t*)&gyro.notchFilterDyn[axis][p], gyroADCf);
+                gyroADCf = gyro.notchFilterDynApplyFn((filter_t *)&gyro.notchFilterDyn[axis][p], gyroADCf);
             }
 
             if (axis == gyro.gyroDebugAxis) {

@@ -113,10 +113,10 @@ attitudeEulerAngles_t attitude = EULER_INITIALIZE;
 PG_REGISTER_WITH_RESET_TEMPLATE(imuConfig_t, imuConfig, PG_IMU_CONFIG, 1);
 
 PG_RESET_TEMPLATE(imuConfig_t, imuConfig,
-    .dcm_kp = 2500,                // 1.0 * 10000
-    .dcm_ki = 0,                   // 0.003 * 10000
-    .small_angle = 25,
-);
+                  .dcm_kp = 2500,                // 1.0 * 10000
+                  .dcm_ki = 0,                   // 0.003 * 10000
+                  .small_angle = 25,
+                 );
 
 static void imuQuaternionComputeProducts(quaternion *quat, quaternionProducts *quatProd)
 {
@@ -132,7 +132,8 @@ static void imuQuaternionComputeProducts(quaternion *quat, quaternionProducts *q
     quatProd->zz = quat->z * quat->z;
 }
 
-STATIC_UNIT_TESTED void imuComputeRotationMatrix(void){
+STATIC_UNIT_TESTED void imuComputeRotationMatrix(void)
+{
     imuQuaternionComputeProducts(&q, &qP);
 
     rMat[0][0] = 1.0f - 2.0f * qP.yy - 2.0f * qP.zz;
@@ -333,15 +334,17 @@ STATIC_UNIT_TESTED void imuUpdateEulerAngles(void)
     quaternionProducts buffer;
 
     if (FLIGHT_MODE(HEADFREE_MODE)) {
-       imuQuaternionComputeProducts(&headfree, &buffer);
+        imuQuaternionComputeProducts(&headfree, &buffer);
 
-       attitude.values.roll = lrintf(atan2_approx((+2.0f * (buffer.wx + buffer.yz)), (+1.0f - 2.0f * (buffer.xx + buffer.yy))) * (1800.0f / M_PIf));
-       attitude.values.pitch = lrintf(((0.5f * M_PIf) - acos_approx(+2.0f * (buffer.wy - buffer.xz))) * (1800.0f / M_PIf));
-       attitude.values.yaw = lrintf((-atan2_approx((+2.0f * (buffer.wz + buffer.xy)), (+1.0f - 2.0f * (buffer.yy + buffer.zz))) * (1800.0f / M_PIf)));
+        attitude.values.roll = lrintf(atan2_approx((+2.0f * (buffer.wx + buffer.yz)),
+                                                   (+1.0f - 2.0f * (buffer.xx + buffer.yy))) * (1800.0f / M_PIf));
+        attitude.values.pitch = lrintf(((0.5f * M_PIf) - acos_approx(+2.0f * (buffer.wy - buffer.xz))) * (1800.0f / M_PIf));
+        attitude.values.yaw = lrintf((-atan2_approx((+2.0f * (buffer.wz + buffer.xy)),
+                                                    (+1.0f - 2.0f * (buffer.yy + buffer.zz))) * (1800.0f / M_PIf)));
     } else {
-       attitude.values.roll = lrintf(atan2_approx(rMat[2][1], rMat[2][2]) * (1800.0f / M_PIf));
-       attitude.values.pitch = lrintf(((0.5f * M_PIf) - acos_approx(-rMat[2][0])) * (1800.0f / M_PIf));
-       attitude.values.yaw = lrintf((-atan2_approx(rMat[1][0], rMat[0][0]) * (1800.0f / M_PIf)));
+        attitude.values.roll = lrintf(atan2_approx(rMat[2][1], rMat[2][2]) * (1800.0f / M_PIf));
+        attitude.values.pitch = lrintf(((0.5f * M_PIf) - acos_approx(-rMat[2][0])) * (1800.0f / M_PIf));
+        attitude.values.yaw = lrintf((-atan2_approx(rMat[1][0], rMat[0][0]) * (1800.0f / M_PIf)));
     }
 
     if (attitude.values.yaw < 0) {
@@ -419,17 +422,18 @@ static float imuCalcKpGain(timeUs_t currentTimeUs, bool useAcc, float *gyroAvera
     if (attitudeResetActive) {
         ret = ATTITUDE_RESET_KP_GAIN;
     } else {
-       ret = imuRuntimeConfig.dcm_kp;
-       if (!armState) {
-          ret = ret * 10.0f; // Scale the kP to generally converge faster when disarmed.
-       }
+        ret = imuRuntimeConfig.dcm_kp;
+        if (!armState) {
+            ret = ret * 10.0f; // Scale the kP to generally converge faster when disarmed.
+        }
     }
 
     return ret;
 }
 
 #if defined(USE_GPS)
-static void imuComputeQuaternionFromRPY(quaternionProducts *quatProd, int16_t initialRoll, int16_t initialPitch, int16_t initialYaw)
+static void imuComputeQuaternionFromRPY(quaternionProducts *quatProd, int16_t initialRoll, int16_t initialPitch,
+                                        int16_t initialYaw)
 {
     if (initialRoll > 1800) {
         initialRoll -= 3600;
@@ -491,12 +495,13 @@ static void imuCalculateEstimatedAttitude(timeUs_t currentTimeUs)
 #ifdef USE_GPS_RESCUE
         && !gpsRescueDisableMag()
 #endif
-        ) {
+       ) {
         useMag = true;
     }
 #endif
 #if defined(USE_GPS)
-    if (!useMag && sensors(SENSOR_GPS) && STATE(GPS_FIX) && gpsSol.numSat >= 5 && gpsSol.groundSpeed >= GPS_COG_MIN_GROUNDSPEED) {
+    if (!useMag && sensors(SENSOR_GPS) && STATE(GPS_FIX) && gpsSol.numSat >= 5
+        && gpsSol.groundSpeed >= GPS_COG_MIN_GROUNDSPEED) {
         // Use GPS course over ground to correct attitude.values.yaw
         if (isFixedWing()) {
             courseOverGround = DECIDEGREES_TO_RADIANS(gpsSol.groundCourse);
@@ -615,10 +620,10 @@ float getCosTiltAngle(void)
 
 void getQuaternion(quaternion *quat)
 {
-   quat->w = q.w;
-   quat->x = q.x;
-   quat->y = q.y;
-   quat->z = q.z;
+    quat->w = q.w;
+    quat->x = q.x;
+    quat->y = q.y;
+    quat->z = q.z;
 }
 
 #ifdef SIMULATOR_BUILD
@@ -668,10 +673,10 @@ bool imuQuaternionHeadfreeOffsetSet(void)
     if ((ABS(attitude.values.roll) < 450)  && (ABS(attitude.values.pitch) < 450)) {
         const float yaw = -atan2_approx((+2.0f * (qP.wz + qP.xy)), (+1.0f - 2.0f * (qP.yy + qP.zz)));
 
-        offset.w = cos_approx(yaw/2);
+        offset.w = cos_approx(yaw / 2);
         offset.x = 0;
         offset.y = 0;
-        offset.z = sin_approx(yaw/2);
+        offset.z = sin_approx(yaw / 2);
 
         return true;
     } else {
@@ -703,9 +708,12 @@ void imuQuaternionHeadfreeTransformVectorEarthToBody(t_fp_vector_def *v)
     imuQuaternionMultiplication(&offset, &q, &headfree);
     imuQuaternionComputeProducts(&headfree, &buffer);
 
-    const float x = (buffer.ww + buffer.xx - buffer.yy - buffer.zz) * v->X + 2.0f * (buffer.xy + buffer.wz) * v->Y + 2.0f * (buffer.xz - buffer.wy) * v->Z;
-    const float y = 2.0f * (buffer.xy - buffer.wz) * v->X + (buffer.ww - buffer.xx + buffer.yy - buffer.zz) * v->Y + 2.0f * (buffer.yz + buffer.wx) * v->Z;
-    const float z = 2.0f * (buffer.xz + buffer.wy) * v->X + 2.0f * (buffer.yz - buffer.wx) * v->Y + (buffer.ww - buffer.xx - buffer.yy + buffer.zz) * v->Z;
+    const float x = (buffer.ww + buffer.xx - buffer.yy - buffer.zz) * v->X + 2.0f * (buffer.xy + buffer.wz) * v->Y + 2.0f
+                    * (buffer.xz - buffer.wy) * v->Z;
+    const float y = 2.0f * (buffer.xy - buffer.wz) * v->X + (buffer.ww - buffer.xx + buffer.yy - buffer.zz) * v->Y + 2.0f
+                    * (buffer.yz + buffer.wx) * v->Z;
+    const float z = 2.0f * (buffer.xz + buffer.wy) * v->X + 2.0f * (buffer.yz - buffer.wx) * v->Y +
+                    (buffer.ww - buffer.xx - buffer.yy + buffer.zz) * v->Z;
 
     v->X = x;
     v->Y = y;

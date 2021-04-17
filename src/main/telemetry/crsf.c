@@ -138,7 +138,8 @@ static void crsfInitializeFrame(sbuf_t *dst)
 
 static void crsfFinalize(sbuf_t *dst)
 {
-    crc8_dvb_s2_sbuf_append(dst, &crsfFrame[2]); // start at byte 2, since CRC does not include device address and frame length
+    crc8_dvb_s2_sbuf_append(dst,
+                            &crsfFrame[2]); // start at byte 2, since CRC does not include device address and frame length
     sbufSwitchToReader(dst, crsfFrame);
     // write the telemetry frame to the receiver.
     crsfRxWriteTelemetryData(sbufPtr(dst), sbufBytesRemaining(dst));
@@ -172,7 +173,8 @@ void crsfFrameGps(sbuf_t *dst)
     sbufWriteU32BigEndian(dst, gpsSol.llh.lon);
     sbufWriteU16BigEndian(dst, (gpsSol.groundSpeed * 36 + 50) / 100); // gpsSol.groundSpeed is in cm/s
     sbufWriteU16BigEndian(dst, gpsSol.groundCourse * 10); // gpsSol.groundCourse is degrees * 10
-    const uint16_t altitude = (constrain(getEstimatedAltitudeCm(), 0 * 100, 5000 * 100) / 100) + 1000; // constrain altitude from 0 to 5,000m
+    const uint16_t altitude = (constrain(getEstimatedAltitudeCm(), 0 * 100,
+                                         5000 * 100) / 100) + 1000; // constrain altitude from 0 to 5,000m
     sbufWriteU16BigEndian(dst, altitude);
     sbufWriteU8(dst, gpsSol.numSat);
 }
@@ -237,11 +239,11 @@ int16_t     Yaw angle ( rad / 10000 )
 
 void crsfFrameAttitude(sbuf_t *dst)
 {
-     sbufWriteU8(dst, CRSF_FRAME_ATTITUDE_PAYLOAD_SIZE + CRSF_FRAME_LENGTH_TYPE_CRC);
-     sbufWriteU8(dst, CRSF_FRAMETYPE_ATTITUDE);
-     sbufWriteU16BigEndian(dst, DECIDEGREES_TO_RADIANS10000(attitude.values.pitch));
-     sbufWriteU16BigEndian(dst, DECIDEGREES_TO_RADIANS10000(attitude.values.roll));
-     sbufWriteU16BigEndian(dst, DECIDEGREES_TO_RADIANS10000(attitude.values.yaw));
+    sbufWriteU8(dst, CRSF_FRAME_ATTITUDE_PAYLOAD_SIZE + CRSF_FRAME_LENGTH_TYPE_CRC);
+    sbufWriteU8(dst, CRSF_FRAMETYPE_ATTITUDE);
+    sbufWriteU16BigEndian(dst, DECIDEGREES_TO_RADIANS10000(attitude.values.pitch));
+    sbufWriteU16BigEndian(dst, DECIDEGREES_TO_RADIANS10000(attitude.values.roll));
+    sbufWriteU16BigEndian(dst, DECIDEGREES_TO_RADIANS10000(attitude.values.yaw));
 }
 
 /*
@@ -265,25 +267,25 @@ void crsfFrameFlightMode(sbuf_t *dst)
     } else
 
 #if defined(USE_GPS)
-    if (!ARMING_FLAG(ARMED) && featureIsEnabled(FEATURE_GPS) && (!STATE(GPS_FIX) || !STATE(GPS_FIX_HOME))) {
-        flightMode = "WAIT"; // Waiting for GPS lock
-    } else
+        if (!ARMING_FLAG(ARMED) && featureIsEnabled(FEATURE_GPS) && (!STATE(GPS_FIX) || !STATE(GPS_FIX_HOME))) {
+            flightMode = "WAIT"; // Waiting for GPS lock
+        } else
 #endif
 
-    // Flight modes in decreasing order of importance
-    if (FLIGHT_MODE(FAILSAFE_MODE)) {
-        flightMode = "!FS!";
-    } else if (FLIGHT_MODE(GPS_RESCUE_MODE)) {
-        flightMode = "RTH";
-    } else if (FLIGHT_MODE(PASSTHRU_MODE)) {
-        flightMode = "MANU";
-    } else if (FLIGHT_MODE(ANGLE_MODE)) {
-        flightMode = "STAB";
-    } else if (FLIGHT_MODE(HORIZON_MODE)) {
-        flightMode = "HOR";
-    } else if (airmodeIsEnabled()) {
-        flightMode = "AIR";
-    }
+            // Flight modes in decreasing order of importance
+            if (FLIGHT_MODE(FAILSAFE_MODE)) {
+                flightMode = "!FS!";
+            } else if (FLIGHT_MODE(GPS_RESCUE_MODE)) {
+                flightMode = "RTH";
+            } else if (FLIGHT_MODE(PASSTHRU_MODE)) {
+                flightMode = "MANU";
+            } else if (FLIGHT_MODE(ANGLE_MODE)) {
+                flightMode = "STAB";
+            } else if (FLIGHT_MODE(HORIZON_MODE)) {
+                flightMode = "HOR";
+            } else if (airmodeIsEnabled()) {
+                flightMode = "AIR";
+            }
 
     sbufWriteString(dst, flightMode);
     if (!ARMING_FLAG(ARMED)) {
@@ -306,7 +308,8 @@ uint32_t    Null Bytes
 uint8_t     255 (Max MSP Parameter)
 uint8_t     0x01 (Parameter version 1)
 */
-void crsfFrameDeviceInfo(sbuf_t *dst) {
+void crsfFrameDeviceInfo(sbuf_t *dst)
+{
 
     char buff[30];
     tfp_sprintf(buff, "%s %s: %s", FC_FIRMWARE_NAME, FC_VERSION_STRING, systemConfig()->boardIdentifier);
@@ -317,7 +320,7 @@ void crsfFrameDeviceInfo(sbuf_t *dst) {
     sbufWriteU8(dst, CRSF_ADDRESS_RADIO_TRANSMITTER);
     sbufWriteU8(dst, CRSF_ADDRESS_FLIGHT_CONTROLLER);
     sbufWriteStringWithZeroTerminator(dst, buff);
-    for (unsigned int ii=0; ii<12; ii++) {
+    for (unsigned int ii = 0; ii < 12; ii++) {
         sbufWriteU8(dst, 0x00);
     }
     sbufWriteU8(dst, CRSF_DEVICEINFO_PARAMETER_COUNT);
@@ -337,7 +340,7 @@ void crsfFrameDeviceInfo(sbuf_t *dst) {
 
 static uint16_t getRunLength(const void *start, const void *end)
 {
-    uint8_t *cursor = (uint8_t*)start;
+    uint8_t *cursor = (uint8_t *)start;
     uint8_t c = *cursor;
     size_t runLength = 0;
     for (; cursor != end; cursor++) {
@@ -364,7 +367,7 @@ static void cRleEncodeStream(sbuf_t *source, sbuf_t *dest, uint8_t maxDestLen)
             const uint8_t remainder = (runLength % CRSF_RLE_MAX_RUN_LENGTH);
             const uint8_t totalBatches = fullBatches + (remainder) ? 1 : 0;
             if (destRemaining >= totalBatches * CRSF_RLE_BATCH_SIZE) {
-                for (unsigned int i=1; i<=totalBatches; i++) {
+                for (unsigned int i = 1; i <= totalBatches; i++) {
                     const uint8_t batchLength = (i < totalBatches) ? CRSF_RLE_MAX_RUN_LENGTH : remainder;
                     sbufWriteU8(dest, c);
                     sbufWriteU8(dest, batchLength);
@@ -520,12 +523,12 @@ void initCrsfTelemetry(void)
     crsfSchedule[index++] = BV(CRSF_FRAME_FLIGHT_MODE_INDEX);
 #ifdef USE_GPS
     if (featureIsEnabled(FEATURE_GPS)
-       && telemetryIsSensorEnabled(SENSOR_ALTITUDE | SENSOR_LAT_LONG | SENSOR_GROUND_SPEED | SENSOR_HEADING)) {
+        && telemetryIsSensorEnabled(SENSOR_ALTITUDE | SENSOR_LAT_LONG | SENSOR_GROUND_SPEED | SENSOR_HEADING)) {
         crsfSchedule[index++] = BV(CRSF_FRAME_GPS_INDEX);
     }
 #endif
     crsfScheduleCount = (uint8_t)index;
- }
+}
 
 bool checkCrsfTelemetryState(void)
 {
@@ -537,7 +540,8 @@ void crsfProcessDisplayPortCmd(uint8_t *frameStart)
 {
     uint8_t cmd = *frameStart;
     switch (cmd) {
-    case CRSF_DISPLAYPORT_SUBCMD_OPEN: ;
+    case CRSF_DISPLAYPORT_SUBCMD_OPEN:
+        ;
         const uint8_t rows = *(frameStart + CRSF_DISPLAYPORT_OPEN_ROWS_OFFSET);
         const uint8_t cols = *(frameStart + CRSF_DISPLAYPORT_OPEN_COLS_OFFSET);
         crsfDisplayPortSetDimensions(rows, cols);
@@ -607,15 +611,15 @@ void handleCrsfTelemetry(timeUs_t currentTimeUs)
     if (crsfDisplayPortIsReady() && crsfDisplayPortScreen()->updated) {
         crsfDisplayPortScreen()->updated = false;
         uint16_t screenSize = crsfDisplayPortScreen()->rows * crsfDisplayPortScreen()->cols;
-        uint8_t *srcStart = (uint8_t*)crsfDisplayPortScreen()->buffer;
-        uint8_t *srcEnd = (uint8_t*)(crsfDisplayPortScreen()->buffer + screenSize);
+        uint8_t *srcStart = (uint8_t *)crsfDisplayPortScreen()->buffer;
+        uint8_t *srcEnd = (uint8_t *)(crsfDisplayPortScreen()->buffer + screenSize);
         sbuf_t displayPortSbuf;
         sbuf_t *src = sbufInit(&displayPortSbuf, srcStart, srcEnd);
         sbuf_t crsfDisplayPortBuf;
         sbuf_t *dst = &crsfDisplayPortBuf;
         displayPortBatchId = (displayPortBatchId  + 1) % CRSF_DISPLAYPORT_BATCH_MAX;
         uint8_t i = 0;
-        while(sbufBytesRemaining(src)) {
+        while (sbufBytesRemaining(src)) {
             crsfInitializeFrame(dst);
             crsfFrameDisplayPortChunk(dst, src, displayPortBatchId, i);
             crsfFinalize(dst);
@@ -638,7 +642,8 @@ void handleCrsfTelemetry(timeUs_t currentTimeUs)
 #if defined(UNIT_TEST)
 static int crsfFinalizeBuf(sbuf_t *dst, uint8_t *frame)
 {
-    crc8_dvb_s2_sbuf_append(dst, &crsfFrame[2]); // start at byte 2, since CRC does not include device address and frame length
+    crc8_dvb_s2_sbuf_append(dst,
+                            &crsfFrame[2]); // start at byte 2, since CRC does not include device address and frame length
     sbufSwitchToReader(dst, crsfFrame);
     const int frameSize = sbufBytesRemaining(dst);
     for (int ii = 0; sbufBytesRemaining(dst); ++ii) {

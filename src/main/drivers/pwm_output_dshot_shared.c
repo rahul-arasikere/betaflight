@@ -106,7 +106,8 @@ FAST_CODE void pwmWriteDshotInt(uint8_t index, uint16_t value)
 
 #ifdef USE_DSHOT_DMAR
     if (useBurstDshot) {
-        bufferSize = loadDmaBuffer(&motor->timer->dmaBurstBuffer[timerLookupChannelIndex(motor->timerHardware->channel)], 4, packet);
+        bufferSize = loadDmaBuffer(&motor->timer->dmaBurstBuffer[timerLookupChannelIndex(motor->timerHardware->channel)], 4,
+                                   packet);
         motor->timer->dmaBurstLength = bufferSize * 4;
     } else
 #endif
@@ -157,7 +158,8 @@ static uint32_t decodeTelemetryPacket(uint32_t buffer[], uint32_t count)
 
     static const uint32_t decode[32] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 10, 11, 0, 13, 14, 15,
-        0, 0, 2, 3, 0, 5, 6, 7, 0, 0, 8, 1, 0, 4, 12, 0 };
+        0, 0, 2, 3, 0, 5, 6, 7, 0, 0, 8, 1, 0, 4, 12, 0
+    };
 
     uint32_t decodedValue = decode[value & 0x1f];
     decodedValue |= decode[(value >> 5) & 0x1f] << 4;

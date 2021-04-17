@@ -78,8 +78,8 @@
 #define SPEKTRUM_PULSE_OFFSET          988 // Offset value to convert digital data into RC pulse
 
 typedef union {
-        uint8_t raw[SRXL2_MAX_PACKET_LENGTH];
-        Srxl2Header header;
+    uint8_t raw[SRXL2_MAX_PACKET_LENGTH];
+    Srxl2Header header;
 } Srxl2Frame;
 
 struct rxBuf {
@@ -98,8 +98,8 @@ static volatile uint32_t lastReceiveTimestamp = 0;
 static volatile uint32_t lastIdleTimestamp = 0;
 
 struct rxBuf readBuffer[2];
-struct rxBuf* readBufferPtr = &readBuffer[0];
-struct rxBuf* processBufferPtr = &readBuffer[1];
+struct rxBuf *readBufferPtr = &readBuffer[0];
+struct rxBuf *processBufferPtr = &readBuffer[1];
 static volatile unsigned readBufferIdx = 0;
 static volatile bool transmittingTelemetry = false;
 static uint8_t writeBuffer[SRXL2_MAX_PACKET_LENGTH];
@@ -128,9 +128,9 @@ uint8_t globalResult = 0;
 
 // if 50ms with not activity, go to default baudrate and to step 1
 
-bool srxl2ProcessHandshake(const Srxl2Header* header)
+bool srxl2ProcessHandshake(const Srxl2Header *header)
 {
-    const Srxl2HandshakeSubHeader* handshake = (Srxl2HandshakeSubHeader*)(header + 1);
+    const Srxl2HandshakeSubHeader *handshake = (Srxl2HandshakeSubHeader *)(header + 1);
     if (handshake->destinationDeviceId == Broadcast) {
         DEBUG_PRINTF("broadcast handshake from %x\r\n", handshake->sourceDeviceId);
         busMasterDeviceId = handshake->sourceDeviceId;
@@ -169,7 +169,8 @@ bool srxl2ProcessHandshake(const Srxl2Header* header)
     return true;
 }
 
-void srxl2ProcessChannelData(const Srxl2ChannelDataHeader* channelData, rxRuntimeState_t *rxRuntimeState) {
+void srxl2ProcessChannelData(const Srxl2ChannelDataHeader *channelData, rxRuntimeState_t *rxRuntimeState)
+{
     globalResult = RX_FRAME_COMPLETE;
 
     if (channelData->rssi >= 0) {
@@ -192,12 +193,13 @@ void srxl2ProcessChannelData(const Srxl2ChannelDataHeader* channelData, rxRuntim
         channelMask &= ~mask;
     }
 
-     DEBUG_PRINTF("channel data: %d %d %x\r\n", channelData_header->rssi, channelData_header->frameLosses, channelData_header->channelMask.u32);
+    DEBUG_PRINTF("channel data: %d %d %x\r\n", channelData_header->rssi, channelData_header->frameLosses,
+                 channelData_header->channelMask.u32);
 }
 
-bool srxl2ProcessControlData(const Srxl2Header* header, rxRuntimeState_t *rxRuntimeState)
+bool srxl2ProcessControlData(const Srxl2Header *header, rxRuntimeState_t *rxRuntimeState)
 {
-    const Srxl2ControlDataSubHeader* controlData = (Srxl2ControlDataSubHeader*)(header + 1);
+    const Srxl2ControlDataSubHeader *controlData = (Srxl2ControlDataSubHeader *)(header + 1);
     const uint8_t ownId = (FlightController << 4) | unitId;
     if (controlData->replyId == ownId) {
         telemetryRequested = true;
@@ -213,11 +215,12 @@ bool srxl2ProcessControlData(const Srxl2Header* header, rxRuntimeState_t *rxRunt
         globalResult |= RX_FRAME_FAILSAFE;
         setRssiDirect(0, RSSI_SOURCE_RX_PROTOCOL);
         // DEBUG_PRINTF("fs channel data\r\n");
-    } break;
+    }
+    break;
 
     case VTXData: {
 #if defined(USE_SPEKTRUM_VTX_CONTROL) && defined(USE_VTX_COMMON)
-        Srxl2VtxData *vtxData = (Srxl2VtxData*)(controlData + 1);
+        Srxl2VtxData *vtxData = (Srxl2VtxData *)(controlData + 1);
         DEBUG_PRINTF("vtx data\r\n");
         DEBUG_PRINTF("vtx band: %x\r\n", vtxData->band);
         DEBUG_PRINTF("vtx channel: %x\r\n", vtxData->channel);
@@ -235,13 +238,14 @@ bool srxl2ProcessControlData(const Srxl2Header* header, rxRuntimeState_t *rxRunt
                                 ((vtxData->power & 0x07));
         spektrumHandleVtxControl(vtxControl);
 #endif
-    } break;
+    }
+    break;
     }
 
     return true;
 }
 
-bool srxl2ProcessPacket(const Srxl2Header* header, rxRuntimeState_t *rxRuntimeState)
+bool srxl2ProcessPacket(const Srxl2Header *header, rxRuntimeState_t *rxRuntimeState)
 {
     switch (header->packetType) {
     case Handshake:
@@ -260,12 +264,14 @@ bool srxl2ProcessPacket(const Srxl2Header* header, rxRuntimeState_t *rxRuntimeSt
 void srxl2Process(rxRuntimeState_t *rxRuntimeState)
 {
     if (processBufferPtr->packet.header.id != SRXL2_ID || processBufferPtr->len != processBufferPtr->packet.header.length) {
-        DEBUG_PRINTF("invalid header id: %x, or length: %x received vs %x expected \r\n", processBufferPtr->packet.header.id, processBufferPtr->len, processBufferPtr->packet.header.length);
+        DEBUG_PRINTF("invalid header id: %x, or length: %x received vs %x expected \r\n", processBufferPtr->packet.header.id,
+                     processBufferPtr->len, processBufferPtr->packet.header.length);
         globalResult = RX_FRAME_DROPPED;
         return;
     }
 
-    const uint16_t calculatedCrc = crc16_ccitt_update(0, processBufferPtr->packet.raw, processBufferPtr->packet.header.length);
+    const uint16_t calculatedCrc = crc16_ccitt_update(0, processBufferPtr->packet.raw,
+                                                      processBufferPtr->packet.header.length);
 
     //Invalid if crc non-zero
     if (calculatedCrc) {
@@ -296,8 +302,7 @@ static void srxl2DataReceive(uint16_t character, void *data)
     if (readBufferPtr->len > 0 || readBufferIdx >= SRXL2_MAX_PACKET_LENGTH) {
         readBufferIdx = 0;
         globalResult = RX_FRAME_DROPPED;
-    }
-    else {
+    } else {
         readBufferPtr->packet.raw[readBufferIdx] = character;
         readBufferIdx++;
     }
@@ -307,11 +312,9 @@ static void srxl2Idle()
 {
     if (transmittingTelemetry) { // Transmitting telemetry triggers idle interrupt as well. We dont want to change buffers then
         transmittingTelemetry = false;
-    }
-    else if (readBufferIdx == 0) { // Packet was invalid
+    } else if (readBufferIdx == 0) { // Packet was invalid
         readBufferPtr->len = 0;
-    }
-    else {
+    } else {
         lastIdleTimestamp = microsISR();
         //Swap read and process buffer pointers
         if (processBufferPtr == &readBuffer[0]) {
@@ -344,7 +347,8 @@ static uint8_t srxl2FrameStatus(rxRuntimeState_t *rxRuntimeState)
     const uint32_t now = micros();
 
     switch (state) {
-    case Disabled: break;
+    case Disabled:
+        break;
 
     case ListenForActivity: {
         // activity detected
@@ -357,7 +361,7 @@ static uint8_t srxl2FrameStatus(rxRuntimeState_t *rxRuntimeState)
             if (baudRate != 0) {
                 uint32_t currentBaud = serialGetBaudRate(serialPort);
 
-                if(currentBaud == SRXL2_PORT_BAUDRATE_DEFAULT)
+                if (currentBaud == SRXL2_PORT_BAUDRATE_DEFAULT)
                     serialSetBaudRate(serialPort, SRXL2_PORT_BAUDRATE_HIGH);
                 else
                     serialSetBaudRate(serialPort, SRXL2_PORT_BAUDRATE_DEFAULT);
@@ -374,7 +378,8 @@ static uint8_t srxl2FrameStatus(rxRuntimeState_t *rxRuntimeState)
                 timeoutTimestamp = now + SRXL2_LISTEN_FOR_HANDSHAKE_TIMEOUT_US;
             }
         }
-    } break;
+    }
+    break;
 
     case SendHandshake: {
         if (cmpTimeUs(now, timeoutTimestamp) >= 0) {
@@ -392,7 +397,8 @@ static uint8_t srxl2FrameStatus(rxRuntimeState_t *rxRuntimeState)
             state = ListenForActivity;
             lastReceiveTimestamp = 0;
         }
-    } break;
+    }
+    break;
 
     case ListenForHandshake: {
         if (cmpTimeUs(now, timeoutTimestamp) >= 0)  {
@@ -404,13 +410,15 @@ static uint8_t srxl2FrameStatus(rxRuntimeState_t *rxRuntimeState)
             state = ListenForActivity;
             lastReceiveTimestamp = 0;
         }
-    } break;
+    }
+    break;
 
     case Running: {
         // frame timed out, reset state
         if (cmpTimeUs(now, lastValidPacketTimestamp) >= SRXL2_FRAME_TIMEOUT_US) {
             serialSetBaudRate(serialPort, SRXL2_PORT_BAUDRATE_DEFAULT);
-            DEBUG_PRINTF("case Running: switching to %d baud: %d %d\r\n", SRXL2_PORT_BAUDRATE_DEFAULT, now, lastValidPacketTimestamp);
+            DEBUG_PRINTF("case Running: switching to %d baud: %d %d\r\n", SRXL2_PORT_BAUDRATE_DEFAULT, now,
+                         lastValidPacketTimestamp);
             timeoutTimestamp = now + SRXL2_LISTEN_FOR_ACTIVITY_TIMEOUT_US;
             result = (result & ~RX_FRAME_PENDING) | RX_FRAME_FAILSAFE;
 
@@ -418,7 +426,8 @@ static uint8_t srxl2FrameStatus(rxRuntimeState_t *rxRuntimeState)
             lastReceiveTimestamp = 0;
             lastValidPacketTimestamp = 0;
         }
-    } break;
+    }
+    break;
     };
 
     if (writeBufferIdx) {
@@ -449,7 +458,8 @@ static bool srxl2ProcessFrame(const rxRuntimeState_t *rxRuntimeState)
             serialWriteBuf(serialPort, writeBuffer, writeBufferIdx);
             writeBufferIdx = 0;
         } else {
-            DEBUG_PRINTF("not enough time to send 2 characters passed yet, %d us since last receive, %d required\r\n", now - lastReceiveTimestamp, SRXL2_REPLY_QUIESCENCE);
+            DEBUG_PRINTF("not enough time to send 2 characters passed yet, %d us since last receive, %d required\r\n",
+                         now - lastReceiveTimestamp, SRXL2_REPLY_QUIESCENCE);
         }
     } else {
         DEBUG_PRINTF("still receiving a frame, %d %d\r\n", lastIdleTimestamp, lastReceiveTimestamp);
@@ -469,9 +479,9 @@ static uint16_t srxl2ReadRawRC(const rxRuntimeState_t *rxRuntimeState, uint8_t c
 
 void srxl2RxWriteData(const void *data, int len)
 {
-    const uint16_t crc = crc16_ccitt_update(0, (uint8_t*)data, len - 2);
-    ((uint8_t*)data)[len-2] = ((uint8_t *) &crc)[1] & 0xFF;
-    ((uint8_t*)data)[len-1] = ((uint8_t *) &crc)[0] & 0xFF;
+    const uint16_t crc = crc16_ccitt_update(0, (uint8_t *)data, len - 2);
+    ((uint8_t *)data)[len - 2] = ((uint8_t *) &crc)[1] & 0xFF;
+    ((uint8_t *)data)[len - 1] = ((uint8_t *) &crc)[0] & 0xFF;
 
     len = MIN(len, (int)sizeof(writeBuffer));
     memcpy(writeBuffer, data, len);
@@ -516,7 +526,7 @@ bool srxl2RxInit(const rxConfig_t *rxConfig, rxRuntimeState_t *rxRuntimeState)
     }
 
     serialPort = openSerialPort(portConfig->identifier, FUNCTION_RX_SERIAL, srxl2DataReceive,
-        NULL, SRXL2_PORT_BAUDRATE_DEFAULT, SRXL2_PORT_MODE, options);
+                                NULL, SRXL2_PORT_BAUDRATE_DEFAULT, SRXL2_PORT_MODE, options);
 
     if (!serialPort) {
         return false;
@@ -557,10 +567,10 @@ void srxl2InitializeFrame(sbuf_t *dst)
 
 void srxl2FinalizeFrame(sbuf_t *dst)
 {
-  sbufSwitchToReader(dst, telemetryFrame);
-  // Include 2 additional bytes of length since we're letting the srxl2RxWriteData function add the CRC in
-  srxl2RxWriteData(sbufPtr(dst), sbufBytesRemaining(dst) + 2);
-  telemetryRequested = false;
+    sbufSwitchToReader(dst, telemetryFrame);
+    // Include 2 additional bytes of length since we're letting the srxl2RxWriteData function add the CRC in
+    srxl2RxWriteData(sbufPtr(dst), sbufBytesRemaining(dst) + 2);
+    telemetryRequested = false;
 }
 
 void srxl2Bind(void)

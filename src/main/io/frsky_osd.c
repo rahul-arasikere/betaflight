@@ -46,8 +46,7 @@
 #define FRSKY_OSD_ERROR(...)
 #define FRSKY_OSD_ASSERT(x)
 
-typedef enum
-{
+typedef enum {
     OSD_CMD_RESPONSE_ERROR = 0,
 
     OSD_CMD_INFO = 1,
@@ -332,7 +331,7 @@ static void frskyOsdUpdateReceiveBuffer(void)
                 // Full uvarint decoded. Check against buffer size.
                 if (state.recvBuffer.expected > sizeof(state.recvBuffer.data)) {
                     FRSKY_OSD_ERROR("Can't handle payload of size %u with a buffer of size %u",
-                        state.recvBuffer.expected, sizeof(state.recvBuffer.data));
+                                    state.recvBuffer.expected, sizeof(state.recvBuffer.data));
                     frskyOsdResetReceiveBuffer();
                     break;
                 }
@@ -350,7 +349,7 @@ static void frskyOsdUpdateReceiveBuffer(void)
         case RECV_STATE_CHECKSUM:
             if (c != state.recvBuffer.crc) {
                 FRSKY_OSD_DEBUG("Checksum error %u != %u. Discarding %u bytes",
-                    c, state.recvBuffer.crc, state.recvBuffer.pos);
+                                c, state.recvBuffer.crc, state.recvBuffer.pos);
                 frskyOsdResetReceiveBuffer();
                 break;
             }
@@ -371,65 +370,62 @@ static bool frskyOsdIsResponseAvailable(void)
 static bool frskyOsdHandleCommand(osdCommand_e cmd, const void *payload, size_t size)
 {
     switch (cmd) {
-        case OSD_CMD_RESPONSE_ERROR:
-        {
-            if (size >= 2) {
-                FRSKY_OSD_ERROR("Received an error %02x in response to command %u", *(ptr + 1), *ptr);
-                return true;
-            }
+    case OSD_CMD_RESPONSE_ERROR: {
+        if (size >= 2) {
+            FRSKY_OSD_ERROR("Received an error %02x in response to command %u", *(ptr + 1), *ptr);
+            return true;
+        }
+        break;
+    }
+    case OSD_CMD_INFO: {
+        if (size < sizeof(frskyOsdInfoResponse_t)) {
             break;
         }
-        case OSD_CMD_INFO:
-        {
-            if (size < sizeof(frskyOsdInfoResponse_t)) {
-                break;
-            }
-            const frskyOsdInfoResponse_t *resp = payload;
-            if (resp->magic[0] != 'A' || resp->magic[1] != 'G' || resp->magic[2] != 'H') {
-                FRSKY_OSD_ERROR("Invalid magic number %x %x %x, expecting AGH",
-                    resp->magic[0], resp->magic[1], resp->magic[2]);
-                return false;
-            }
-            state.info.major = resp->versionMajor;
-            state.info.minor = resp->versionMinor;
-            state.info.grid.rows = resp->gridRows;
-            state.info.grid.columns = resp->gridColumns;
-            state.info.viewport.width = resp->pixelWidth;
-            state.info.viewport.height = resp->pixelHeight;
-            if (!state.initialized) {
-                FRSKY_OSD_DEBUG("FrSky OSD initialized. Version %u.%u.%u, pixels=%ux%u, grid=%ux%u",
-                    resp->versionMajor, resp->versionMinor, resp->versionPatch,
-                    resp->pixelWidth, resp->pixelHeight, resp->gridColumns, resp->gridRows);
-                state.initialized = true;
-                frskyOsdClearScreen();
-                frskyOsdResetDrawingState();
-            }
-            return true;
+        const frskyOsdInfoResponse_t *resp = payload;
+        if (resp->magic[0] != 'A' || resp->magic[1] != 'G' || resp->magic[2] != 'H') {
+            FRSKY_OSD_ERROR("Invalid magic number %x %x %x, expecting AGH",
+                            resp->magic[0], resp->magic[1], resp->magic[2]);
+            return false;
         }
-        case OSD_CMD_READ_FONT:
-        {
-            if (!state.recvOsdCharacter.chr) {
-                FRSKY_OSD_DEBUG("Got unexpected font character");
-                break;
-            }
-            if (size < sizeof(uint16_t) + FRSKY_OSD_CHAR_TOTAL_BYTES) {
-                FRSKY_OSD_TRACE("Received buffer too small for a character: %u bytes", size);
-                break;
-            }
-            const frskyOsdCharacter_t *chr = payload;
-            state.recvOsdCharacter.addr = chr->addr;
-            FRSKY_OSD_TRACE("Received character %u", chr->addr);
-            // Skip character address
-            memcpy(state.recvOsdCharacter.chr->data, &chr->data, MIN(sizeof(state.recvOsdCharacter.chr->data), (size_t)FRSKY_OSD_CHAR_TOTAL_BYTES));
-            return true;
+        state.info.major = resp->versionMajor;
+        state.info.minor = resp->versionMinor;
+        state.info.grid.rows = resp->gridRows;
+        state.info.grid.columns = resp->gridColumns;
+        state.info.viewport.width = resp->pixelWidth;
+        state.info.viewport.height = resp->pixelHeight;
+        if (!state.initialized) {
+            FRSKY_OSD_DEBUG("FrSky OSD initialized. Version %u.%u.%u, pixels=%ux%u, grid=%ux%u",
+                            resp->versionMajor, resp->versionMinor, resp->versionPatch,
+                            resp->pixelWidth, resp->pixelHeight, resp->gridColumns, resp->gridRows);
+            state.initialized = true;
+            frskyOsdClearScreen();
+            frskyOsdResetDrawingState();
         }
-        case OSD_CMD_WRITE_FONT:
-        {
-            // We only wait for the confirmation, we're not interested in the data
-            return true;
-        }
-        default:
+        return true;
+    }
+    case OSD_CMD_READ_FONT: {
+        if (!state.recvOsdCharacter.chr) {
+            FRSKY_OSD_DEBUG("Got unexpected font character");
             break;
+        }
+        if (size < sizeof(uint16_t) + FRSKY_OSD_CHAR_TOTAL_BYTES) {
+            FRSKY_OSD_TRACE("Received buffer too small for a character: %u bytes", size);
+            break;
+        }
+        const frskyOsdCharacter_t *chr = payload;
+        state.recvOsdCharacter.addr = chr->addr;
+        FRSKY_OSD_TRACE("Received character %u", chr->addr);
+        // Skip character address
+        memcpy(state.recvOsdCharacter.chr->data, &chr->data, MIN(sizeof(state.recvOsdCharacter.chr->data),
+                                                                 (size_t)FRSKY_OSD_CHAR_TOTAL_BYTES));
+        return true;
+    }
+    case OSD_CMD_WRITE_FONT: {
+        // We only wait for the confirmation, we're not interested in the data
+        return true;
+    }
+    default:
+        break;
     }
     return false;
 }
@@ -518,8 +514,8 @@ bool frskyOsdInit(videoSystem_e videoSystem)
         FRSKY_OSD_TRACE("FrSky OSD configured, trying to connect...");
         portOptions_e portOptions = 0;
         serialPort_t *port = openSerialPort(portConfig->identifier,
-            FUNCTION_FRSKY_OSD, NULL, NULL, FRSKY_OSD_BAUDRATE,
-            MODE_RXTX, portOptions);
+                                            FUNCTION_FRSKY_OSD, NULL, NULL, FRSKY_OSD_BAUDRATE,
+                                            MODE_RXTX, portOptions);
 
         if (port) {
             frskyOsdStateReset(port);
@@ -660,12 +656,13 @@ static void frskyOsdSendCharInGrid(unsigned x, unsigned y, uint16_t chr)
         y,
         chr & 0xFF,
         chr >> 8,
-        0,
+            0,
     };
     frskyOsdSendAsyncCommand(OSD_CMD_DRAW_GRID_CHR, payload, sizeof(payload));
 }
 
-static void frskyOsdSendAsyncBlobCommand(uint8_t cmd, const void *header, size_t headerSize, const void *blob, size_t blobSize)
+static void frskyOsdSendAsyncBlobCommand(uint8_t cmd, const void *header, size_t headerSize, const void *blob,
+                                         size_t blobSize)
 {
     uint8_t payload[128];
 

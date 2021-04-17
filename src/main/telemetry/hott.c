@@ -239,7 +239,8 @@ void hottPrepareGPSResponse(HOTT_GPS_MSG_t *hottGPSMessage)
 
     int32_t altitudeM = getEstimatedAltitudeCm() / 100;
 
-    const uint16_t hottGpsAltitude = constrain(altitudeM + HOTT_GPS_ALTITUDE_OFFSET, 0 , UINT16_MAX); // gpsSol.llh.alt in m ; offset = 500 -> O m
+    const uint16_t hottGpsAltitude = constrain(altitudeM + HOTT_GPS_ALTITUDE_OFFSET, 0,
+                                               UINT16_MAX);  // gpsSol.llh.alt in m ; offset = 500 -> O m
 
     hottGPSMessage->altitude_L = hottGpsAltitude & 0x00FF;
     hottGPSMessage->altitude_H = hottGpsAltitude >> 8;
@@ -257,20 +258,18 @@ static inline void updateAlarmBatteryStatus(HOTT_EAM_MSG_t *hottEAMMessage)
 {
     if (shouldTriggerBatteryAlarmNow()) {
         lastHottAlarmSoundTime = millis();
-	const batteryState_e voltageState = getVoltageState();
-	const batteryState_e consumptionState = getConsumptionState();
+        const batteryState_e voltageState = getVoltageState();
+        const batteryState_e consumptionState = getConsumptionState();
         if (voltageState == BATTERY_WARNING  || voltageState == BATTERY_CRITICAL) {
             hottEAMMessage->warning_beeps = 0x10;
             hottEAMMessage->alarm_invers1 = HOTT_EAM_ALARM1_FLAG_BATTERY_1;
-	}
-	else if (consumptionState == BATTERY_WARNING  || consumptionState == BATTERY_CRITICAL) {
+        } else if (consumptionState == BATTERY_WARNING  || consumptionState == BATTERY_CRITICAL) {
             hottEAMMessage->warning_beeps = 0x16;
             hottEAMMessage->alarm_invers1 = HOTT_EAM_ALARM1_FLAG_MAH;
-	}		
-	else {
+        } else {
             hottEAMMessage->warning_beeps = HOTT_EAM_ALARM1_FLAG_NONE;
             hottEAMMessage->alarm_invers1 = HOTT_EAM_ALARM1_FLAG_NONE;
-	}
+        }
     }
 }
 
@@ -425,7 +424,8 @@ void configureHoTTTelemetryPort(void)
         portOptions |= SERIAL_BIDIR;
     }
 
-    hottPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_HOTT, NULL, NULL, HOTT_BAUDRATE, HOTT_PORT_MODE, portOptions);
+    hottPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_HOTT, NULL, NULL, HOTT_BAUDRATE, HOTT_PORT_MODE,
+                              portOptions);
 
     if (!hottPort) {
         return;
@@ -456,7 +456,8 @@ static inline void hottSendEAMResponse(void)
     hottSendResponse((uint8_t *)&hottEAMMessage, sizeof(hottEAMMessage));
 }
 
-static void hottPrepareMessages(void) {
+static void hottPrepareMessages(void)
+{
     hottPrepareEAMResponse(&hottEAMMessage);
 #ifdef USE_GPS
     hottPrepareGPSResponse(&hottGPSMessage);
@@ -617,13 +618,13 @@ static void hottCheckSerialData(uint32_t currentMicros)
     const uint8_t address = serialRead(hottPort);
 
     if ((requestId == 0) || (requestId == HOTT_BINARY_MODE_REQUEST_ID) || (address == HOTT_TELEMETRY_NO_SENSOR_ID)) {
-    /*
-     * FIXME the first byte of the HoTT request frame is ONLY either 0x80 (binary mode) or 0x7F (text mode).
-     * The binary mode is read as 0x00 (error reading the upper bit) while the text mode is correctly decoded.
-     * The (requestId == 0) test is a workaround for detecting the binary mode with no ambiguity as there is only
-     * one other valid value (0x7F) for text mode.
-     * The error reading for the upper bit should nevertheless be fixed
-     */
+        /*
+         * FIXME the first byte of the HoTT request frame is ONLY either 0x80 (binary mode) or 0x7F (text mode).
+         * The binary mode is read as 0x00 (error reading the upper bit) while the text mode is correctly decoded.
+         * The (requestId == 0) test is a workaround for detecting the binary mode with no ambiguity as there is only
+         * one other valid value (0x7F) for text mode.
+         * The error reading for the upper bit should nevertheless be fixed
+         */
         processBinaryModeRequest(address);
     }
 #if defined (USE_HOTT_TEXTMODE) && defined (USE_CMS)
@@ -633,7 +634,8 @@ static void hottCheckSerialData(uint32_t currentMicros)
 #endif
 }
 
-static void hottSendTelemetryData(void) {
+static void hottSendTelemetryData(void)
+{
 
     if (!hottIsSending) {
         hottConfigurePortForTX();

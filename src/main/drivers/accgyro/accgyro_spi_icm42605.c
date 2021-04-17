@@ -196,7 +196,8 @@ void icm42605GyroInit(gyroDev_t *gyro)
 
     spiSetDivisor(gyro->bus.busdev_u.spi.instance, spiCalculateDivider(ICM42605_MAX_SPI_INIT_CLK_HZ));
 
-    spiBusWriteRegister(&gyro->bus, ICM42605_RA_PWR_MGMT0, ICM42605_PWR_MGMT0_TEMP_DISABLE_OFF | ICM42605_PWR_MGMT0_ACCEL_MODE_LN | ICM42605_PWR_MGMT0_GYRO_MODE_LN);
+    spiBusWriteRegister(&gyro->bus, ICM42605_RA_PWR_MGMT0,
+                        ICM42605_PWR_MGMT0_TEMP_DISABLE_OFF | ICM42605_PWR_MGMT0_ACCEL_MODE_LN | ICM42605_PWR_MGMT0_GYRO_MODE_LN);
     delay(15);
 
     uint8_t outputDataRate = 0;
@@ -235,9 +236,11 @@ void icm42605GyroInit(gyroDev_t *gyro)
     value = spiBusReadRegister(&gyro->bus, ICM42605_RA_ACCEL_CONFIG0);
     debug[2] = value;
 
-    spiBusWriteRegister(&gyro->bus, ICM42605_RA_GYRO_ACCEL_CONFIG0, ICM42605_ACCEL_UI_FILT_BW_LOW_LATENCY | ICM42605_GYRO_UI_FILT_BW_LOW_LATENCY);
+    spiBusWriteRegister(&gyro->bus, ICM42605_RA_GYRO_ACCEL_CONFIG0,
+                        ICM42605_ACCEL_UI_FILT_BW_LOW_LATENCY | ICM42605_GYRO_UI_FILT_BW_LOW_LATENCY);
 
-    spiBusWriteRegister(&gyro->bus, ICM42605_RA_INT_CONFIG, ICM42605_INT1_MODE_PULSED | ICM42605_INT1_DRIVE_CIRCUIT_PP | ICM42605_INT1_POLARITY_ACTIVE_HIGH);
+    spiBusWriteRegister(&gyro->bus, ICM42605_RA_INT_CONFIG,
+                        ICM42605_INT1_MODE_PULSED | ICM42605_INT1_DRIVE_CIRCUIT_PP | ICM42605_INT1_POLARITY_ACTIVE_HIGH);
     spiBusWriteRegister(&gyro->bus, ICM42605_RA_INT_CONFIG0, ICM42605_UI_DRDY_INT_CLEAR_ON_SBR);
 
 #ifdef USE_MPU_DATA_READY_SIGNAL

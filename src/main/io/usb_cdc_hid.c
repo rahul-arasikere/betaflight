@@ -75,10 +75,11 @@ const uint8_t hidChannelMapping[] = {
 void sendRcDataToHid(void)
 {
     int8_t report[9];
-     // Axes
+    // Axes
     for (unsigned i = 0; i < USB_CDC_HID_NUM_AXES; i++) {
         const uint8_t channel = hidChannelMapping[i];
-        report[i] = scaleRange(constrain(rcData[channel], PWM_RANGE_MIN, PWM_RANGE_MAX), PWM_RANGE_MIN, PWM_RANGE_MAX, USB_CDC_HID_RANGE_MIN, USB_CDC_HID_RANGE_MAX);
+        report[i] = scaleRange(constrain(rcData[channel], PWM_RANGE_MIN, PWM_RANGE_MAX), PWM_RANGE_MIN, PWM_RANGE_MAX,
+                               USB_CDC_HID_RANGE_MIN, USB_CDC_HID_RANGE_MAX);
         if (channel == PITCH) {
             // PITCH is inverted in Windows
             report[i] = -report[i];
@@ -90,14 +91,15 @@ void sendRcDataToHid(void)
     report[8] = 0;
     for (unsigned i = 0; i < USB_CDC_HID_NUM_BUTTONS; i++) {
         const uint8_t channel = hidChannelMapping[i + USB_CDC_HID_NUM_AXES];
-        if (scaleRange(constrain(rcData[channel], PWM_RANGE_MIN, PWM_RANGE_MAX), PWM_RANGE_MIN, PWM_RANGE_MAX, USB_CDC_HID_RANGE_MIN, USB_CDC_HID_RANGE_MAX) > 0) {
+        if (scaleRange(constrain(rcData[channel], PWM_RANGE_MIN, PWM_RANGE_MAX), PWM_RANGE_MIN, PWM_RANGE_MAX,
+                       USB_CDC_HID_RANGE_MIN, USB_CDC_HID_RANGE_MAX) > 0) {
             report[8] |= (1 << i);
         }
     }
 #if defined(STM32F4)
-    USBD_HID_SendReport(&USB_OTG_dev, (uint8_t*)report, sizeof(report));
+    USBD_HID_SendReport(&USB_OTG_dev, (uint8_t *)report, sizeof(report));
 #elif defined(STM32F7) || defined(STM32H7) || defined(STM32G4)
-    USBD_HID_SendReport(&USBD_Device, (uint8_t*)report, sizeof(report));
+    USBD_HID_SendReport(&USBD_Device, (uint8_t *)report, sizeof(report));
 #else
 # error "MCU does not support USB HID."
 #endif
@@ -105,6 +107,7 @@ void sendRcDataToHid(void)
 
 bool cdcDeviceIsMayBeActive()
 {
-    return usbDevConfig()->type == COMPOSITE && usbIsConnected() && (getBatteryState() == BATTERY_NOT_PRESENT || batteryConfig()->voltageMeterSource == VOLTAGE_METER_NONE);
+    return usbDevConfig()->type == COMPOSITE && usbIsConnected() && (getBatteryState() == BATTERY_NOT_PRESENT
+                                                                     || batteryConfig()->voltageMeterSource == VOLTAGE_METER_NONE);
 }
 #endif

@@ -121,8 +121,7 @@ extern "C" {
 
 #pragma pack(push, 1)
 
-typedef struct
-{
+typedef struct {
     uint8_t  status;          // 0x80 for bootable, 0x00 for not bootable, anything else for invalid
     uint8_t  start_head;      // The head of the start
     uint8_t  start_sector;    // (S | ((C >> 2) & 0xC0)) where S is the sector of the start and C is the cylinder of the start. Note that S is counted from one.
@@ -135,8 +134,7 @@ typedef struct
     uint32_t EndLBA;          // linear address of last sector in partition. Multiply by sector size (usually 512) for real offset
 } mbr_part_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t    Code[440];
     uint32_t   DiskSig;  //This is optional
     uint16_t   Reserved; //Usually 0x0000
@@ -144,8 +142,7 @@ typedef struct
     uint8_t    BootSignature[2]; //0x55 0xAA for bootable
 } mbr_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t jump[JUMP_INS_LEN];
     uint8_t OEM_name[OEM_NAME_LEN];
     uint16_t bytes_per_sec;
@@ -175,8 +172,7 @@ typedef struct
     uint8_t file_system_type[FILE_SYS_TYPE_LENGTH];
 } boot_sector;
 
-typedef struct
-{
+typedef struct {
     uint32_t signature1;     /* 0x41615252L */
     uint32_t reserved1[120]; /* Nothing as far as I can tell */
     uint32_t signature2;     /* 0x61417272L */
@@ -186,8 +182,7 @@ typedef struct
     uint32_t signature3;
 } fsinfo_t;
 
-typedef struct
-{
+typedef struct {
     uint8_t name[FILE_NAME_SHRT_LEN];
     uint8_t extn[FILE_NAME_EXTN_LEN];
     uint8_t attr;
@@ -203,8 +198,7 @@ typedef struct
     uint32_t size;
 } dir_entry;
 
-typedef struct
-{
+typedef struct {
     uint8_t ord_field;
     uint8_t fname0_4[LFN_FIRST_SET_LEN];
     uint8_t flag;
@@ -276,8 +270,8 @@ static void lba_to_chs(int lba, uint8_t *cl, uint8_t *ch, uint8_t *dh)
     head = (lba / sectors) % heads;
     cylinder = lba / (sectors * heads);
     if (cylinder >= cylinders) {
-      *cl = *ch = *dh = 0xff;
-      return;
+        *cl = *ch = *dh = 0xff;
+        return;
     }
     *cl = sector | ((cylinder & 0x300) >> 2);
     *ch = cylinder & 0xFF;
@@ -350,8 +344,10 @@ void read_mbr_sector(const emfat_t *emfat, uint8_t *sect)
     mbr->PartTable[0].PartType = 0x0C;
     mbr->PartTable[0].StartLBA = emfat->priv.boot_lba;
     mbr->PartTable[0].EndLBA = emfat->disk_sectors;
-    lba_to_chs(mbr->PartTable[0].StartLBA, &mbr->PartTable[0].start_sector, &mbr->PartTable[0].start_cylinder, &mbr->PartTable[0].start_head);
-    lba_to_chs(emfat->disk_sectors - 1, &mbr->PartTable[0].end_sector, &mbr->PartTable[0].end_cylinder, &mbr->PartTable[0].end_head);
+    lba_to_chs(mbr->PartTable[0].StartLBA, &mbr->PartTable[0].start_sector, &mbr->PartTable[0].start_cylinder,
+               &mbr->PartTable[0].start_head);
+    lba_to_chs(emfat->disk_sectors - 1, &mbr->PartTable[0].end_sector, &mbr->PartTable[0].end_cylinder,
+               &mbr->PartTable[0].end_head);
     mbr->BootSignature[0] = 0x55;
     mbr->BootSignature[1] = 0xAA;
 }
@@ -509,8 +505,7 @@ void fill_entry(dir_entry *entry, const char *name, uint8_t attr, uint32_t clust
 
     if ((attr & ATTR_DIR) == 0) {
         for (i = l - 1; i >= 0; i--) {
-            if (name[i] == '.')
-            {
+            if (name[i] == '.') {
                 dot_pos = i;
                 break;
             }
@@ -593,7 +588,8 @@ void fill_dir_sector(emfat_t *emfat, uint8_t *data, emfat_entry_t *entry, uint32
             fill_entry(de++, entry->name, ATTR_DIR | ATTR_READ, entry->priv.first_clust, entry->cma_time, 0);
         } else {
             //fill_entry(de++, entry->name, ATTR_ARCHIVE | ATTR_READ, entry->priv.first_clust, entry->cma_time, entry->curr_size);
-            fill_entry(de++, entry->name, ATTR_ARCHIVE | ATTR_READ | entry->attr, entry->priv.first_clust, entry->cma_time, entry->curr_size);
+            fill_entry(de++, entry->name, ATTR_ARCHIVE | ATTR_READ | entry->attr, entry->priv.first_clust, entry->cma_time,
+                       entry->curr_size);
         }
         entry = entry->priv.next;
         avail -= sizeof(dir_entry);

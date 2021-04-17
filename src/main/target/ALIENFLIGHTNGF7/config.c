@@ -69,7 +69,8 @@ void targetConfiguration(void)
     } else {
         rxConfigMutable()->serialrx_provider = SERIALRX_SBUS;
         rxConfigMutable()->serialrx_inverted = true;
-        serialConfigMutable()->portConfigs[findSerialPortIndexByIdentifier(SERIALRX_UART)].functionMask = FUNCTION_TELEMETRY_FRSKY_HUB | FUNCTION_RX_SERIAL;
+        serialConfigMutable()->portConfigs[findSerialPortIndexByIdentifier(SERIALRX_UART)].functionMask =
+            FUNCTION_TELEMETRY_FRSKY_HUB | FUNCTION_RX_SERIAL;
         telemetryConfigMutable()->telemetry_inverted = false;
         batteryConfigMutable()->voltageMeterSource = VOLTAGE_METER_ADC;
         batteryConfigMutable()->currentMeterSource = CURRENT_METER_ADC;
@@ -89,13 +90,29 @@ void targetConfiguration(void)
         pidProfile->pid[FD_YAW].D = 18;
     }
 
-    *customMotorMixerMutable(0) = (motorMixer_t){ 1.0f, -0.414178f,  1.0f, -1.0f };    // REAR_R
-    *customMotorMixerMutable(1) = (motorMixer_t){ 1.0f, -0.414178f, -1.0f,  1.0f };    // FRONT_R
-    *customMotorMixerMutable(2) = (motorMixer_t){ 1.0f,  0.414178f,  1.0f,  1.0f };    // REAR_L
-    *customMotorMixerMutable(3) = (motorMixer_t){ 1.0f,  0.414178f, -1.0f, -1.0f };    // FRONT_L
-    *customMotorMixerMutable(4) = (motorMixer_t){ 1.0f, -1.0f, -0.414178f, -1.0f };    // MIDFRONT_R
-    *customMotorMixerMutable(5) = (motorMixer_t){ 1.0f,  1.0f, -0.414178f,  1.0f };    // MIDFRONT_L
-    *customMotorMixerMutable(6) = (motorMixer_t){ 1.0f, -1.0f,  0.414178f,  1.0f };    // MIDREAR_R
-    *customMotorMixerMutable(7) = (motorMixer_t){ 1.0f,  1.0f,  0.414178f, -1.0f };    // MIDREAR_L
+    *customMotorMixerMutable(0) = (motorMixer_t) {
+        1.0f, -0.414178f,  1.0f, -1.0f
+    };    // REAR_R
+    *customMotorMixerMutable(1) = (motorMixer_t) {
+        1.0f, -0.414178f, -1.0f,  1.0f
+    };    // FRONT_R
+    *customMotorMixerMutable(2) = (motorMixer_t) {
+        1.0f,  0.414178f,  1.0f,  1.0f
+    };    // REAR_L
+    *customMotorMixerMutable(3) = (motorMixer_t) {
+        1.0f,  0.414178f, -1.0f, -1.0f
+    };    // FRONT_L
+    *customMotorMixerMutable(4) = (motorMixer_t) {
+        1.0f, -1.0f, -0.414178f, -1.0f
+    };    // MIDFRONT_R
+    *customMotorMixerMutable(5) = (motorMixer_t) {
+        1.0f,  1.0f, -0.414178f,  1.0f
+    };    // MIDFRONT_L
+    *customMotorMixerMutable(6) = (motorMixer_t) {
+        1.0f, -1.0f,  0.414178f,  1.0f
+    };    // MIDREAR_R
+    *customMotorMixerMutable(7) = (motorMixer_t) {
+        1.0f,  1.0f,  0.414178f, -1.0f
+    };    // MIDREAR_L
 }
 #endif

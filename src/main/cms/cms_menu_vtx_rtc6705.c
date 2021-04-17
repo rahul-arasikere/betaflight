@@ -48,10 +48,10 @@ static uint8_t cmsx_vtxPit;
 static OSD_TAB_t entryVtxBand;
 static OSD_TAB_t entryVtxChannel;
 static OSD_TAB_t entryVtxPower;
-static const char * const cmsxCmsPitNames[] = {
-        "---",
-        "OFF",
-        "ON ",
+static const char *const cmsxCmsPitNames[] = {
+    "---",
+    "OFF",
+    "ON ",
 };
 static OSD_TAB_t entryVtxPit = {&cmsx_vtxPit, 2, cmsxCmsPitNames};
 

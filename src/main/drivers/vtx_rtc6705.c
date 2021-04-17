@@ -83,7 +83,7 @@ static uint32_t reverse32(uint32_t in)
     uint32_t out = 0;
 
     for (uint8_t i = 0 ; i < 32 ; i++) {
-        out |= ((in>>i) & 1)<<(31-i);
+        out |= ((in >> i) & 1) << (31 - i);
     }
 
     return out;
@@ -158,10 +158,10 @@ static void rtc6705Transfer(uint32_t command)
     delayMicroseconds(2);
 }
 
- /**
- * Set a frequency in Mhz
- * Formula derived from datasheet
- */
+/**
+* Set a frequency in Mhz
+* Formula derived from datasheet
+*/
 void rtc6705SetFrequency(uint16_t frequency)
 {
 #if defined(USE_VTX_RTC6705_SOFTSPI)
@@ -174,8 +174,11 @@ void rtc6705SetFrequency(uint16_t frequency)
 
     frequency = constrain(frequency, VTX_RTC6705_FREQ_MIN, VTX_RTC6705_FREQ_MAX);
 
-    const uint32_t val_a = ((((uint64_t)frequency*(uint64_t)RTC6705_SET_DIVMULT*(uint64_t)RTC6705_SET_R)/(uint64_t)RTC6705_SET_DIVMULT) % RTC6705_SET_FDIV) / RTC6705_SET_NDIV; //Casts required to make sure correct math (large numbers)
-    const uint32_t val_n = (((uint64_t)frequency*(uint64_t)RTC6705_SET_DIVMULT*(uint64_t)RTC6705_SET_R)/(uint64_t)RTC6705_SET_DIVMULT) / RTC6705_SET_FDIV; //Casts required to make sure correct math (large numbers)
+    const uint32_t val_a = ((((uint64_t)frequency * (uint64_t)RTC6705_SET_DIVMULT * (uint64_t)RTC6705_SET_R) /
+                             (uint64_t)RTC6705_SET_DIVMULT) % RTC6705_SET_FDIV) /
+                           RTC6705_SET_NDIV; //Casts required to make sure correct math (large numbers)
+    const uint32_t val_n = (((uint64_t)frequency * (uint64_t)RTC6705_SET_DIVMULT * (uint64_t)RTC6705_SET_R) /
+                            (uint64_t)RTC6705_SET_DIVMULT) / RTC6705_SET_FDIV; //Casts required to make sure correct math (large numbers)
 
     uint32_t val_hex = RTC6705_SET_WRITE;
     val_hex |= (val_a << 5);
@@ -201,7 +204,8 @@ void rtc6705SetRFPower(uint8_t rf_power)
 
     uint32_t val_hex = RTC6705_RW_CONTROL_BIT; // write
     val_hex |= RTC6705_ADDRESS; // address
-    const uint32_t data = rf_power > 1 ? PA_CONTROL_DEFAULT : (PA_CONTROL_DEFAULT | PD_Q5G_MASK) & (~(PA5G_PW_MASK | PA5G_BS_MASK));
+    const uint32_t data = rf_power > 1 ? PA_CONTROL_DEFAULT : (PA_CONTROL_DEFAULT | PD_Q5G_MASK) & (~
+                          (PA5G_PW_MASK | PA5G_BS_MASK));
     val_hex |= data << 5; // 4 address bits and 1 rw bit.
 
     spiSetDivisor(busdev->busdev_u.spi.instance, spiCalculateDivider(RTC6705_MAX_SPI_CLK_HZ));

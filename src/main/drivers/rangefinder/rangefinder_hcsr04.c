@@ -62,7 +62,7 @@ static IO_t echoIO;
 static IO_t triggerIO;
 
 #if !defined(UNIT_TEST)
-void hcsr04_extiHandler(extiCallbackRec_t* cb)
+void hcsr04_extiHandler(extiCallbackRec_t *cb)
 {
     UNUSED(cb);
 
@@ -110,7 +110,8 @@ void hcsr04_update(rangefinderDev_t *dev)
     const timeMs_t timeNowMs = millis();
 
     // We should have a valid measurement within 60ms of trigger
-    if (lastMeasurementReceivedAt > lastMeasurementStartedAt && (lastMeasurementReceivedAt - lastMeasurementStartedAt) <= HCSR04_MINIMUM_FIRING_INTERVAL_MS) {
+    if (lastMeasurementReceivedAt > lastMeasurementStartedAt
+        && (lastMeasurementReceivedAt - lastMeasurementStartedAt) <= HCSR04_MINIMUM_FIRING_INTERVAL_MS) {
         // The speed of sound is 340 m/s or approx. 29 microseconds per centimeter.
         // The ping travels out and back, so to find the distance of the
         // object we take half of the distance traveled.
@@ -148,7 +149,7 @@ int32_t hcsr04_get_distance(rangefinderDev_t *dev)
     return result;
 }
 
-bool hcsr04Detect(rangefinderDev_t *dev, const sonarConfig_t * rangefinderHardwarePins)
+bool hcsr04Detect(rangefinderDev_t *dev, const sonarConfig_t *rangefinderHardwarePins)
 {
     bool detected = false;
 
@@ -187,7 +188,8 @@ bool hcsr04Detect(rangefinderDev_t *dev, const sonarConfig_t * rangefinderHardwa
     if (detected) {
         // Hardware detected - configure the driver
         EXTIHandlerInit(&hcsr04_extiCallbackRec, hcsr04_extiHandler);
-        EXTIConfig(echoIO, &hcsr04_extiCallbackRec, NVIC_PRIO_SONAR_EXTI, IOCFG_IN_FLOATING, BETAFLIGHT_EXTI_TRIGGER_BOTH); // TODO - priority!
+        EXTIConfig(echoIO, &hcsr04_extiCallbackRec, NVIC_PRIO_SONAR_EXTI, IOCFG_IN_FLOATING,
+                   BETAFLIGHT_EXTI_TRIGGER_BOTH); // TODO - priority!
         EXTIEnable(echoIO, true);
 
         dev->delayMs = 100;
@@ -200,8 +202,7 @@ bool hcsr04Detect(rangefinderDev_t *dev, const sonarConfig_t * rangefinderHardwa
         dev->read = &hcsr04_get_distance;
 
         return true;
-    }
-    else {
+    } else {
         // Not detected - free resources
         IORelease(triggerIO);
         IORelease(echoIO);

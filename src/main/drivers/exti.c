@@ -31,7 +31,7 @@
 #include "drivers/exti.h"
 
 typedef struct {
-    extiCallbackRec_t* handler;
+    extiCallbackRec_t *handler;
 } extiChannelRec_t;
 
 extiChannelRec_t extiChannelRecs[16];

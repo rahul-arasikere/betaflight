@@ -429,8 +429,8 @@ static const dmaTimerMapping_t dmaTimerMapping[] = {
 #undef DMA
 
 #else // STM32F3
-    // The embedded ADC24_DMA_REMAP conditional should be removed
-    // when (and if) F3 is going generic.
+// The embedded ADC24_DMA_REMAP conditional should be removed
+// when (and if) F3 is going generic.
 #define DMA(d, c) { DMA_CODE(d, 0, c), (dmaResource_t *)DMA ## d ## _Channel ## c }
 static const dmaPeripheralMapping_t dmaPeripheralMapping[18] = {
 #ifdef USE_SPI
@@ -608,7 +608,7 @@ dmaoptValue_t dmaGetOptionByTimer(const timerHardware_t *timer)
 #if defined(STM32H7) || defined(STM32G4)
     for (unsigned opt = 0; opt < ARRAYLEN(dmaChannelSpec); opt++) {
         if (timer->dmaRefConfigured == dmaChannelSpec[opt].ref) {
-                return (dmaoptValue_t)opt;
+            return (dmaoptValue_t)opt;
         }
     }
 #else
@@ -621,7 +621,7 @@ dmaoptValue_t dmaGetOptionByTimer(const timerHardware_t *timer)
 #if defined(STM32F4) || defined(STM32F7)
                     && dma->channel == timer->dmaChannelConfigured
 #endif
-                    ) {
+                   ) {
                     return j;
                 }
             }
@@ -638,7 +638,7 @@ dmaoptValue_t dmaGetUpOptionByTimer(const timerHardware_t *timer)
 {
     for (unsigned opt = 0; opt < ARRAYLEN(dmaChannelSpec); opt++) {
         if (timer->dmaTimUPRef == dmaChannelSpec[opt].ref) {
-                return (dmaoptValue_t)opt;
+            return (dmaoptValue_t)opt;
         }
     }
 

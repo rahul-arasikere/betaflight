@@ -124,7 +124,8 @@ uint32_t rcInvalidPulsPeriod[MAX_SUPPORTED_RC_CHANNEL_COUNT];
 rxRuntimeState_t rxRuntimeState;
 static uint8_t rcSampleIndex = 0;
 
-PG_REGISTER_ARRAY_WITH_RESET_FN(rxChannelRangeConfig_t, NON_AUX_CHANNEL_COUNT, rxChannelRangeConfigs, PG_RX_CHANNEL_RANGE_CONFIG, 0);
+PG_REGISTER_ARRAY_WITH_RESET_FN(rxChannelRangeConfig_t, NON_AUX_CHANNEL_COUNT, rxChannelRangeConfigs,
+                                PG_RX_CHANNEL_RANGE_CONFIG, 0);
 void pgResetFn_rxChannelRangeConfigs(rxChannelRangeConfig_t *rxChannelRangeConfigs)
 {
     // set default calibration to full range and 1:1 mapping
@@ -134,18 +135,20 @@ void pgResetFn_rxChannelRangeConfigs(rxChannelRangeConfig_t *rxChannelRangeConfi
     }
 }
 
-PG_REGISTER_ARRAY_WITH_RESET_FN(rxFailsafeChannelConfig_t, MAX_SUPPORTED_RC_CHANNEL_COUNT, rxFailsafeChannelConfigs, PG_RX_FAILSAFE_CHANNEL_CONFIG, 0);
+PG_REGISTER_ARRAY_WITH_RESET_FN(rxFailsafeChannelConfig_t, MAX_SUPPORTED_RC_CHANNEL_COUNT, rxFailsafeChannelConfigs,
+                                PG_RX_FAILSAFE_CHANNEL_CONFIG, 0);
 void pgResetFn_rxFailsafeChannelConfigs(rxFailsafeChannelConfig_t *rxFailsafeChannelConfigs)
 {
     for (int i = 0; i < MAX_SUPPORTED_RC_CHANNEL_COUNT; i++) {
         rxFailsafeChannelConfigs[i].mode = (i < NON_AUX_CHANNEL_COUNT) ? RX_FAILSAFE_MODE_AUTO : RX_FAILSAFE_MODE_HOLD;
         rxFailsafeChannelConfigs[i].step = (i == THROTTLE)
-            ? CHANNEL_VALUE_TO_RXFAIL_STEP(RX_MIN_USEC)
-            : CHANNEL_VALUE_TO_RXFAIL_STEP(RX_MID_USEC);
+                                           ? CHANNEL_VALUE_TO_RXFAIL_STEP(RX_MIN_USEC)
+                                           : CHANNEL_VALUE_TO_RXFAIL_STEP(RX_MID_USEC);
     }
 }
 
-void resetAllRxChannelRangeConfigurations(rxChannelRangeConfig_t *rxChannelRangeConfig) {
+void resetAllRxChannelRangeConfigurations(rxChannelRangeConfig_t *rxChannelRangeConfig)
+{
     // set default calibration to full range and 1:1 mapping
     for (int i = 0; i < NON_AUX_CHANNEL_COUNT; i++) {
         rxChannelRangeConfig->min = PWM_RANGE_MIN;
@@ -309,16 +312,15 @@ void rxInit(void)
 
         break;
 #ifdef USE_SERIAL_RX
-    case RX_PROVIDER_SERIAL:
-        {
-            const bool enabled = serialRxInit(rxConfig(), &rxRuntimeState);
-            if (!enabled) {
-                rxRuntimeState.rcReadRawFn = nullReadRawRC;
-                rxRuntimeState.rcFrameStatusFn = nullFrameStatus;
-            }
+    case RX_PROVIDER_SERIAL: {
+        const bool enabled = serialRxInit(rxConfig(), &rxRuntimeState);
+        if (!enabled) {
+            rxRuntimeState.rcReadRawFn = nullReadRawRC;
+            rxRuntimeState.rcFrameStatusFn = nullFrameStatus;
         }
+    }
 
-        break;
+    break;
 #endif
 
 #ifdef USE_RX_MSP
@@ -330,16 +332,15 @@ void rxInit(void)
 #endif
 
 #ifdef USE_RX_SPI
-    case RX_PROVIDER_SPI:
-        {
-            const bool enabled = rxSpiInit(rxSpiConfig(), &rxRuntimeState);
-            if (!enabled) {
-                rxRuntimeState.rcReadRawFn = nullReadRawRC;
-                rxRuntimeState.rcFrameStatusFn = nullFrameStatus;
-            }
+    case RX_PROVIDER_SPI: {
+        const bool enabled = rxSpiInit(rxSpiConfig(), &rxRuntimeState);
+        if (!enabled) {
+            rxRuntimeState.rcReadRawFn = nullReadRawRC;
+            rxRuntimeState.rcFrameStatusFn = nullFrameStatus;
         }
+    }
 
-        break;
+    break;
 #endif
 
 #if defined(USE_PWM) || defined(USE_PPM)
@@ -356,12 +357,13 @@ void rxInit(void)
         rssiSource = RSSI_SOURCE_ADC;
     } else
 #endif
-    if (rxConfig()->rssi_channel > 0) {
-        rssiSource = RSSI_SOURCE_RX_CHANNEL;
-    }
+        if (rxConfig()->rssi_channel > 0) {
+            rssiSource = RSSI_SOURCE_RX_CHANNEL;
+        }
 
     // Setup source frame RSSI filtering to take averaged values every FRAME_ERR_RESAMPLE_US
-    pt1FilterInit(&frameErrFilter, pt1FilterGain(GET_FRAME_ERR_LPF_FREQUENCY(rxConfig()->rssi_src_frame_lpf_period), FRAME_ERR_RESAMPLE_US/1000000.0));
+    pt1FilterInit(&frameErrFilter, pt1FilterGain(GET_FRAME_ERR_LPF_FREQUENCY(rxConfig()->rssi_src_frame_lpf_period),
+                                                 FRAME_ERR_RESAMPLE_US / 1000000.0));
 
     rxChannelCount = MIN(rxConfig()->max_aux_channel + NON_AUX_CHANNEL_COUNT, rxRuntimeState.channelCount);
 }
@@ -491,26 +493,25 @@ bool rxUpdateCheck(timeUs_t currentTimeUs, timeDelta_t currentDeltaTimeUs)
 #endif
     case RX_PROVIDER_SERIAL:
     case RX_PROVIDER_MSP:
-    case RX_PROVIDER_SPI:
-        {
-            const uint8_t frameStatus = rxRuntimeState.rcFrameStatusFn(&rxRuntimeState);
-            if (frameStatus & RX_FRAME_COMPLETE) {
-                rxIsInFailsafeMode = (frameStatus & RX_FRAME_FAILSAFE) != 0;
-                bool rxFrameDropped = (frameStatus & RX_FRAME_DROPPED) != 0;
-                signalReceived = !(rxIsInFailsafeMode || rxFrameDropped);
-                if (signalReceived) {
-                    needRxSignalBefore = currentTimeUs + needRxSignalMaxDelayUs;
-                }
-
-                setLinkQuality(signalReceived, currentDeltaTimeUs);
+    case RX_PROVIDER_SPI: {
+        const uint8_t frameStatus = rxRuntimeState.rcFrameStatusFn(&rxRuntimeState);
+        if (frameStatus & RX_FRAME_COMPLETE) {
+            rxIsInFailsafeMode = (frameStatus & RX_FRAME_FAILSAFE) != 0;
+            bool rxFrameDropped = (frameStatus & RX_FRAME_DROPPED) != 0;
+            signalReceived = !(rxIsInFailsafeMode || rxFrameDropped);
+            if (signalReceived) {
+                needRxSignalBefore = currentTimeUs + needRxSignalMaxDelayUs;
             }
 
-            if (frameStatus & RX_FRAME_PROCESSING_REQUIRED) {
-                auxiliaryProcessingRequired = true;
-            }
+            setLinkQuality(signalReceived, currentDeltaTimeUs);
         }
 
-        break;
+        if (frameStatus & RX_FRAME_PROCESSING_REQUIRED) {
+            auxiliaryProcessingRequired = true;
+        }
+    }
+
+    break;
     }
 
     if (signalReceived) {
@@ -573,7 +574,7 @@ static uint16_t getRxfailValue(uint8_t channel)
             }
         }
 
-    FALLTHROUGH;
+        FALLTHROUGH;
     default:
     case RX_FAILSAFE_MODE_INVALID:
     case RX_FAILSAFE_MODE_HOLD:
@@ -769,7 +770,8 @@ static void updateRSSIPWM(void)
     int16_t pwmRssi = rcData[rxConfig()->rssi_channel - 1];
 
     // Range of rawPwmRssi is [1000;2000]. rssi should be in [0;1023];
-    setRssiDirect(scaleRange(constrain(pwmRssi, PWM_RANGE_MIN, PWM_RANGE_MAX), PWM_RANGE_MIN, PWM_RANGE_MAX, 0, RSSI_MAX_VALUE), RSSI_SOURCE_RX_CHANNEL);
+    setRssiDirect(scaleRange(constrain(pwmRssi, PWM_RANGE_MIN, PWM_RANGE_MAX), PWM_RANGE_MIN, PWM_RANGE_MAX, 0,
+                             RSSI_MAX_VALUE), RSSI_SOURCE_RX_CHANNEL);
 }
 
 static void updateRSSIADC(timeUs_t currentTimeUs)

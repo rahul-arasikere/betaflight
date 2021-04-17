@@ -73,8 +73,7 @@
 
 #define SPI_DEFAULT_TIMEOUT 10
 
-static LL_SPI_InitTypeDef defaultInit =
-{
+static LL_SPI_InitTypeDef defaultInit = {
     .TransferDirection = SPI_DIRECTION_2LINES,
     .Mode = SPI_MODE_MASTER,
     .DataWidth = SPI_DATASIZE_8BIT,
@@ -158,7 +157,7 @@ uint8_t spiTransferByte(SPI_TypeDef *instance, uint8_t txByte)
 bool spiIsBusBusy(SPI_TypeDef *instance)
 {
     return LL_SPI_GetTxFIFOLevel(instance) != LL_SPI_TX_FIFO_EMPTY
-        || LL_SPI_IsActiveFlag_BSY(instance);
+           || LL_SPI_IsActiveFlag_BSY(instance);
 }
 
 bool spiTransfer(SPI_TypeDef *instance, const uint8_t *txData, uint8_t *rxData, int len)

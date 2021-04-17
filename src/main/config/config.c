@@ -107,26 +107,26 @@ pidProfile_t *currentPidProfile;
 PG_REGISTER_WITH_RESET_TEMPLATE(pilotConfig_t, pilotConfig, PG_PILOT_CONFIG, 1);
 
 PG_RESET_TEMPLATE(pilotConfig_t, pilotConfig,
-    .name = { 0 },
-    .displayName = { 0 },
-);
+                  .name = { 0 },
+                  .displayName = { 0 },
+                 );
 
 PG_REGISTER_WITH_RESET_TEMPLATE(systemConfig_t, systemConfig, PG_SYSTEM_CONFIG, 2);
 
 PG_RESET_TEMPLATE(systemConfig_t, systemConfig,
-    .pidProfileIndex = 0,
-    .activeRateProfile = 0,
-    .debug_mode = DEBUG_MODE,
-    .task_statistics = true,
-    .rateProfile6PosSwitch = false,
-    .cpu_overclock = DEFAULT_CPU_OVERCLOCK,
-    .powerOnArmingGraceTime = 5,
-    .boardIdentifier = TARGET_BOARD_IDENTIFIER,
-    .hseMhz = SYSTEM_HSE_VALUE,  // Only used for F4 and G4 targets
-    .configurationState = CONFIGURATION_STATE_DEFAULTS_BARE,
-    .schedulerOptimizeRate = SCHEDULER_OPTIMIZE_RATE_AUTO,
-    .enableStickArming = false,
-);
+                  .pidProfileIndex = 0,
+                  .activeRateProfile = 0,
+                  .debug_mode = DEBUG_MODE,
+                  .task_statistics = true,
+                  .rateProfile6PosSwitch = false,
+                  .cpu_overclock = DEFAULT_CPU_OVERCLOCK,
+                  .powerOnArmingGraceTime = 5,
+                  .boardIdentifier = TARGET_BOARD_IDENTIFIER,
+                  .hseMhz = SYSTEM_HSE_VALUE,  // Only used for F4 and G4 targets
+                  .configurationState = CONFIGURATION_STATE_DEFAULTS_BARE,
+                  .schedulerOptimizeRate = SCHEDULER_OPTIMIZE_RATE_AUTO,
+                  .enableStickArming = false,
+                 );
 
 uint8_t getCurrentPidProfileIndex(void)
 {
@@ -159,7 +159,8 @@ void resetConfig(void)
 
 static void activateConfig(void)
 {
-    schedulerOptimizeRate(systemConfig()->schedulerOptimizeRate == SCHEDULER_OPTIMIZE_RATE_ON || (systemConfig()->schedulerOptimizeRate == SCHEDULER_OPTIMIZE_RATE_AUTO && motorConfig()->dev.useDshotTelemetry));
+    schedulerOptimizeRate(systemConfig()->schedulerOptimizeRate == SCHEDULER_OPTIMIZE_RATE_ON
+                          || (systemConfig()->schedulerOptimizeRate == SCHEDULER_OPTIMIZE_RATE_AUTO && motorConfig()->dev.useDshotTelemetry));
     loadPidProfile();
     loadControlRateProfile();
 
@@ -177,7 +178,8 @@ static void activateConfig(void)
     accInitFilters();
 #endif
 
-    imuConfigure(throttleCorrectionConfig()->throttle_correction_angle, throttleCorrectionConfig()->throttle_correction_value);
+    imuConfigure(throttleCorrectionConfig()->throttle_correction_angle,
+                 throttleCorrectionConfig()->throttle_correction_value);
 
 #if defined(USE_LED_STRIP_STATUS_MODE)
     reevaluateLedConfig();
@@ -198,9 +200,12 @@ static void validateAndFixRatesSettings(void)
     for (unsigned profileIndex = 0; profileIndex < CONTROL_RATE_PROFILE_COUNT; profileIndex++) {
         const ratesType_e ratesType = controlRateProfilesMutable(profileIndex)->rates_type;
         for (unsigned axis = FD_ROLL; axis <= FD_YAW; axis++) {
-            controlRateProfilesMutable(profileIndex)->rcRates[axis] = constrain(controlRateProfilesMutable(profileIndex)->rcRates[axis], 0, ratesSettingLimits[ratesType].rc_rate_limit);
-            controlRateProfilesMutable(profileIndex)->rates[axis] = constrain(controlRateProfilesMutable(profileIndex)->rates[axis], 0, ratesSettingLimits[ratesType].srate_limit);
-            controlRateProfilesMutable(profileIndex)->rcExpo[axis] = constrain(controlRateProfilesMutable(profileIndex)->rcExpo[axis], 0, ratesSettingLimits[ratesType].expo_limit);
+            controlRateProfilesMutable(profileIndex)->rcRates[axis] = constrain(controlRateProfilesMutable(
+                                                                                    profileIndex)->rcRates[axis], 0, ratesSettingLimits[ratesType].rc_rate_limit);
+            controlRateProfilesMutable(profileIndex)->rates[axis] = constrain(controlRateProfilesMutable(profileIndex)->rates[axis],
+                                                                              0, ratesSettingLimits[ratesType].srate_limit);
+            controlRateProfilesMutable(profileIndex)->rcExpo[axis] = constrain(controlRateProfilesMutable(
+                                                                                   profileIndex)->rcExpo[axis], 0, ratesSettingLimits[ratesType].expo_limit);
         }
     }
 }
@@ -266,7 +271,8 @@ static void validateAndFixConfig(void)
             pidProfilesMutable(i)->motor_output_limit = 100;
         }
 
-        if (pidProfilesMutable(i)->auto_profile_cell_count > MAX_AUTO_DETECT_CELL_COUNT || pidProfilesMutable(i)->auto_profile_cell_count < AUTO_PROFILE_CELL_COUNT_CHANGE) {
+        if (pidProfilesMutable(i)->auto_profile_cell_count > MAX_AUTO_DETECT_CELL_COUNT
+            || pidProfilesMutable(i)->auto_profile_cell_count < AUTO_PROFILE_CELL_COUNT_CHANGE) {
             pidProfilesMutable(i)->auto_profile_cell_count = AUTO_PROFILE_CELL_COUNT_STAY;
         }
 
@@ -292,7 +298,8 @@ static void validateAndFixConfig(void)
         }
     }
 
-    if ((motorConfig()->dev.motorPwmProtocol == PWM_TYPE_STANDARD) && (motorConfig()->dev.motorPwmRate > BRUSHLESS_MOTORS_PWM_RATE)) {
+    if ((motorConfig()->dev.motorPwmProtocol == PWM_TYPE_STANDARD)
+        && (motorConfig()->dev.motorPwmRate > BRUSHLESS_MOTORS_PWM_RATE)) {
         motorConfigMutable()->dev.motorPwmRate = BRUSHLESS_MOTORS_PWM_RATE;
     }
 
@@ -314,7 +321,9 @@ static void validateAndFixConfig(void)
     }
 #endif // USE_ACC
 
-    if (!(featureIsConfigured(FEATURE_RX_PARALLEL_PWM) || featureIsConfigured(FEATURE_RX_PPM) || featureIsConfigured(FEATURE_RX_SERIAL) || featureIsConfigured(FEATURE_RX_MSP) || featureIsConfigured(FEATURE_RX_SPI))) {
+    if (!(featureIsConfigured(FEATURE_RX_PARALLEL_PWM) || featureIsConfigured(FEATURE_RX_PPM)
+          || featureIsConfigured(FEATURE_RX_SERIAL) || featureIsConfigured(FEATURE_RX_MSP)
+          || featureIsConfigured(FEATURE_RX_SPI))) {
         featureEnableImmediate(DEFAULT_RX_FEATURE);
     }
 
@@ -346,13 +355,13 @@ static void validateAndFixConfig(void)
         rxConfigMutable()->rssi_src_frame_errors = false;
     } else
 #endif
-    if (rxConfigMutable()->rssi_channel
+        if (rxConfigMutable()->rssi_channel
 #if defined(USE_PWM) || defined(USE_PPM)
-        || featureIsConfigured(FEATURE_RX_PPM) || featureIsConfigured(FEATURE_RX_PARALLEL_PWM)
+            || featureIsConfigured(FEATURE_RX_PPM) || featureIsConfigured(FEATURE_RX_PARALLEL_PWM)
 #endif
-        ) {
-        rxConfigMutable()->rssi_src_frame_errors = false;
-    }
+           ) {
+            rxConfigMutable()->rssi_src_frame_errors = false;
+        }
 
     if (!rcSmoothingIsEnabled() || rxConfig()->rcInterpolationChannels == INTERPOLATION_CHANNELS_T) {
         for (unsigned i = 0; i < PID_PROFILE_COUNT; i++) {
@@ -373,8 +382,8 @@ static void validateAndFixConfig(void)
 #if defined(USE_THROTTLE_BOOST)
     if (!rcSmoothingIsEnabled() ||
         !(rxConfig()->rcInterpolationChannels == INTERPOLATION_CHANNELS_RPYT
-        || rxConfig()->rcInterpolationChannels == INTERPOLATION_CHANNELS_T
-        || rxConfig()->rcInterpolationChannels == INTERPOLATION_CHANNELS_RPT)) {
+          || rxConfig()->rcInterpolationChannels == INTERPOLATION_CHANNELS_T
+          || rxConfig()->rcInterpolationChannels == INTERPOLATION_CHANNELS_RPT)) {
         for (unsigned i = 0; i < PID_PROFILE_COUNT; i++) {
             pidProfilesMutable(i)->throttle_boost = 0;
         }
@@ -386,7 +395,7 @@ static void validateAndFixConfig(void)
 #if !defined(USE_GPS) || !defined(USE_GPS_RESCUE)
         || true
 #endif
-        ) {
+    ) {
 
 #ifdef USE_GPS_RESCUE
         if (failsafeConfig()->failsafe_procedure == FAILSAFE_PROCEDURE_GPS_RESCUE) {
@@ -429,7 +438,8 @@ static void validateAndFixConfig(void)
     // The FrSky D SPI RX sends RSSI_ADC_PIN (if configured) as A2
     adcConfigMutable()->rssi.enabled = featureIsEnabled(FEATURE_RSSI_ADC);
 #ifdef USE_RX_SPI
-    adcConfigMutable()->rssi.enabled |= (featureIsEnabled(FEATURE_RX_SPI) && rxSpiConfig()->rx_spi_protocol == RX_SPI_FRSKY_D);
+    adcConfigMutable()->rssi.enabled |= (featureIsEnabled(FEATURE_RX_SPI)
+                                         && rxSpiConfig()->rx_spi_protocol == RX_SPI_FRSKY_D);
 #endif
 #endif // USE_ADC
 
@@ -533,7 +543,9 @@ static void validateAndFixConfig(void)
     }
 
 #if defined(USE_DSHOT_TELEMETRY)
-    if ((!configuredMotorProtocolDshot || (motorConfig()->dev.useDshotBitbang == DSHOT_BITBANG_OFF && motorConfig()->dev.useBurstDshot == DSHOT_DMAR_ON) || systemConfig()->schedulerOptimizeRate == SCHEDULER_OPTIMIZE_RATE_OFF)
+    if ((!configuredMotorProtocolDshot || (motorConfig()->dev.useDshotBitbang == DSHOT_BITBANG_OFF
+                                           && motorConfig()->dev.useBurstDshot == DSHOT_DMAR_ON)
+         || systemConfig()->schedulerOptimizeRate == SCHEDULER_OPTIMIZE_RATE_OFF)
         && motorConfig()->dev.useDshotTelemetry) {
         motorConfigMutable()->dev.useDshotTelemetry = false;
     }
@@ -550,12 +562,12 @@ static void validateAndFixConfig(void)
 
 #if defined(USE_OSD)
     for (int i = 0; i < OSD_TIMER_COUNT; i++) {
-         const uint16_t t = osdConfig()->timers[i];
-         if (OSD_TIMER_SRC(t) >= OSD_TIMER_SRC_COUNT ||
-                 OSD_TIMER_PRECISION(t) >= OSD_TIMER_PREC_COUNT) {
-             osdConfigMutable()->timers[i] = osdTimerDefault[i];
-         }
-     }
+        const uint16_t t = osdConfig()->timers[i];
+        if (OSD_TIMER_SRC(t) >= OSD_TIMER_SRC_COUNT ||
+            OSD_TIMER_PRECISION(t) >= OSD_TIMER_PREC_COUNT) {
+            osdConfigMutable()->timers[i] = osdTimerDefault[i];
+        }
+    }
 #endif
 
 #if defined(USE_VTX_COMMON) && defined(USE_VTX_TABLE)
@@ -607,7 +619,7 @@ static void validateAndFixConfig(void)
 #ifndef USE_MSP_PUSH_OVER_VCP
             || (portConfig->identifier == SERIAL_PORT_USB_VCP)
 #endif
-            ) {
+           ) {
             displayPortProfileMspMutable()->displayPortSerial = SERIAL_PORT_NONE;
         }
     }
@@ -651,21 +663,21 @@ void validateAndFixGyroConfig(void)
         float motorUpdateRestriction;
         switch (motorConfig()->dev.motorPwmProtocol) {
         case PWM_TYPE_STANDARD:
-                motorUpdateRestriction = 1.0f / BRUSHLESS_MOTORS_PWM_RATE;
-                break;
+            motorUpdateRestriction = 1.0f / BRUSHLESS_MOTORS_PWM_RATE;
+            break;
         case PWM_TYPE_ONESHOT125:
-                motorUpdateRestriction = 0.0005f;
-                break;
+            motorUpdateRestriction = 0.0005f;
+            break;
         case PWM_TYPE_ONESHOT42:
-                motorUpdateRestriction = 0.0001f;
-                break;
+            motorUpdateRestriction = 0.0001f;
+            break;
 #ifdef USE_DSHOT
         case PWM_TYPE_DSHOT150:
-                motorUpdateRestriction = 0.000250f;
-                break;
+            motorUpdateRestriction = 0.000250f;
+            break;
         case PWM_TYPE_DSHOT300:
-                motorUpdateRestriction = 0.0001f;
-                break;
+            motorUpdateRestriction = 0.0001f;
+            break;
 #endif
         default:
             motorUpdateRestriction = 0.00003125f;
@@ -699,7 +711,8 @@ void validateAndFixGyroConfig(void)
 
 #ifdef USE_GYRO_DATA_ANALYSE
     // Disable dynamic filter if gyro loop is less than 2KHz
-    const uint32_t configuredLooptime = (gyro.sampleRateHz > 0) ? (pidConfig()->pid_process_denom * 1e6 / gyro.sampleRateHz) : 0;
+    const uint32_t configuredLooptime = (gyro.sampleRateHz > 0) ? (pidConfig()->pid_process_denom * 1e6 / gyro.sampleRateHz)
+                                        : 0;
     if (configuredLooptime > DYNAMIC_FILTER_MAX_SUPPORTED_LOOP_TIME) {
         featureDisableImmediate(FEATURE_DYNAMIC_FILTER);
     }
@@ -817,7 +830,8 @@ bool isConfigDirty(void)
 
 void changePidProfileFromCellCount(uint8_t cellCount)
 {
-    if (currentPidProfile->auto_profile_cell_count == cellCount || currentPidProfile->auto_profile_cell_count == AUTO_PROFILE_CELL_COUNT_STAY) {
+    if (currentPidProfile->auto_profile_cell_count == cellCount
+        || currentPidProfile->auto_profile_cell_count == AUTO_PROFILE_CELL_COUNT_STAY) {
         return;
     }
 
@@ -828,7 +842,8 @@ void changePidProfileFromCellCount(uint8_t cellCount)
             matchingProfileIndex = profileIndex;
 
             break;
-        } else if (matchingProfileIndex < 0 && pidProfiles(profileIndex)->auto_profile_cell_count == AUTO_PROFILE_CELL_COUNT_STAY) {
+        } else if (matchingProfileIndex < 0
+                   && pidProfiles(profileIndex)->auto_profile_cell_count == AUTO_PROFILE_CELL_COUNT_STAY) {
             matchingProfileIndex = profileIndex;
         }
 

@@ -79,7 +79,7 @@
 enum {
     RATE_LOW = 0,
     RATE_MID = 1,
-    RATE_HIGH= 2
+    RATE_HIGH = 2
 };
 
 #define FLAG_PICTURE    0x40
@@ -215,7 +215,7 @@ static void setSymaXHoppingChannels(uint32_t addr)
         addr = 0x07;
     }
     const uint32_t inc = (addr << 24) | (addr << 16) | (addr << 8) | addr;
-    uint32_t * const prfChannels = (uint32_t *)symaRfChannels;
+    uint32_t *const prfChannels = (uint32_t *)symaRfChannels;
     if (addr == 0x16) {
         *prfChannels = 0x28481131;
     } else if (addr == 0x1e) {
@@ -274,7 +274,8 @@ rx_spi_received_e symaNrf24DataReceived(uint8_t *payload)
 static void symaNrf24Setup(rx_spi_protocol_e protocol)
 {
     symaProtocol = protocol;
-    NRF24L01_Initialize(BV(NRF24L01_00_CONFIG_EN_CRC) | BV( NRF24L01_00_CONFIG_CRCO)); // sets PWR_UP, EN_CRC, CRCO - 2 byte CRC
+    NRF24L01_Initialize(BV(NRF24L01_00_CONFIG_EN_CRC) | BV(
+                            NRF24L01_00_CONFIG_CRCO)); // sets PWR_UP, EN_CRC, CRCO - 2 byte CRC
     NRF24L01_SetupBasic();
 
     if (symaProtocol == RX_SPI_NRF24_SYMA_X) {

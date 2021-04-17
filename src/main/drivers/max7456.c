@@ -180,11 +180,11 @@
 // On shared SPI bus we want to change clock for OSD chip and restore for other devices.
 
 #ifdef USE_SPI_TRANSACTION
-    #define __spiBusTransactionBegin(busdev)        spiBusTransactionBegin(busdev)
-    #define __spiBusTransactionEnd(busdev)          spiBusTransactionEnd(busdev)
+#define __spiBusTransactionBegin(busdev)        spiBusTransactionBegin(busdev)
+#define __spiBusTransactionEnd(busdev)          spiBusTransactionEnd(busdev)
 #else
-    #define __spiBusTransactionBegin(busdev)        {spiBusSetDivisor(busdev, max7456SpiClock);IOLo((busdev)->busdev_u.spi.csnPin);}
-    #define __spiBusTransactionEnd(busdev)       {IOHi((busdev)->busdev_u.spi.csnPin);spiSetDivisor((busdev)->busdev_u.spi.instance, spiCalculateDivider(MAX7456_MAX_SPI_SHARED_CLK));}
+#define __spiBusTransactionBegin(busdev)        {spiBusSetDivisor(busdev, max7456SpiClock);IOLo((busdev)->busdev_u.spi.csnPin);}
+#define __spiBusTransactionEnd(busdev)       {IOHi((busdev)->busdev_u.spi.csnPin);spiSetDivisor((busdev)->busdev_u.spi.instance, spiCalculateDivider(MAX7456_MAX_SPI_SHARED_CLK));}
 #endif
 
 #define MAX7456_SUPPORTED_LAYER_COUNT (DISPLAYPORT_LAYER_BACKGROUND + 1)
@@ -217,7 +217,7 @@ static uint8_t shadowBuffer[VIDEO_BUFFER_CHARS_PAL];
 volatile bool dmaTransactionInProgress = false;
 #endif
 
-static uint8_t spiBuff[MAX_CHARS2UPDATE*6];
+static uint8_t spiBuff[MAX_CHARS2UPDATE * 6];
 
 static uint8_t  videoSignalCfg;
 static uint8_t  videoSignalReg  = OSD_ENABLE; // OSD_ENABLE required to trigger first ReInit
@@ -256,7 +256,7 @@ static uint8_t max7456Send(uint8_t add, uint8_t data)
 }
 
 #ifdef MAX7456_DMA_CHANNEL_TX
-static void max7456SendDma(void* tx_buffer, void* rx_buffer, uint16_t buffer_size)
+static void max7456SendDma(void *tx_buffer, void *rx_buffer, uint16_t buffer_size)
 {
     DMA_InitTypeDef DMA_InitStructure;
 #ifdef MAX7456_DMA_CHANNEL_RX
@@ -324,12 +324,12 @@ static void max7456SendDma(void* tx_buffer, void* rx_buffer, uint16_t buffer_siz
 
     SPI_I2S_DMACmd(busdev->busdev_u.spi.instance,
 #ifdef MAX7456_DMA_CHANNEL_RX
-            SPI_I2S_DMAReq_Rx |
+                   SPI_I2S_DMAReq_Rx |
 #endif
-            SPI_I2S_DMAReq_Tx, ENABLE);
+                   SPI_I2S_DMAReq_Tx, ENABLE);
 }
 
-void max7456_dma_irq_handler(dmaChannelDescriptor_t* descriptor)
+void max7456_dma_irq_handler(dmaChannelDescriptor_t *descriptor)
 {
     if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_TCIF)) {
 #ifdef MAX7456_DMA_CHANNEL_RX
@@ -353,9 +353,9 @@ void max7456_dma_irq_handler(dmaChannelDescriptor_t* descriptor)
 
         SPI_I2S_DMACmd(busdev->busdev_u.spi.instance,
 #ifdef MAX7456_DMA_CHANNEL_RX
-                SPI_I2S_DMAReq_Rx |
+                       SPI_I2S_DMAReq_Rx |
 #endif
-                SPI_I2S_DMAReq_Tx, DISABLE);
+                       SPI_I2S_DMAReq_Tx, DISABLE);
 
         __spiBusTransactionEnd(busdev);
         dmaTransactionInProgress = false;
@@ -481,7 +481,8 @@ void max7456PreInit(const max7456Config_t *max7456Config)
 // Here we init only CS and try to init MAX for first time.
 // Also detect device type (MAX v.s. AT)
 
-max7456InitStatus_e max7456Init(const max7456Config_t *max7456Config, const vcdProfile_t *pVcdProfile, bool cpuOverclock)
+max7456InitStatus_e max7456Init(const max7456Config_t *max7456Config, const vcdProfile_t *pVcdProfile,
+                                bool cpuOverclock)
 {
     max7456SpiClock = spiCalculateDivider(MAX7456_MAX_SPI_CLK_HZ);
     max7456DeviceDetected = false;
@@ -519,7 +520,7 @@ max7456InitStatus_e max7456Init(const max7456Config_t *max7456Config, const vcdP
 
     __spiBusTransactionBegin(busdev);
 
-    uint8_t osdm = max7456Send(MAX7456ADD_OSDM|MAX7456ADD_READ, 0xff);
+    uint8_t osdm = max7456Send(MAX7456ADD_OSDM | MAX7456ADD_READ, 0xff);
 
     __spiBusTransactionEnd(busdev);
 
@@ -539,7 +540,7 @@ max7456InitStatus_e max7456Init(const max7456Config_t *max7456Config, const vcdP
 
     max7456Send(MAX7456ADD_CMAL, (1 << 6)); // CA[8] bit
 
-    if (max7456Send(MAX7456ADD_CMAL|MAX7456ADD_READ, 0xff) & (1 << 6)) {
+    if (max7456Send(MAX7456ADD_CMAL | MAX7456ADD_READ, 0xff) & (1 << 6)) {
         max7456DeviceType = MAX7456_DEVICE_TYPE_AT;
     } else {
         max7456DeviceType = MAX7456_DEVICE_TYPE_MAX;
@@ -556,7 +557,9 @@ max7456InitStatus_e max7456Init(const max7456Config_t *max7456Config, const vcdP
         break;
 
     case MAX7456_CLOCK_CONFIG_OC:
-        max7456SpiClock = (cpuOverclock && (max7456DeviceType == MAX7456_DEVICE_TYPE_MAX)) ? spiCalculateDivider(MAX7456_MAX_SPI_CLK_HZ) * 2 : spiCalculateDivider(MAX7456_MAX_SPI_CLK_HZ);
+        max7456SpiClock = (cpuOverclock
+                           && (max7456DeviceType == MAX7456_DEVICE_TYPE_MAX)) ? spiCalculateDivider(MAX7456_MAX_SPI_CLK_HZ) * 2 :
+                          spiCalculateDivider(MAX7456_MAX_SPI_CLK_HZ);
         break;
 
     case MAX7456_CLOCK_CONFIG_FULL:
@@ -714,7 +717,8 @@ void max7456ReInitIfRequired(bool forceStallCheck)
     static timeMs_t lastSigCheckMs = 0;
     static timeMs_t videoDetectTimeMs = 0;
     static uint16_t reInitCount = 0;
-    static timeMs_t lastStallCheckMs = MAX7456_STALL_CHECK_INTERVAL_MS / 2; // offset so that it doesn't coincide with the signal check
+    static timeMs_t lastStallCheckMs = MAX7456_STALL_CHECK_INTERVAL_MS /
+                                       2; // offset so that it doesn't coincide with the signal check
 
     const timeMs_t nowMs = millis();
 
@@ -722,14 +726,14 @@ void max7456ReInitIfRequired(bool forceStallCheck)
     if (forceStallCheck || (lastStallCheckMs + MAX7456_STALL_CHECK_INTERVAL_MS < nowMs)) {
         lastStallCheckMs = nowMs;
         __spiBusTransactionBegin(busdev);
-        stalled = (max7456Send(MAX7456ADD_VM0|MAX7456ADD_READ, 0x00) != videoSignalReg);
+        stalled = (max7456Send(MAX7456ADD_VM0 | MAX7456ADD_READ, 0x00) != videoSignalReg);
         __spiBusTransactionEnd(busdev);
     }
 
     if (stalled) {
         max7456ReInit();
     } else if ((videoSignalCfg == VIDEO_SYSTEM_AUTO)
-              && ((nowMs - lastSigCheckMs) > MAX7456_SIGNAL_CHECK_INTERVAL_MS)) {
+               && ((nowMs - lastSigCheckMs) > MAX7456_SIGNAL_CHECK_INTERVAL_MS)) {
 
         // Adjust output format based on the current input format.
 
@@ -745,7 +749,7 @@ void max7456ReInitIfRequired(bool forceStallCheck)
             videoDetectTimeMs = 0;
         } else {
             if ((VIN_IS_PAL(videoSense) && VIDEO_MODE_IS_NTSC(videoSignalReg))
-              || (VIN_IS_NTSC_alt(videoSense) && VIDEO_MODE_IS_PAL(videoSignalReg))) {
+                || (VIN_IS_NTSC_alt(videoSense) && VIDEO_MODE_IS_PAL(videoSignalReg))) {
                 if (videoDetectTimeMs) {
                     if (millis() - videoDetectTimeMs > VIDEO_SIGNAL_DEBOUNCE_MS) {
                         max7456ReInit();
@@ -822,7 +826,8 @@ static void max7456DrawScreenSlow(void)
     for (int xx = 0; xx < maxScreenSize; xx++) {
         if (buffer[xx] == END_STRING) {
             escapeCharFound = true;
-            max7456Send(MAX7456ADD_DMDI, ' ');  // replace the 0xFF character with a blank in the first pass to avoid terminating auto-increment
+            max7456Send(MAX7456ADD_DMDI,
+                        ' ');  // replace the 0xFF character with a blank in the first pass to avoid terminating auto-increment
         } else {
             max7456Send(MAX7456ADD_DMDI, buffer[xx]);
         }

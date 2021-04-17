@@ -102,7 +102,7 @@ typedef enum {
     OSD_LOGO_ARMING_FIRST
 } osd_logo_on_arming_e;
 
-const char * const osdTimerSourceNames[] = {
+const char *const osdTimerSourceNames[] = {
     "ON TIME  ",
     "TOTAL ARM",
     "LAST ARM ",
@@ -143,7 +143,7 @@ static bool backgroundLayerSupported = false;
 escSensorData_t *osdEscDataCombined;
 #endif
 
-STATIC_ASSERT(OSD_POS_MAX == OSD_POS(31,31), OSD_POS_MAX_incorrect);
+STATIC_ASSERT(OSD_POS_MAX == OSD_POS(31, 31), OSD_POS_MAX_incorrect);
 
 PG_REGISTER_WITH_RESET_FN(osdConfig_t, osdConfig, PG_OSD_CONFIG, 9);
 
@@ -190,7 +190,8 @@ const osd_stats_e osdStatsDisplayOrder[OSD_STAT_COUNT] = {
 // OSD symbols can optionally be placed before and after the formatted number (use SYM_NONE for no symbol).
 // The formatString can be used for customized formatting of the integer part. Follow the printf style.
 // Pass an empty formatString for default.
-int osdPrintFloat(char *buffer, char leadingSymbol, float value, char *formatString, unsigned decimalPlaces, bool round, char trailingSymbol)
+int osdPrintFloat(char *buffer, char leadingSymbol, float value, char *formatString, unsigned decimalPlaces, bool round,
+                  char trailingSymbol)
 {
     char mask[7];
     int pos = 0;
@@ -213,7 +214,8 @@ int osdPrintFloat(char *buffer, char leadingSymbol, float value, char *formatStr
 
     pos += tfp_sprintf(buffer + pos, (strlen(formatString) ? formatString : "%01u"), integerPart);
     if (decimalPlaces) {
-        tfp_sprintf((char *)&mask, ".%%0%uu", decimalPlaces); // builds up the format string to be like ".%03u" for decimalPlaces == 3 as an example
+        tfp_sprintf((char *)&mask, ".%%0%uu",
+                    decimalPlaces); // builds up the format string to be like ".%03u" for decimalPlaces == 3 as an example
         pos += tfp_sprintf(buffer + pos, mask, fractionalPart);
     }
 
@@ -266,7 +268,7 @@ void setOsdProfile(uint8_t value)
             osdProfile = 1 << (value - 1);
         }
     }
- }
+}
 
 uint8_t getCurrentOsdProfileIndex(void)
 {
@@ -311,8 +313,8 @@ static void osdDrawElements(void)
 }
 
 const uint16_t osdTimerDefault[OSD_TIMER_COUNT] = {
-        OSD_TIMER(OSD_TIMER_SRC_ON, OSD_TIMER_PREC_SECOND, 10),
-        OSD_TIMER(OSD_TIMER_SRC_TOTAL_ARMED, OSD_TIMER_PREC_SECOND, 10)
+    OSD_TIMER(OSD_TIMER_SRC_ON, OSD_TIMER_PREC_SECOND, 10),
+    OSD_TIMER(OSD_TIMER_SRC_TOTAL_ARMED, OSD_TIMER_PREC_SECOND, 10)
 };
 
 void pgResetFn_osdConfig(osdConfig_t *osdConfig)
@@ -331,7 +333,7 @@ void pgResetFn_osdConfig(osdConfig_t *osdConfig)
     osdConfig->units = UNIT_METRIC;
 
     // Enable all warnings by default
-    for (int i=0; i < OSD_WARNING_COUNT; i++) {
+    for (int i = 0; i < OSD_WARNING_COUNT; i++) {
         osdWarnSetState(i, true);
     }
     // turn off RSSI & Link Quality warnings by default
@@ -353,14 +355,15 @@ void pgResetFn_osdConfig(osdConfig_t *osdConfig)
     osdConfig->esc_temp_alarm = ESC_TEMP_ALARM_OFF; // off by default
     osdConfig->esc_rpm_alarm = ESC_RPM_ALARM_OFF; // off by default
     osdConfig->esc_current_alarm = ESC_CURRENT_ALARM_OFF; // off by default
-    osdConfig->core_temp_alarm = 70; // a temperature above 70C should produce a warning, lockups have been reported above 80C
+    osdConfig->core_temp_alarm =
+        70; // a temperature above 70C should produce a warning, lockups have been reported above 80C
 
     osdConfig->ahMaxPitch = 20; // 20 degrees
     osdConfig->ahMaxRoll = 40; // 40 degrees
 
     osdConfig->osdProfileIndex = 1;
     osdConfig->ahInvert = false;
-    for (int i=0; i < OSD_PROFILE_COUNT; i++) {
+    for (int i = 0; i < OSD_PROFILE_COUNT; i++) {
         osdConfig->profile[i][0] = '\0';
     }
     osdConfig->rssi_dbm_alarm = -60;
@@ -604,7 +607,7 @@ static void osdUpdateStats(void)
 
 #ifdef USE_BLACKBOX
 
-static void osdGetBlackboxStatusString(char * buff)
+static void osdGetBlackboxStatusString(char *buff)
 {
     bool storageDeviceIsWorking = isBlackboxDeviceWorking();
     uint32_t storageUsed = 0;
@@ -646,7 +649,7 @@ static void osdGetBlackboxStatusString(char * buff)
 }
 #endif
 
-static void osdDisplayStatisticLabel(uint8_t y, const char * text, const char * value)
+static void osdDisplayStatisticLabel(uint8_t y, const char *text, const char *value)
 {
     displayWrite(osdDisplayPort, 2, y, DISPLAYPORT_ATTR_NONE, text);
     displayWrite(osdDisplayPort, 20, y, DISPLAYPORT_ATTR_NONE, ":");
@@ -687,17 +690,20 @@ static bool osdDisplayStat(int statistic, uint8_t displayRow)
     }
 
     case OSD_STAT_TIMER_1:
-        osdFormatTimer(buff, false, (OSD_TIMER_SRC(osdConfig()->timers[OSD_TIMER_1]) == OSD_TIMER_SRC_ON ? false : true), OSD_TIMER_1);
+        osdFormatTimer(buff, false, (OSD_TIMER_SRC(osdConfig()->timers[OSD_TIMER_1]) == OSD_TIMER_SRC_ON ? false : true),
+                       OSD_TIMER_1);
         osdDisplayStatisticLabel(displayRow, osdTimerSourceNames[OSD_TIMER_SRC(osdConfig()->timers[OSD_TIMER_1])], buff);
         return true;
 
     case OSD_STAT_TIMER_2:
-        osdFormatTimer(buff, false, (OSD_TIMER_SRC(osdConfig()->timers[OSD_TIMER_2]) == OSD_TIMER_SRC_ON ? false : true), OSD_TIMER_2);
+        osdFormatTimer(buff, false, (OSD_TIMER_SRC(osdConfig()->timers[OSD_TIMER_2]) == OSD_TIMER_SRC_ON ? false : true),
+                       OSD_TIMER_2);
         osdDisplayStatisticLabel(displayRow, osdTimerSourceNames[OSD_TIMER_SRC(osdConfig()->timers[OSD_TIMER_2])], buff);
         return true;
 
     case OSD_STAT_MAX_ALTITUDE: {
-        osdPrintFloat(buff, SYM_NONE, osdGetMetersToSelectedUnit(stats.max_altitude) / 100.0f, "", 1, true, osdGetMetersToSelectedUnitSymbol());
+        osdPrintFloat(buff, SYM_NONE, osdGetMetersToSelectedUnit(stats.max_altitude) / 100.0f, "", 1, true,
+                      osdGetMetersToSelectedUnitSymbol());
         osdDisplayStatisticLabel(displayRow, "MAX ALTITUDE", buff);
         return true;
     }
@@ -731,7 +737,7 @@ static bool osdDisplayStat(int statistic, uint8_t displayRow)
 
     case OSD_STAT_MIN_BATTERY:
         osdPrintFloat(buff, SYM_NONE, stats.min_voltage / 100.0f, "", 2, true, SYM_VOLT);
-        osdDisplayStatisticLabel(displayRow, osdConfig()->stat_show_cell_value? "MIN AVG CELL" : "MIN BATTERY", buff);
+        osdDisplayStatisticLabel(displayRow, osdConfig()->stat_show_cell_value ? "MIN AVG CELL" : "MIN BATTERY", buff);
         return true;
 
     case OSD_STAT_END_BATTERY:
@@ -739,15 +745,14 @@ static bool osdDisplayStat(int statistic, uint8_t displayRow)
         osdDisplayStatisticLabel(displayRow, osdConfig()->stat_show_cell_value ? "END AVG CELL" : "END BATTERY", buff);
         return true;
 
-    case OSD_STAT_BATTERY: 
-        {
-            const uint16_t statsVoltage = getStatsVoltage();
-            osdPrintFloat(buff, SYM_NONE, statsVoltage / 100.0f, "", 2, true, SYM_VOLT);
-            osdDisplayStatisticLabel(displayRow, osdConfig()->stat_show_cell_value ? "AVG BATT CELL" : "BATTERY", buff);
-            return true;
-        }
-        break;
-        
+    case OSD_STAT_BATTERY: {
+        const uint16_t statsVoltage = getStatsVoltage();
+        osdPrintFloat(buff, SYM_NONE, statsVoltage / 100.0f, "", 2, true, SYM_VOLT);
+        osdDisplayStatisticLabel(displayRow, osdConfig()->stat_show_cell_value ? "AVG BATT CELL" : "BATTERY", buff);
+        return true;
+    }
+    break;
+
     case OSD_STAT_MIN_RSSI:
         itoa(stats.min_rssi, buff, 10);
         strcat(buff, "%");
@@ -779,16 +784,15 @@ static bool osdDisplayStat(int statistic, uint8_t displayRow)
         }
         break;
 
-    case OSD_STAT_BLACKBOX_NUMBER:
-        {
-            int32_t logNumber = blackboxGetLogNumber();
-            if (logNumber >= 0) {
-                itoa(logNumber, buff, 10);
-                osdDisplayStatisticLabel(displayRow, "BB LOG NUM", buff);
-                return true;
-            }
+    case OSD_STAT_BLACKBOX_NUMBER: {
+        int32_t logNumber = blackboxGetLogNumber();
+        if (logNumber >= 0) {
+            itoa(logNumber, buff, 10);
+            osdDisplayStatisticLabel(displayRow, "BB LOG NUM", buff);
+            return true;
         }
-        break;
+    }
+    break;
 #endif
 
 #if defined(USE_ACC)
@@ -803,7 +807,8 @@ static bool osdDisplayStat(int statistic, uint8_t displayRow)
 
 #ifdef USE_ESC_SENSOR
     case OSD_STAT_MAX_ESC_TEMP:
-        tfp_sprintf(buff, "%d%c", osdConvertTemperatureToSelectedUnit(stats.max_esc_temp), osdGetTemperatureSymbolForSelectedUnit());
+        tfp_sprintf(buff, "%d%c", osdConvertTemperatureToSelectedUnit(stats.max_esc_temp),
+                    osdGetTemperatureSymbolForSelectedUnit());
         osdDisplayStatisticLabel(displayRow, "MAX ESC TEMP", buff);
         return true;
 #endif
@@ -859,8 +864,8 @@ static bool osdDisplayStat(int statistic, uint8_t displayRow)
     }
 
     case OSD_STAT_TOTAL_DIST:
-        #define METERS_PER_KILOMETER 1000
-        #define METERS_PER_MILE      1609
+#define METERS_PER_KILOMETER 1000
+#define METERS_PER_MILE      1609
         if (osdConfig()->units == UNIT_IMPERIAL) {
             tfp_sprintf(buff, "%d%c", statsConfig()->stats_total_dist_m / METERS_PER_MILE, SYM_MILES);
         } else {
@@ -923,7 +928,8 @@ static timeDelta_t osdShowArmed(void)
 
     displayClearScreen(osdDisplayPort);
 
-    if ((osdConfig()->logo_on_arming == OSD_LOGO_ARMING_ON) || ((osdConfig()->logo_on_arming == OSD_LOGO_ARMING_FIRST) && !ARMING_FLAG(WAS_EVER_ARMED))) {
+    if ((osdConfig()->logo_on_arming == OSD_LOGO_ARMING_ON) || ((osdConfig()->logo_on_arming == OSD_LOGO_ARMING_FIRST)
+                                                                && !ARMING_FLAG(WAS_EVER_ARMED))) {
         osdDrawLogo(3, 1);
         ret = osdConfig()->logo_on_arming_duration * 1e5;
     } else {
@@ -951,7 +957,8 @@ STATIC_UNIT_TESTED void osdRefresh(timeUs_t currentTimeUs)
         } else if (isSomeStatEnabled()
                    && !suppressStatsDisplay
                    && (!(getArmingDisableFlags() & (ARMING_DISABLED_RUNAWAY_TAKEOFF | ARMING_DISABLED_CRASH_DETECTED))
-                       || !VISIBLE(osdElementConfig()->item_pos[OSD_WARNINGS]))) { // suppress stats if runaway takeoff triggered disarm and WARNINGS element is visible
+                       || !VISIBLE(
+                           osdElementConfig()->item_pos[OSD_WARNINGS]))) { // suppress stats if runaway takeoff triggered disarm and WARNINGS element is visible
             osdStatsEnabled = true;
             resumeRefreshAt = currentTimeUs + (60 * REFRESH_1S);
             stats.end_voltage = getStatsVoltage();
@@ -1016,8 +1023,8 @@ STATIC_UNIT_TESTED void osdRefresh(timeUs_t currentTimeUs)
 
 #if defined(USE_ACC)
     if (sensors(SENSOR_ACC)
-       && (VISIBLE(osdElementConfig()->item_pos[OSD_G_FORCE]) || osdStatGetState(OSD_STAT_MAX_G_FORCE))) {
-            // only calculate the G force if the element is visible or the stat is enabled
+        && (VISIBLE(osdElementConfig()->item_pos[OSD_G_FORCE]) || osdStatGetState(OSD_STAT_MAX_G_FORCE))) {
+        // only calculate the G force if the element is visible or the stat is enabled
         for (int axis = 0; axis < XYZ_AXIS_COUNT; axis++) {
             const float a = accAverage[axis];
             osdGForce += a * a;

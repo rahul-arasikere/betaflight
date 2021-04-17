@@ -360,15 +360,15 @@ uartPort_t *serialUART(UARTDevice_e device, uint32_t baudRate, portMode_e mode, 
 
     if ((options & SERIAL_BIDIR) && txIO) {
         ioConfig_t ioCfg = IO_CONFIG(
-            ((options & SERIAL_INVERTED) || (options & SERIAL_BIDIR_PP) || (options & SERIAL_BIDIR_PP_PD)) ? GPIO_MODE_AF_PP : GPIO_MODE_AF_OD,
-            GPIO_SPEED_FREQ_HIGH,
-            ((options & SERIAL_INVERTED) || (options & SERIAL_BIDIR_PP_PD)) ? GPIO_PULLDOWN : GPIO_PULLUP
-        );
+                               ((options & SERIAL_INVERTED) || (options & SERIAL_BIDIR_PP)
+                                || (options & SERIAL_BIDIR_PP_PD)) ? GPIO_MODE_AF_PP : GPIO_MODE_AF_OD,
+                               GPIO_SPEED_FREQ_HIGH,
+                               ((options & SERIAL_INVERTED) || (options & SERIAL_BIDIR_PP_PD)) ? GPIO_PULLDOWN : GPIO_PULLUP
+                           );
 
         IOInit(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device));
         IOConfigGPIOAF(txIO, ioCfg, uartdev->tx.af);
-    }
-    else {
+    } else {
         if ((mode & MODE_TX) && txIO) {
             IOInit(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(device));
             IOConfigGPIOAF(txIO, IOCFG_AF_PP, uartdev->tx.af);
@@ -382,7 +382,8 @@ uartPort_t *serialUART(UARTDevice_e device, uint32_t baudRate, portMode_e mode, 
 
 #ifdef USE_DMA
     if (!s->rxDMAResource) {
-        HAL_NVIC_SetPriority(hardware->rxIrq, NVIC_PRIORITY_BASE(hardware->rxPriority), NVIC_PRIORITY_SUB(hardware->rxPriority));
+        HAL_NVIC_SetPriority(hardware->rxIrq, NVIC_PRIORITY_BASE(hardware->rxPriority),
+                             NVIC_PRIORITY_SUB(hardware->rxPriority));
         HAL_NVIC_EnableIRQ(hardware->rxIrq);
     }
 #endif

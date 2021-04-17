@@ -151,8 +151,8 @@ bool qmp6988Detect(baroDev_t *baro)
     int Coe_b12_;
     int Coe_b21_;
     int Coe_bp3_;
-    uint16_t lb=0,hb=0;
-    uint32_t lw=0,hw=0,temp1,temp2;
+    uint16_t lb = 0, hb = 0;
+    uint32_t lw = 0, hw = 0, temp1, temp2;
 
     delay(20);
 
@@ -187,82 +187,82 @@ bool qmp6988Detect(baroDev_t *baro)
     //algo OTP
     hw = databuf[0];
     lw =  databuf[1];
-    temp1 = hw<<12 | lw<<4;
+    temp1 = hw << 12 | lw << 4;
 
     hb = databuf[2];
     lb = databuf[3];
-    Coe_bt1_ = hb<<8 | lb;
+    Coe_bt1_ = hb << 8 | lb;
 
     hb = databuf[4];
     lb = databuf[5];
-    Coe_bt2_ = hb<<8 | lb;
+    Coe_bt2_ = hb << 8 | lb;
 
     hb = databuf[6];
     lb = databuf[7];
-    Coe_bp1_ = hb<<8 | lb;
+    Coe_bp1_ = hb << 8 | lb;
 
     hb = databuf[8];
     lb = databuf[9];
-    Coe_b11_ = hb<<8 | lb;
+    Coe_b11_ = hb << 8 | lb;
 
     hb = databuf[10];
     lb = databuf[11];
-    Coe_bp2_ = hb<<8 | lb;
+    Coe_bp2_ = hb << 8 | lb;
 
     hb = databuf[12];
     lb = databuf[13];
-    Coe_b12_ = hb<<8 | lb;
+    Coe_b12_ = hb << 8 | lb;
 
     hb = databuf[14];
     lb = databuf[15];
-    Coe_b21_ = hb<<8 | lb;
+    Coe_b21_ = hb << 8 | lb;
 
     hb = databuf[16];
     lb = databuf[17];
-    Coe_bp3_ = hb<<8 | lb;
+    Coe_bp3_ = hb << 8 | lb;
 
     hw = databuf[18];
     lw = databuf[19];
-    temp2 = hw<<12 | lw<<4;
+    temp2 = hw << 12 | lw << 4;
 
     hb = databuf[20];
     lb = databuf[21];
-    Coe_a1_ = hb<<8 | lb;
+    Coe_a1_ = hb << 8 | lb;
 
     hb = databuf[22];
     lb = databuf[23];
-    Coe_a2_ = hb<<8 | lb;
+    Coe_a2_ = hb << 8 | lb;
 
     hb = databuf[24];
 
-    temp1 = temp1|((hb&0xf0)>>4);
-    if(temp1&0x80000)
-       Coe_b00_ = ((int)temp1 - (int)0x100000);
+    temp1 = temp1 | ((hb & 0xf0) >> 4);
+    if (temp1 & 0x80000)
+        Coe_b00_ = ((int)temp1 - (int)0x100000);
     else
-       Coe_b00_ = temp1;
+        Coe_b00_ = temp1;
 
-    temp2 = temp2|(hb&0x0f);
-    if(temp2&0x80000)
+    temp2 = temp2 | (hb & 0x0f);
+    if (temp2 & 0x80000)
         Coe_a0_  = ((int)temp2 - (int)0x100000);
     else
         Coe_a0_ = temp2;
 
-    qmp6988_cal.Coe_a0=(float)Coe_a0_/16.0;
-    qmp6988_cal.Coe_a1=(-6.30E-03)+(4.30E-04)*(float)Coe_a1_/32767.0;
-    qmp6988_cal.Coe_a2=(-1.9E-11)+(1.2E-10)*(float)Coe_a2_/32767.0;
+    qmp6988_cal.Coe_a0 = (float)Coe_a0_ / 16.0;
+    qmp6988_cal.Coe_a1 = (-6.30E-03) + (4.30E-04) * (float)Coe_a1_ / 32767.0;
+    qmp6988_cal.Coe_a2 = (-1.9E-11) + (1.2E-10) * (float)Coe_a2_ / 32767.0;
 
-    qmp6988_cal.Coe_b00 = Coe_b00_/16.0;
-    qmp6988_cal.Coe_bt1 = (1.00E-01)+(9.10E-02)*(float)Coe_bt1_/32767.0;
-    qmp6988_cal.Coe_bt2= (1.20E-08)+(1.20E-06)*(float)Coe_bt2_/32767.0;
+    qmp6988_cal.Coe_b00 = Coe_b00_ / 16.0;
+    qmp6988_cal.Coe_bt1 = (1.00E-01) + (9.10E-02) * (float)Coe_bt1_ / 32767.0;
+    qmp6988_cal.Coe_bt2 = (1.20E-08) + (1.20E-06) * (float)Coe_bt2_ / 32767.0;
 
-    qmp6988_cal.Coe_bp1 = (3.30E-02)+(1.90E-02)*(float)Coe_bp1_/32767.0;
-    qmp6988_cal.Coe_b11= (2.10E-07)+(1.40E-07)*(float)Coe_b11_/32767.0;
+    qmp6988_cal.Coe_bp1 = (3.30E-02) + (1.90E-02) * (float)Coe_bp1_ / 32767.0;
+    qmp6988_cal.Coe_b11 = (2.10E-07) + (1.40E-07) * (float)Coe_b11_ / 32767.0;
 
-    qmp6988_cal.Coe_bp2 = (-6.30E-10)+(3.50E-10)*(float)Coe_bp2_/32767.0;
-    qmp6988_cal.Coe_b12= (2.90E-13)+(7.60E-13)*(float)Coe_b12_/32767.0;
+    qmp6988_cal.Coe_bp2 = (-6.30E-10) + (3.50E-10) * (float)Coe_bp2_ / 32767.0;
+    qmp6988_cal.Coe_b12 = (2.90E-13) + (7.60E-13) * (float)Coe_b12_ / 32767.0;
 
-    qmp6988_cal.Coe_b21 = (2.10E-15)+(1.20E-14)*(float)Coe_b21_/32767.0;
-    qmp6988_cal.Coe_bp3= (1.30E-16)+(7.90E-17)*(float)Coe_bp3_/32767.0;
+    qmp6988_cal.Coe_b21 = (2.10E-15) + (1.20E-14) * (float)Coe_b21_ / 32767.0;
+    qmp6988_cal.Coe_bp3 = (1.30E-16) + (7.90E-17) * (float)Coe_bp3_ / 32767.0;
 
     // Set power mode and sample times
     busWriteRegister(busdev, QMP6988_CTRL_MEAS_REG, QMP6988_PWR_SAMPLE_MODE);
@@ -277,7 +277,8 @@ bool qmp6988Detect(baroDev_t *baro)
     baro->start_up = qmp6988StartUP;
     baro->read_up = qmp6988ReadUP;
     baro->get_up = qmp6988GetUP;
-    baro->up_delay = ((T_INIT_MAX + T_MEASURE_PER_OSRS_MAX * (((1 << QMP6988_TEMPERATURE_OSR) >> 1) + ((1 << QMP6988_PRESSURE_OSR) >> 1)) + (QMP6988_PRESSURE_OSR ? T_SETUP_PRESSURE_MAX : 0) + 15) / 16) * 1000;
+    baro->up_delay = ((T_INIT_MAX + T_MEASURE_PER_OSRS_MAX * (((1 << QMP6988_TEMPERATURE_OSR) >> 1) + ((
+                                                                  1 << QMP6988_PRESSURE_OSR) >> 1)) + (QMP6988_PRESSURE_OSR ? T_SETUP_PRESSURE_MAX : 0) + 15) / 16) * 1000;
     baro->calculate = qmp6988Calculate;
 
     return true;
@@ -340,8 +341,8 @@ static float qmp6988CompensateTemperature(int32_t adc_T)
     int32_t var1;
     float T;
 
-    var1=adc_T-1024*1024*8;
-    T= qmp6988_cal.Coe_a0+qmp6988_cal.Coe_a1*var1+qmp6988_cal.Coe_a2*var1*var1;
+    var1 = adc_T - 1024 * 1024 * 8;
+    T = qmp6988_cal.Coe_a0 + qmp6988_cal.Coe_a1 * var1 + qmp6988_cal.Coe_a2 * var1 * var1;
 
     return T;
 }
@@ -350,19 +351,20 @@ static float qmp6988CompensateTemperature(int32_t adc_T)
 
 STATIC_UNIT_TESTED void qmp6988Calculate(int32_t *pressure, int32_t *temperature)
 {
-    float tr,pr;
+    float tr, pr;
     int32_t Dp;
 
     tr = qmp6988CompensateTemperature(qmp6988_ut);
-    Dp = qmp6988_up - 1024*1024*8;
+    Dp = qmp6988_up - 1024 * 1024 * 8;
 
-    pr = qmp6988_cal.Coe_b00+qmp6988_cal.Coe_bt1*tr+qmp6988_cal.Coe_bp1*Dp+qmp6988_cal.Coe_b11*tr*Dp+qmp6988_cal.Coe_bt2*tr*tr+qmp6988_cal.Coe_bp2*Dp*Dp+qmp6988_cal.Coe_b12*Dp*tr*tr
-    +qmp6988_cal.Coe_b21*Dp*Dp*tr+qmp6988_cal.Coe_bp3*Dp*Dp*Dp;
+    pr = qmp6988_cal.Coe_b00 + qmp6988_cal.Coe_bt1 * tr + qmp6988_cal.Coe_bp1 * Dp + qmp6988_cal.Coe_b11 * tr * Dp +
+         qmp6988_cal.Coe_bt2 * tr * tr + qmp6988_cal.Coe_bp2 * Dp * Dp + qmp6988_cal.Coe_b12 * Dp * tr * tr
+         + qmp6988_cal.Coe_b21 * Dp * Dp * tr + qmp6988_cal.Coe_bp3 * Dp * Dp * Dp;
 
     if (pr)
-    *pressure = (int32_t)(pr);
+        *pressure = (int32_t)(pr);
     if (tr)
-    *temperature = (int32_t)tr/256;
+        *temperature = (int32_t)tr / 256;
 }
 
 #endif

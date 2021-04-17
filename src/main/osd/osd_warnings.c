@@ -143,7 +143,8 @@ void renderOsdWarning(char *warningText, bool *blinking, uint8_t *displayAttr)
     if (osdWarnGetState(OSD_WARNING_LAUNCH_CONTROL) && isLaunchControlActive()) {
 #ifdef USE_ACC
         if (sensors(SENSOR_ACC)) {
-            const int pitchAngle = constrain((attitude.raw[FD_PITCH] - accelerometerConfig()->accelerometerTrims.raw[FD_PITCH]) / 10, -90, 90);
+            const int pitchAngle = constrain((attitude.raw[FD_PITCH] - accelerometerConfig()->accelerometerTrims.raw[FD_PITCH]) /
+                                             10, -90, 90);
             tfp_sprintf(warningText, "LAUNCH %d", pitchAngle);
         } else
 #endif // USE_ACC
@@ -197,10 +198,10 @@ void renderOsdWarning(char *warningText, bool *blinking, uint8_t *displayAttr)
 
 #ifdef USE_GPS_RESCUE
     if (osdWarnGetState(OSD_WARNING_GPS_RESCUE_UNAVAILABLE) &&
-       ARMING_FLAG(ARMED) &&
-       gpsRescueIsConfigured() &&
-       !gpsRescueIsDisabled() &&
-       !gpsRescueIsAvailable()) {
+        ARMING_FLAG(ARMED) &&
+        gpsRescueIsConfigured() &&
+        !gpsRescueIsDisabled() &&
+        !gpsRescueIsAvailable()) {
         tfp_sprintf(warningText, "RESCUE N/A");
         *displayAttr = DISPLAYPORT_ATTR_WARNING;
         *blinking = true;;
@@ -208,9 +209,9 @@ void renderOsdWarning(char *warningText, bool *blinking, uint8_t *displayAttr)
     }
 
     if (osdWarnGetState(OSD_WARNING_GPS_RESCUE_DISABLED) &&
-       ARMING_FLAG(ARMED) &&
-       gpsRescueIsConfigured() &&
-       gpsRescueIsDisabled()) {
+        ARMING_FLAG(ARMED) &&
+        gpsRescueIsConfigured() &&
+        gpsRescueIsDisabled()) {
 
         statistic_t *stats = osdGetStats();
         if (cmpTimeUs(stats->armed_time, OSD_GPS_RESCUE_DISABLED_WARNING_DURATION_US) < 0) {
@@ -234,7 +235,8 @@ void renderOsdWarning(char *warningText, bool *blinking, uint8_t *displayAttr)
 #ifdef USE_ADC_INTERNAL
     const int16_t coreTemperature = getCoreTemperatureCelsius();
     if (osdWarnGetState(OSD_WARNING_CORE_TEMPERATURE) && coreTemperature >= osdConfig()->core_temp_alarm) {
-        tfp_sprintf(warningText, "CORE %c: %3d%c", SYM_TEMPERATURE, osdConvertTemperatureToSelectedUnit(coreTemperature), osdGetTemperatureSymbolForSelectedUnit());
+        tfp_sprintf(warningText, "CORE %c: %3d%c", SYM_TEMPERATURE, osdConvertTemperatureToSelectedUnit(coreTemperature),
+                    osdGetTemperatureSymbolForSelectedUnit());
         *displayAttr = DISPLAYPORT_ATTR_WARNING;
         *blinking = true;;
         return;
@@ -264,13 +266,15 @@ void renderOsdWarning(char *warningText, bool *blinking, uint8_t *displayAttr)
             const char motorNumber = '1' + i;
             // if everything is OK just display motor number else R, T or C
             char warnFlag = motorNumber;
-            if (ARMING_FLAG(ARMED) && osdConfig()->esc_rpm_alarm != ESC_RPM_ALARM_OFF && calcEscRpm(escData->rpm) <= osdConfig()->esc_rpm_alarm) {
+            if (ARMING_FLAG(ARMED) && osdConfig()->esc_rpm_alarm != ESC_RPM_ALARM_OFF
+                && calcEscRpm(escData->rpm) <= osdConfig()->esc_rpm_alarm) {
                 warnFlag = 'R';
             }
             if (osdConfig()->esc_temp_alarm != ESC_TEMP_ALARM_OFF && escData->temperature >= osdConfig()->esc_temp_alarm) {
                 warnFlag = 'T';
             }
-            if (ARMING_FLAG(ARMED) && osdConfig()->esc_current_alarm != ESC_CURRENT_ALARM_OFF && escData->current >= osdConfig()->esc_current_alarm) {
+            if (ARMING_FLAG(ARMED) && osdConfig()->esc_current_alarm != ESC_CURRENT_ALARM_OFF
+                && escData->current >= osdConfig()->esc_current_alarm) {
                 warnFlag = 'C';
             }
 
@@ -312,7 +316,8 @@ void renderOsdWarning(char *warningText, bool *blinking, uint8_t *displayAttr)
 #endif // USE_RC_SMOOTHING_FILTER
 
     // Show warning if mah consumed is over the configured limit
-    if (osdWarnGetState(OSD_WARNING_OVER_CAP) && ARMING_FLAG(ARMED) && osdConfig()->cap_alarm > 0 && getMAhDrawn() >= osdConfig()->cap_alarm) {
+    if (osdWarnGetState(OSD_WARNING_OVER_CAP) && ARMING_FLAG(ARMED) && osdConfig()->cap_alarm > 0
+        && getMAhDrawn() >= osdConfig()->cap_alarm) {
         tfp_sprintf(warningText, "OVER CAP");
         *displayAttr = DISPLAYPORT_ATTR_WARNING;
         *blinking = true;;
@@ -320,8 +325,9 @@ void renderOsdWarning(char *warningText, bool *blinking, uint8_t *displayAttr)
     }
 
     // Show warning if battery is not fresh
-    if (osdWarnGetState(OSD_WARNING_BATTERY_NOT_FULL) && !(ARMING_FLAG(ARMED) || ARMING_FLAG(WAS_EVER_ARMED)) && (getBatteryState() == BATTERY_OK)
-          && getBatteryAverageCellVoltage() < batteryConfig()->vbatfullcellvoltage) {
+    if (osdWarnGetState(OSD_WARNING_BATTERY_NOT_FULL) && !(ARMING_FLAG(ARMED) || ARMING_FLAG(WAS_EVER_ARMED))
+        && (getBatteryState() == BATTERY_OK)
+        && getBatteryAverageCellVoltage() < batteryConfig()->vbatfullcellvoltage) {
         tfp_sprintf(warningText, "BATT < FULL");
         *displayAttr = DISPLAYPORT_ATTR_INFO;
         return;

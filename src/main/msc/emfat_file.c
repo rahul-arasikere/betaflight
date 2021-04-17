@@ -70,8 +70,7 @@ static const char readme_file[] =
 #endif
 
 #ifdef USE_EMFAT_ICON
-static const char icon_file[] =
-{
+static const char icon_file[] = {
     0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x18, 0x18, 0x00, 0x00, 0x01, 0x00, 0x20, 0x00, 0x28, 0x09,
     0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0x18, 0x00, 0x00, 0x00, 0x30, 0x00,
     0x00, 0x00, 0x01, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -255,8 +254,7 @@ static void bblog_read_proc(uint8_t *dest, int size, uint32_t offset, emfat_entr
     flashfsReadAbs(offset, dest, size);
 }
 
-static const emfat_entry_t entriesPredefined[] =
-{
+static const emfat_entry_t entriesPredefined[] = {
     // name           dir    attr         lvl offset  size             max_size        user                time  read               write
     { "",             true,  0,           0,  0,      0,               0,              0,                  CMA,  NULL,              NULL, { 0 } },
 #ifdef USE_EMFAT_AUTORUN
@@ -266,7 +264,7 @@ static const emfat_entry_t entriesPredefined[] =
     { "icon.ico",     false, ATTR_HIDDEN, 1,  0,      ICON_SIZE,       ICON_SIZE,      (long)icon_file,    CMA,  memory_read_proc,  NULL, { 0 } },
 #endif
 #ifdef USE_EMFAT_README
-    { "readme.txt",   false, 0,           1,  0,      README_SIZE,     1024*1024,      (long)readme_file,  CMA,  memory_read_proc,  NULL, { 0 } },
+    { "readme.txt",   false, 0,           1,  0,      README_SIZE,     1024 * 1024,      (long)readme_file,  CMA,  memory_read_proc,  NULL, { 0 } },
 #endif
     { FC_FIRMWARE_IDENTIFIER "_ALL.BBL", 0,     0,           1,  0,      0,               0,              0,                  CMA,  bblog_read_proc,   NULL, { 0 } },
     { "PADDING.TXT",  0,     ATTR_HIDDEN, 1,  0,      0,               0,              0,                  CMA,  NULL,              NULL, { 0 } },
@@ -295,7 +293,7 @@ static void emfat_set_entry_cma(emfat_entry_t *entry)
 #ifdef USE_FLASHFS
 static void emfat_add_log(emfat_entry_t *entry, int number, uint32_t offset, uint32_t size)
 {
-    static char logNames[EMFAT_MAX_LOG_ENTRY][8+1+3];
+    static char logNames[EMFAT_MAX_LOG_ENTRY][8 + 1 + 3];
 
     tfp_sprintf(logNames[number], FC_FIRMWARE_IDENTIFIER "_%03d.BBL", number + 1);
     entry->name = logNames[number];

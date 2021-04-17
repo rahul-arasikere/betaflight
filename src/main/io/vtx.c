@@ -130,7 +130,7 @@ STATIC_UNIT_TESTED vtxSettingsConfig_t vtxGetSettings(void)
 
     if (!ARMING_FLAG(ARMED) && !failsafeIsActive() &&
         (settings.lowPowerDisarm == VTX_LOW_POWER_DISARM_ALWAYS ||
-        (settings.lowPowerDisarm == VTX_LOW_POWER_DISARM_UNTIL_FIRST_ARM && !ARMING_FLAG(WAS_EVER_ARMED)))) {
+         (settings.lowPowerDisarm == VTX_LOW_POWER_DISARM_UNTIL_FIRST_ARM && !ARMING_FLAG(WAS_EVER_ARMED)))) {
         settings.power = VTX_TABLE_DEFAULT_POWER;
     }
 
@@ -253,26 +253,26 @@ void vtxUpdate(timeUs_t currentTimeUs)
         bool vtxUpdatePending = false;
         do {
             switch (currentSchedule) {
-                case VTX_PARAM_POWER:
-                    vtxUpdatePending = vtxProcessPower(vtxDevice);
-                    break;
-                case VTX_PARAM_BANDCHAN:
-                    if (vtxGetSettings().band) {
-                        vtxUpdatePending = vtxProcessBandAndChannel(vtxDevice);
+            case VTX_PARAM_POWER:
+                vtxUpdatePending = vtxProcessPower(vtxDevice);
+                break;
+            case VTX_PARAM_BANDCHAN:
+                if (vtxGetSettings().band) {
+                    vtxUpdatePending = vtxProcessBandAndChannel(vtxDevice);
 #if defined(VTX_SETTINGS_FREQCMD)
-                    } else {
-                        vtxUpdatePending = vtxProcessFrequency(vtxDevice);
+                } else {
+                    vtxUpdatePending = vtxProcessFrequency(vtxDevice);
 #endif
-                    }
-                    break;
-                case VTX_PARAM_PITMODE:
-                    vtxUpdatePending = vtxProcessPitMode(vtxDevice);
-                    break;
-                case VTX_PARAM_CONFIRM:
-                    vtxUpdatePending = vtxProcessStateUpdate(vtxDevice);
-                    break;
-                default:
-                    break;
+                }
+                break;
+            case VTX_PARAM_PITMODE:
+                vtxUpdatePending = vtxProcessPitMode(vtxDevice);
+                break;
+            case VTX_PARAM_CONFIRM:
+                vtxUpdatePending = vtxProcessStateUpdate(vtxDevice);
+                break;
+            default:
+                break;
             }
             currentSchedule = (currentSchedule + 1) % VTX_PARAM_COUNT;
         } while (!vtxUpdatePending && currentSchedule != startingSchedule);

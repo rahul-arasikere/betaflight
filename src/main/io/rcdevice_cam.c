@@ -89,7 +89,8 @@ static void rcdeviceCameraControlProcess(void)
                     // avoid display wifi page when arming, in the next firmware(>2.0) of rcsplit we have change the wifi page logic:
                     // when the wifi was turn on it won't turn off the analog video output,
                     // and just put a wifi indicator on the right top of the video output. here is for the old split firmware
-                    if (!ARMING_FLAG(ARMED) && !(getArmingDisableFlags() & (ARMING_DISABLED_RUNAWAY_TAKEOFF | ARMING_DISABLED_CRASH_DETECTED))) {
+                    if (!ARMING_FLAG(ARMED)
+                        && !(getArmingDisableFlags() & (ARMING_DISABLED_RUNAWAY_TAKEOFF | ARMING_DISABLED_CRASH_DETECTED))) {
                         behavior = RCDEVICE_PROTOCOL_CAM_CTRL_SIMULATE_WIFI_BTN;
                     }
                 }
@@ -102,7 +103,8 @@ static void rcdeviceCameraControlProcess(void)
             case BOXCAMERA3:
                 if (isFeatureSupported(RCDEVICE_PROTOCOL_FEATURE_CHANGE_MODE)) {
                     // avoid change camera mode when arming
-                    if (!ARMING_FLAG(ARMED) && !(getArmingDisableFlags() & (ARMING_DISABLED_RUNAWAY_TAKEOFF | ARMING_DISABLED_CRASH_DETECTED))) {
+                    if (!ARMING_FLAG(ARMED)
+                        && !(getArmingDisableFlags() & (ARMING_DISABLED_RUNAWAY_TAKEOFF | ARMING_DISABLED_CRASH_DETECTED))) {
                         behavior = RCDEVICE_PROTOCOL_CAM_CTRL_CHANGE_MODE;
                     }
                 }
@@ -143,8 +145,7 @@ static void rcdeviceSimulationRespHandle(rcdeviceResponseParseContext_t *ctx)
     case RCDEVICE_PROTOCOL_COMMAND_5KEY_SIMULATION_RELEASE:
         isButtonPressed = false;
         break;
-    case RCDEVICE_PROTOCOL_COMMAND_5KEY_CONNECTION:
-    {
+    case RCDEVICE_PROTOCOL_COMMAND_5KEY_CONNECTION: {
         // the high 4 bits is the operationID that we sent
         // the low 4 bits is the result code
         isButtonPressed = true;
@@ -164,7 +165,7 @@ static void rcdeviceSimulationRespHandle(rcdeviceResponseParseContext_t *ctx)
             }
         }
     }
-        break;
+    break;
     case RCDEVICE_PROTOCOL_COMMAND_5KEY_SIMULATION_PRESS:
         isButtonPressed = true;
         break;
@@ -236,7 +237,8 @@ static void rcdevice5KeySimulationProcess(timeUs_t currentTimeUs)
     }
 #endif
 
-    if (ARMING_FLAG(ARMED) || IS_RC_MODE_ACTIVE(BOXSTICKCOMMANDDISABLE) || (getArmingDisableFlags() & (ARMING_DISABLED_RUNAWAY_TAKEOFF | ARMING_DISABLED_CRASH_DETECTED))) {
+    if (ARMING_FLAG(ARMED) || IS_RC_MODE_ACTIVE(BOXSTICKCOMMANDDISABLE)
+        || (getArmingDisableFlags() & (ARMING_DISABLED_RUNAWAY_TAKEOFF | ARMING_DISABLED_CRASH_DETECTED))) {
         return;
     }
 
@@ -287,9 +289,9 @@ static void rcdevice5KeySimulationProcess(timeUs_t currentTimeUs)
 static void rcdeviceProcessDeviceRequest(runcamDeviceRequest_t *request)
 {
     switch (request->command) {
-        case RCDEVICE_PROTOCOL_COMMAND_REQUEST_FC_ATTITUDE:
-            runcamDeviceSendAttitude(camDevice);
-            break;
+    case RCDEVICE_PROTOCOL_COMMAND_REQUEST_FC_ATTITUDE:
+        runcamDeviceSendAttitude(camDevice);
+        break;
     }
 }
 

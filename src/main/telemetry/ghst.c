@@ -83,7 +83,8 @@ static void ghstInitializeFrame(sbuf_t *dst)
 
 static void ghstFinalize(sbuf_t *dst)
 {
-    crc8_dvb_s2_sbuf_append(dst, &ghstFrame[2]); // start at byte 2, since CRC does not include device address and frame length
+    crc8_dvb_s2_sbuf_append(dst,
+                            &ghstFrame[2]); // start at byte 2, since CRC does not include device address and frame length
     sbufSwitchToReader(dst, ghstFrame);
     // write the telemetry frame to the receiver.
     ghstRxWriteTelemetryData(sbufPtr(dst), sbufBytesRemaining(dst));
@@ -154,7 +155,7 @@ void initGhstTelemetry(void)
         ghstSchedule[index++] = BIT(GHST_FRAME_PACK_INDEX);
     }
     ghstScheduleCount = (uint8_t)index;
- }
+}
 
 bool checkGhstTelemetryState(void)
 {
@@ -162,7 +163,7 @@ bool checkGhstTelemetryState(void)
 }
 
 // Called periodically by the scheduler
- void handleGhstTelemetry(timeUs_t currentTimeUs)
+void handleGhstTelemetry(timeUs_t currentTimeUs)
 {
     static uint32_t ghstLastCycleTime;
 

@@ -99,17 +99,17 @@ void systemResetToBootloader(bootloaderRequestType_e requestType)
 typedef void *(*bootJumpPtr)(void);
 
 void systemJumpToBootloader(void)
-{   
+{
     __SYSCFG_CLK_ENABLE();
-    
+
     uint32_t bootStack =  SYSMEMBOOT_VECTOR_TABLE[0];
-    
+
     bootJumpPtr SysMemBootJump = (bootJumpPtr)SYSMEMBOOT_VECTOR_TABLE[1];
-    
+
     __set_MSP(bootStack); //Set the main stack pointer to its default values
-    
+
     SysMemBootJump();
-    
+
     while (1);
 }
 
@@ -120,7 +120,7 @@ void systemCheckResetReason(void)
 
     switch (bootloaderRequest) {
     case RESET_MSC_REQUEST:
-        // RESET_REASON will be reset by MSC
+    // RESET_REASON will be reset by MSC
     case RESET_NONE:
         return;
 

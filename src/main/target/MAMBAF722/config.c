@@ -29,7 +29,7 @@
 #include "pg/piniobox.h"
 #include "target.h"
 
-#define BLUETOOTH_MSP_UART      SERIAL_PORT_UART4 
+#define BLUETOOTH_MSP_UART      SERIAL_PORT_UART4
 #define BLUETOOTH_MSP_BAUDRATE  BAUD_19200
 
 void targetConfiguration(void)

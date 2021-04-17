@@ -116,8 +116,8 @@ void setUsedLedCount(unsigned ledCount)
 {
     usedLedCount = (ledCount < WS2811_DATA_BUFFER_SIZE) ? ledCount : WS2811_DATA_BUFFER_SIZE;
 
-     // Update all possible positions on the next update in case the count
-     // decreased otherwise LEDs on the end could be left in their previous state
+    // Update all possible positions on the next update in case the count
+    // decreased otherwise LEDs on the end could be left in their previous state
     needsFullRefresh = true;
 }
 
@@ -155,19 +155,20 @@ STATIC_UNIT_TESTED void updateLEDDMABuffer(ledStripFormatRGB_e ledFormat, rgbCol
     uint32_t packed_colour;
 
     switch (ledFormat) {
-        case LED_RGB: // WS2811 drivers use RGB format
-            packed_colour = (color->rgb.r << 16) | (color->rgb.g << 8) | (color->rgb.b);
-            break;
+    case LED_RGB: // WS2811 drivers use RGB format
+        packed_colour = (color->rgb.r << 16) | (color->rgb.g << 8) | (color->rgb.b);
+        break;
 
-        case LED_GRB: // WS2812 drivers use GRB format
-        default:
-            packed_colour = (color->rgb.g << 16) | (color->rgb.r << 8) | (color->rgb.b);
+    case LED_GRB: // WS2812 drivers use GRB format
+    default:
+        packed_colour = (color->rgb.g << 16) | (color->rgb.r << 8) | (color->rgb.b);
         break;
     }
 
     unsigned dmaBufferOffset = 0;
     for (int index = 23; index >= 0; index--) {
-        ledStripDMABuffer[ledIndex * WS2811_BITS_PER_LED + dmaBufferOffset++] = (packed_colour & (1 << index)) ? BIT_COMPARE_1 : BIT_COMPARE_0;
+        ledStripDMABuffer[ledIndex * WS2811_BITS_PER_LED + dmaBufferOffset++] = (packed_colour &
+                                                                                 (1 << index)) ? BIT_COMPARE_1 : BIT_COMPARE_0;
     }
 }
 

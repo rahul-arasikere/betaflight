@@ -130,6 +130,7 @@ void rtc6705SoftSpiSetFrequency(uint16_t channel_freq)
 
 void rtc6705SoftSpiSetRFPower(uint8_t rf_power)
 {
-    rtc6705_write_register(7, (rf_power > 1 ? PA_CONTROL_DEFAULT : (PA_CONTROL_DEFAULT | PD_Q5G_MASK) & (~(PA5G_PW_MASK | PA5G_BS_MASK))));
+    rtc6705_write_register(7, (rf_power > 1 ? PA_CONTROL_DEFAULT : (PA_CONTROL_DEFAULT | PD_Q5G_MASK) & (~
+                               (PA5G_PW_MASK | PA5G_BS_MASK))));
 }
 #endif

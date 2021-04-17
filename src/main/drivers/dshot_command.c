@@ -61,7 +61,7 @@ typedef struct dshotCommandControl_s {
 } dshotCommandControl_t;
 
 static timeUs_t dshotCommandPidLoopTimeUs = 125; // default to 8KHz (125us) loop to prevent possible div/0
-                                                 // gets set to the actual value when the PID loop is initialized
+// gets set to the actual value when the PID loop is initialized
 
 // XXX Optimization opportunity here.
 // https://github.com/betaflight/betaflight/pull/8534#pullrequestreview-258947278
@@ -97,7 +97,7 @@ FAST_CODE bool dshotCommandIsProcessing(void)
     if (dshotCommandQueueEmpty()) {
         return false;
     }
-    dshotCommandControl_t* command = &commandQueue[commandQueueTail];
+    dshotCommandControl_t *command = &commandQueue[commandQueueTail];
     const bool commandIsProcessing = command->state == DSHOT_COMMAND_STATE_STARTDELAY
                                      || command->state == DSHOT_COMMAND_STATE_ACTIVE
                                      || (command->state == DSHOT_COMMAND_STATE_POSTDELAY && !isLastDshotCommand());
@@ -112,7 +112,7 @@ static FAST_CODE bool dshotCommandQueueUpdate(void)
             // There is another command in the queue so update it so it's ready to output in
             // sequence. It can go directly to the DSHOT_COMMAND_STATE_ACTIVE state and bypass
             // the DSHOT_COMMAND_STATE_IDLEWAIT and DSHOT_COMMAND_STATE_STARTDELAY states.
-            dshotCommandControl_t* nextCommand = &commandQueue[commandQueueTail];
+            dshotCommandControl_t *nextCommand = &commandQueue[commandQueueTail];
             nextCommand->state = DSHOT_COMMAND_STATE_ACTIVE;
             nextCommand->nextCommandCycleDelay = 0;
             return true;
@@ -129,13 +129,13 @@ static FAST_CODE uint32_t dshotCommandCyclesFromTime(timeUs_t delayUs)
     return (delayUs + dshotCommandPidLoopTimeUs - 1) / dshotCommandPidLoopTimeUs;
 }
 
-static dshotCommandControl_t* addCommand()
+static dshotCommandControl_t *addCommand()
 {
     int newHead = (commandQueueHead + 1) % (DSHOT_MAX_COMMANDS + 1);
     if (newHead == commandQueueTail) {
         return NULL;
     }
-    dshotCommandControl_t* control = &commandQueue[commandQueueHead];
+    dshotCommandControl_t *control = &commandQueue[commandQueueHead];
     commandQueueHead = newHead;
     return control;
 }
@@ -154,7 +154,8 @@ static bool allMotorsAreIdle(void)
 
 bool dshotStreamingCommandsAreEnabled(void)
 {
-    return motorIsEnabled() && motorGetMotorEnableTimeMs() && millis() > motorGetMotorEnableTimeMs() + DSHOT_PROTOCOL_DETECTION_DELAY_MS;
+    return motorIsEnabled() && motorGetMotorEnableTimeMs()
+           && millis() > motorGetMotorEnableTimeMs() + DSHOT_PROTOCOL_DETECTION_DELAY_MS;
 }
 
 static bool dshotCommandsAreEnabled(dshotCommandType_e commandType)
@@ -180,7 +181,8 @@ static bool dshotCommandsAreEnabled(dshotCommandType_e commandType)
 
 void dshotCommandWrite(uint8_t index, uint8_t motorCount, uint8_t command, dshotCommandType_e commandType)
 {
-    if (!isMotorProtocolDshot() || !dshotCommandsAreEnabled(commandType) || (command > DSHOT_MAX_COMMAND) || dshotCommandQueueFull()) {
+    if (!isMotorProtocolDshot() || !dshotCommandsAreEnabled(commandType) || (command > DSHOT_MAX_COMMAND)
+        || dshotCommandQueueFull()) {
         return;
     }
 
@@ -267,7 +269,7 @@ FAST_CODE_NOINLINE bool dshotCommandOutputIsEnabled(uint8_t motorCount)
 {
     UNUSED(motorCount);
 
-    dshotCommandControl_t* command = &commandQueue[commandQueueTail];
+    dshotCommandControl_t *command = &commandQueue[commandQueueTail];
     switch (command->state) {
     case DSHOT_COMMAND_STATE_IDLEWAIT:
         if (allMotorsAreIdle()) {

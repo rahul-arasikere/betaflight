@@ -82,8 +82,7 @@ static const void *cmsx_menuRcConfirmBack(displayPort_t *pDisp, const OSD_Entry 
 //
 // RC preview
 //
-static const OSD_Entry cmsx_menuRcEntries[] =
-{
+static const OSD_Entry cmsx_menuRcEntries[] = {
     { "-- RC PREV --", OME_Label, NULL, NULL, 0},
 
     { "ROLL",  OME_INT16, NULL, &(OSD_INT16_t){ &rcData[ROLL],     1, 2500, 0 }, DYNAMIC },
@@ -138,8 +137,7 @@ static const void *cmsx_menuMiscOnExit(displayPort_t *pDisp, const OSD_Entry *se
     return NULL;
 }
 
-static const OSD_Entry menuMiscEntries[]=
-{
+static const OSD_Entry menuMiscEntries[] = {
     { "-- MISC --", OME_Label, NULL, NULL, 0 },
 
     { "MIN THR",       OME_UINT16,  NULL,          &(OSD_UINT16_t){ &motorConfig_minthrottle,            1000, 2000, 1 }, REBOOT_REQUIRED },

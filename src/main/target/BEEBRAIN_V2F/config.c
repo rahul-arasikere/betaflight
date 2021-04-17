@@ -102,10 +102,18 @@ void targetConfiguration(void)
     batteryConfigMutable()->vbatmincellvoltage = 280;
     batteryConfigMutable()->vbatwarningcellvoltage = 330;
 
-    *customMotorMixerMutable(0) = (motorMixer_t){ 1.0f, -0.414178f,  1.0f, -1.0f };    // REAR_R
-    *customMotorMixerMutable(1) = (motorMixer_t){ 1.0f, -0.414178f, -1.0f,  1.0f };    // FRONT_R
-    *customMotorMixerMutable(2) = (motorMixer_t){ 1.0f,  0.414178f,  1.0f,  1.0f };    // REAR_L
-    *customMotorMixerMutable(3) = (motorMixer_t){ 1.0f,  0.414178f, -1.0f, -1.0f };    // FRONT_L
+    *customMotorMixerMutable(0) = (motorMixer_t) {
+        1.0f, -0.414178f,  1.0f, -1.0f
+    };    // REAR_R
+    *customMotorMixerMutable(1) = (motorMixer_t) {
+        1.0f, -0.414178f, -1.0f,  1.0f
+    };    // FRONT_R
+    *customMotorMixerMutable(2) = (motorMixer_t) {
+        1.0f,  0.414178f,  1.0f,  1.0f
+    };    // REAR_L
+    *customMotorMixerMutable(3) = (motorMixer_t) {
+        1.0f,  0.414178f, -1.0f, -1.0f
+    };    // FRONT_L
 
     vcdProfileMutable()->video_system = VIDEO_SYSTEM_NTSC;
 #if defined(BEESTORM)
@@ -171,7 +179,8 @@ void targetConfiguration(void)
     }
 #else
     // Frsky version
-    serialConfigMutable()->portConfigs[findSerialPortIndexByIdentifier(SERIALRX_UART)].functionMask = FUNCTION_TELEMETRY_FRSKY_HUB | FUNCTION_RX_SERIAL;
+    serialConfigMutable()->portConfigs[findSerialPortIndexByIdentifier(SERIALRX_UART)].functionMask =
+        FUNCTION_TELEMETRY_FRSKY_HUB | FUNCTION_RX_SERIAL;
     rxConfigMutable()->rssi_channel = BBV2_FRSKY_RSSI_CH_IDX;
     rxFailsafeChannelConfig_t *channelFailsafeConfig = rxFailsafeChannelConfigsMutable(BBV2_FRSKY_RSSI_CH_IDX - 1);
     channelFailsafeConfig->mode = RX_FAILSAFE_MODE_SET;

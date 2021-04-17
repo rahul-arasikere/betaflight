@@ -116,7 +116,8 @@ void config_streamer_start(config_streamer_t *c, uintptr_t base, int size)
 #elif defined(STM32F303)
     FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_PGERR | FLASH_FLAG_WRPERR);
 #elif defined(STM32F4)
-    FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
+    FLASH_ClearFlag(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR |
+                    FLASH_FLAG_PGSERR);
 #elif defined(STM32F7)
     // NOP
 #elif defined(STM32H7)
@@ -380,7 +381,8 @@ static int write_word(config_streamer_t *c, config_streamer_buffer_align_type_t 
     const flashGeometry_t *flashGeometry = flashGetGeometry();
 
     uint32_t flashStartAddress = flashPartition->startSector * flashGeometry->sectorSize;
-    uint32_t flashOverflowAddress = ((flashPartition->endSector + 1) * flashGeometry->sectorSize); // +1 to sector for inclusive
+    uint32_t flashOverflowAddress = ((flashPartition->endSector + 1) *
+                                     flashGeometry->sectorSize); // +1 to sector for inclusive
 
     uint32_t flashAddress = flashStartAddress + dataOffset;
     if (flashAddress + CONFIG_STREAMER_BUFFER_SIZE > flashOverflowAddress) {
@@ -413,12 +415,11 @@ static int write_word(config_streamer_t *c, config_streamer_buffer_align_type_t 
     }
 
     uint64_t *dest_addr = (uint64_t *)c->address;
-    uint64_t *src_addr = (uint64_t*)buffer;
+    uint64_t *src_addr = (uint64_t *)buffer;
     uint8_t row_index = 4;
     /* copy the 256 bits flash word */
-    do
-    {
-      *dest_addr++ = *src_addr++;
+    do {
+        *dest_addr++ = *src_addr++;
     } while (--row_index != 0);
 
 #elif defined(CONFIG_IN_FILE)
@@ -476,7 +477,7 @@ static int write_word(config_streamer_t *c, config_streamer_buffer_align_type_t 
 
     // For F7
     // HAL_StatusTypeDef HAL_FLASH_Program(uint32_t TypeProgram, uint32_t Address, uint64_t Data);
-    const HAL_StatusTypeDef status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, c->address, (uint64_t)*buffer);
+    const HAL_StatusTypeDef status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, c->address, (uint64_t) * buffer);
     if (status != HAL_OK) {
         return -2;
     }
@@ -495,7 +496,7 @@ static int write_word(config_streamer_t *c, config_streamer_buffer_align_type_t 
         }
     }
 
-    const HAL_StatusTypeDef status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, c->address, (uint64_t)*buffer);
+    const HAL_StatusTypeDef status = HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, c->address, (uint64_t) * buffer);
     if (status != HAL_OK) {
         return -2;
     }
@@ -522,7 +523,7 @@ static int write_word(config_streamer_t *c, config_streamer_buffer_align_type_t 
 
 int config_streamer_write(config_streamer_t *c, const uint8_t *p, uint32_t size)
 {
-    for (const uint8_t *pat = p; pat != (uint8_t*)p + size; pat++) {
+    for (const uint8_t *pat = p; pat != (uint8_t *)p + size; pat++) {
         c->buffer.b[c->at++] = *pat;
 
         if (c->at == sizeof(c->buffer)) {
@@ -552,7 +553,8 @@ int config_streamer_finish(config_streamer_t *c)
 {
     if (c->unlocked) {
 #if defined(CONFIG_IN_SDCARD)
-        bool saveEEPROMToSDCard(void); // XXX forward declaration to avoid circular dependency between config_streamer / config_eeprom
+        bool saveEEPROMToSDCard(
+            void); // XXX forward declaration to avoid circular dependency between config_streamer / config_eeprom
         saveEEPROMToSDCard();
         // TODO overwrite the data in the file on the SD card.
 #elif defined(CONFIG_IN_EXTERNAL_FLASH)

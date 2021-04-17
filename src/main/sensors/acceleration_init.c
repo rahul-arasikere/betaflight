@@ -93,9 +93,9 @@ FAST_DATA_ZERO_INIT accelerationRuntime_t accelerationRuntime;
 void resetRollAndPitchTrims(rollAndPitchTrims_t *rollAndPitchTrims)
 {
     RESET_CONFIG_2(rollAndPitchTrims_t, rollAndPitchTrims,
-        .values.roll = 0,
-        .values.pitch = 0,
-    );
+                   .values.roll = 0,
+                   .values.pitch = 0,
+                  );
 }
 
 static void setConfigCalibrationCompleted(void)
@@ -124,10 +124,10 @@ static void resetFlightDynamicsTrims(flightDynamicsTrims_t *accZero)
 void pgResetFn_accelerometerConfig(accelerometerConfig_t *instance)
 {
     RESET_CONFIG_2(accelerometerConfig_t, instance,
-        .acc_lpf_hz = 10,
-        .acc_hardware = ACC_DEFAULT,
-        .acc_high_fsr = false,
-    );
+                   .acc_lpf_hz = 10,
+                   .acc_hardware = ACC_DEFAULT,
+                   .acc_high_fsr = false,
+                  );
     resetRollAndPitchTrims(&instance->accelerometerTrims);
     resetFlightDynamicsTrims(&instance->accZero);
 }
@@ -360,7 +360,7 @@ bool accInit(uint16_t accSampleRateHz)
     // Exceptions are STM32F3DISCOVERY and STM32F411DISCOVERY, and (may be) handled in future enhancement.
 
     sensor_align_e alignment = gyroDeviceConfig(0)->alignment;
-    const sensorAlignment_t* customAlignment = &gyroDeviceConfig(0)->customAlignment;
+    const sensorAlignment_t *customAlignment = &gyroDeviceConfig(0)->customAlignment;
 
 #ifdef USE_MULTI_GYRO
     if (gyroConfig()->gyro_to_use == GYRO_CONFIG_USE_GYRO_2) {
@@ -427,7 +427,8 @@ void performAcclerationCalibration(rollAndPitchTrims_t *rollAndPitchTrims)
         // Calculate average, shift Z down by acc_1G and store values in EEPROM at end of calibration
         accelerationRuntime.accelerationTrims->raw[X] = (a[X] + (CALIBRATING_ACC_CYCLES / 2)) / CALIBRATING_ACC_CYCLES;
         accelerationRuntime.accelerationTrims->raw[Y] = (a[Y] + (CALIBRATING_ACC_CYCLES / 2)) / CALIBRATING_ACC_CYCLES;
-        accelerationRuntime.accelerationTrims->raw[Z] = (a[Z] + (CALIBRATING_ACC_CYCLES / 2)) / CALIBRATING_ACC_CYCLES - acc.dev.acc_1G;
+        accelerationRuntime.accelerationTrims->raw[Z] = (a[Z] + (CALIBRATING_ACC_CYCLES / 2)) / CALIBRATING_ACC_CYCLES -
+                                                        acc.dev.acc_1G;
 
         resetRollAndPitchTrims(rollAndPitchTrims);
         setConfigCalibrationCompleted();

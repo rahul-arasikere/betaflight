@@ -255,7 +255,8 @@ void quadSpiPinConfigure(const quadSpiConfig_t *pConfig)
         }
 
         bool needBK2CS =
-            (pConfig[device].mode == QUADSPI_MODE_DUAL_FLASH && (pConfig[device].csFlags & QUADSPI_CS_MODE_MASK) == QUADSPI_CS_MODE_SEPARATE) ||
+            (pConfig[device].mode == QUADSPI_MODE_DUAL_FLASH
+             && (pConfig[device].csFlags & QUADSPI_CS_MODE_MASK) == QUADSPI_CS_MODE_SEPARATE) ||
             (pConfig[device].mode == QUADSPI_MODE_BK2_ONLY);
 
         if (needBK2CS) {

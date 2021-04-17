@@ -100,7 +100,7 @@ bool getShouldUpdateFf()
 // only used in pid.c when interpolated_sp is active to initiate a new FF value
 {
     const bool updateFf = newRxDataForFF;
-    if (newRxDataForFF == true){
+    if (newRxDataForFF == true) {
         newRxDataForFF = false;
     }
     return updateFf;
@@ -163,7 +163,8 @@ float applyBetaflightRates(const int axis, float rcCommandf, const float rcComma
     }
     float angleRate = 200.0f * rcRate * rcCommandf;
     if (currentControlRateProfile->rates[axis]) {
-        const float rcSuperfactor = 1.0f / (constrainf(1.0f - (rcCommandfAbs * (currentControlRateProfile->rates[axis] / 100.0f)), 0.01f, 1.00f));
+        const float rcSuperfactor = 1.0f / (constrainf(1.0f - (rcCommandfAbs * (currentControlRateProfile->rates[axis] /
+                                                                                100.0f)), 0.01f, 1.00f));
         angleRate *= rcSuperfactor;
     }
 
@@ -185,8 +186,10 @@ float applyKissRates(const int axis, float rcCommandf, const float rcCommandfAbs
 {
     const float rcCurvef = currentControlRateProfile->rcExpo[axis] / 100.0f;
 
-    float kissRpyUseRates = 1.0f / (constrainf(1.0f - (rcCommandfAbs * (currentControlRateProfile->rates[axis] / 100.0f)), 0.01f, 1.00f));
-    float kissRcCommandf = (power3(rcCommandf) * rcCurvef + rcCommandf * (1 - rcCurvef)) * (currentControlRateProfile->rcRates[axis] / 1000.0f);
+    float kissRpyUseRates = 1.0f / (constrainf(1.0f - (rcCommandfAbs * (currentControlRateProfile->rates[axis] / 100.0f)),
+                                               0.01f, 1.00f));
+    float kissRcCommandf = (power3(rcCommandf) * rcCurvef + rcCommandf * (1 - rcCurvef)) *
+                           (currentControlRateProfile->rcRates[axis] / 1000.0f);
     float kissAngle = constrainf(((2000.0f * kissRpyUseRates) * kissRcCommandf), -SETPOINT_RATE_LIMIT, SETPOINT_RATE_LIMIT);
 
     return kissAngle;
@@ -256,7 +259,7 @@ static void calculateSetpointRate(int axis)
         } else {
             rcCommandf = rcCommand[axis] / rcCommandDivider;
         }
-        
+
         rcDeflection[axis] = rcCommandf;
         const float rcCommandfAbs = fabsf(rcCommandf);
         rcDeflectionAbs[axis] = rcCommandfAbs;
@@ -264,7 +267,8 @@ static void calculateSetpointRate(int axis)
         angleRate = applyRates(axis, rcCommandf, rcCommandfAbs);
     }
     // Rate limit from profile (deg/sec)
-    setpointRate[axis] = constrainf(angleRate, -1.0f * currentControlRateProfile->rate_limit[axis], 1.0f * currentControlRateProfile->rate_limit[axis]);
+    setpointRate[axis] = constrainf(angleRate, -1.0f * currentControlRateProfile->rate_limit[axis],
+                                    1.0f * currentControlRateProfile->rate_limit[axis]);
 
     DEBUG_SET(DEBUG_ANGLERATE, axis, angleRate);
 }
@@ -284,8 +288,10 @@ static void scaleRcCommandToFpvCamAngle(void)
 
     float roll = setpointRate[ROLL];
     float yaw = setpointRate[YAW];
-    setpointRate[ROLL] = constrainf(roll * cosFactor -  yaw * sinFactor, -SETPOINT_RATE_LIMIT * 1.0f, SETPOINT_RATE_LIMIT * 1.0f);
-    setpointRate[YAW]  = constrainf(yaw  * cosFactor + roll * sinFactor, -SETPOINT_RATE_LIMIT * 1.0f, SETPOINT_RATE_LIMIT * 1.0f);
+    setpointRate[ROLL] = constrainf(roll * cosFactor -  yaw * sinFactor, -SETPOINT_RATE_LIMIT * 1.0f,
+                                    SETPOINT_RATE_LIMIT * 1.0f);
+    setpointRate[YAW]  = constrainf(yaw  * cosFactor + roll * sinFactor, -SETPOINT_RATE_LIMIT * 1.0f,
+                                    SETPOINT_RATE_LIMIT * 1.0f);
 }
 
 #define THROTTLE_BUFFER_MAX 20
@@ -298,7 +304,8 @@ static void checkForThrottleErrorResetState(uint16_t rxRefreshRate)
 
     const int rxRefreshRateMs = rxRefreshRate / 1000;
     const int indexMax = constrain(THROTTLE_DELTA_MS / rxRefreshRateMs, 1, THROTTLE_BUFFER_MAX);
-    const int16_t throttleVelocityThreshold = (featureIsEnabled(FEATURE_3D)) ? currentPidProfile->itermThrottleThreshold / 2 : currentPidProfile->itermThrottleThreshold;
+    const int16_t throttleVelocityThreshold = (featureIsEnabled(FEATURE_3D)) ? currentPidProfile->itermThrottleThreshold /
+                                              2 : currentPidProfile->itermThrottleThreshold;
 
     rcCommandThrottlePrevious[index++] = rcCommand[THROTTLE];
     if (index >= indexMax) {
@@ -326,7 +333,7 @@ static FAST_CODE uint8_t processRcInterpolation(void)
     uint8_t updatedChannel = 0;
 
     if (rxConfig()->rcInterpolation) {
-         // Set RC refresh rate for sampling and channels to filter
+        // Set RC refresh rate for sampling and channels to filter
         switch (rxConfig()->rcInterpolation) {
         case RC_SMOOTHING_AUTO:
             rxRefreshRate = currentRxRefreshRate + 1000; // Add slight overhead to prevent ramps
@@ -349,8 +356,8 @@ static FAST_CODE uint8_t processRcInterpolation(void)
                 }
             }
 
-           DEBUG_SET(DEBUG_RC_INTERPOLATION, 0, lrintf(rcCommand[0]));
-           DEBUG_SET(DEBUG_RC_INTERPOLATION, 1, lrintf(currentRxRefreshRate / 1000));
+            DEBUG_SET(DEBUG_RC_INTERPOLATION, 0, lrintf(rcCommand[0]));
+            DEBUG_SET(DEBUG_RC_INTERPOLATION, 1, lrintf(currentRxRefreshRate / 1000));
         } else {
             rcInterpolationStepCount--;
         }
@@ -426,7 +433,8 @@ FAST_CODE_NOINLINE void rcSmoothingSetFilterCutoffs(rcSmoothingFilter_t *smoothi
     uint16_t oldCutoff = smoothingData->inputCutoffFrequency;
 
     if (smoothingData->inputCutoffSetting == 0) {
-        smoothingData->inputCutoffFrequency = calcRcSmoothingCutoff(smoothingData->averageFrameTimeUs, (smoothingData->inputFilterType == RC_SMOOTHING_INPUT_PT1), smoothingData->autoSmoothnessFactor);
+        smoothingData->inputCutoffFrequency = calcRcSmoothingCutoff(smoothingData->averageFrameTimeUs,
+                                                                    (smoothingData->inputFilterType == RC_SMOOTHING_INPUT_PT1), smoothingData->autoSmoothnessFactor);
     }
 
     // initialize or update the input filter
@@ -435,22 +443,25 @@ FAST_CODE_NOINLINE void rcSmoothingSetFilterCutoffs(rcSmoothingFilter_t *smoothi
             if ((1 << i) & interpolationChannels) {  // only update channels specified by rc_interp_ch
                 switch (smoothingData->inputFilterType) {
 
-                    case RC_SMOOTHING_INPUT_PT1:
-                        if (!smoothingData->filterInitialized) {
-                            pt1FilterInit((pt1Filter_t*) &smoothingData->filter[i], pt1FilterGain(smoothingData->inputCutoffFrequency, dT));
-                        } else {
-                            pt1FilterUpdateCutoff((pt1Filter_t*) &smoothingData->filter[i], pt1FilterGain(smoothingData->inputCutoffFrequency, dT));
-                        }
-                        break;
+                case RC_SMOOTHING_INPUT_PT1:
+                    if (!smoothingData->filterInitialized) {
+                        pt1FilterInit((pt1Filter_t *) &smoothingData->filter[i], pt1FilterGain(smoothingData->inputCutoffFrequency, dT));
+                    } else {
+                        pt1FilterUpdateCutoff((pt1Filter_t *) &smoothingData->filter[i], pt1FilterGain(smoothingData->inputCutoffFrequency,
+                                                                                                       dT));
+                    }
+                    break;
 
-                    case RC_SMOOTHING_INPUT_BIQUAD:
-                    default:
-                        if (!smoothingData->filterInitialized) {
-                            biquadFilterInitLPF((biquadFilter_t*) &smoothingData->filter[i], smoothingData->inputCutoffFrequency, targetPidLooptime);
-                        } else {
-                            biquadFilterUpdateLPF((biquadFilter_t*) &smoothingData->filter[i], smoothingData->inputCutoffFrequency, targetPidLooptime);
-                        }
-                        break;
+                case RC_SMOOTHING_INPUT_BIQUAD:
+                default:
+                    if (!smoothingData->filterInitialized) {
+                        biquadFilterInitLPF((biquadFilter_t *) &smoothingData->filter[i], smoothingData->inputCutoffFrequency,
+                                            targetPidLooptime);
+                    } else {
+                        biquadFilterUpdateLPF((biquadFilter_t *) &smoothingData->filter[i], smoothingData->inputCutoffFrequency,
+                                              targetPidLooptime);
+                    }
+                    break;
                 }
             }
         }
@@ -462,11 +473,13 @@ FAST_CODE_NOINLINE void rcSmoothingSetFilterCutoffs(rcSmoothingFilter_t *smoothi
         && (currentPidProfile->ff_interpolate_sp == FF_INTERPOLATE_OFF)
         && (rcSmoothingData.derivativeCutoffSetting == 0)) {
 
-        smoothingData->derivativeCutoffFrequency = calcRcSmoothingCutoff(smoothingData->averageFrameTimeUs, (smoothingData->derivativeFilterType == RC_SMOOTHING_DERIVATIVE_PT1), smoothingData->autoSmoothnessFactor);
+        smoothingData->derivativeCutoffFrequency = calcRcSmoothingCutoff(smoothingData->averageFrameTimeUs,
+                                                                         (smoothingData->derivativeFilterType == RC_SMOOTHING_DERIVATIVE_PT1), smoothingData->autoSmoothnessFactor);
     }
 
     if (!smoothingData->filterInitialized) {
-        pidInitSetpointDerivativeLpf(smoothingData->derivativeCutoffFrequency, smoothingData->debugAxis, smoothingData->derivativeFilterType);
+        pidInitSetpointDerivativeLpf(smoothingData->derivativeCutoffFrequency, smoothingData->debugAxis,
+                                     smoothingData->derivativeFilterType);
     } else if (smoothingData->derivativeCutoffFrequency != oldCutoff) {
         pidUpdateSetpointDerivativeLpf(smoothingData->derivativeCutoffFrequency);
     }
@@ -490,9 +503,11 @@ static FAST_CODE bool rcSmoothingAccumulateSample(rcSmoothingFilter_t *smoothing
     smoothingData->training.min = MIN(smoothingData->training.min, rxFrameTimeUs);
 
     // if we've collected enough samples then calculate the average and reset the accumulation
-    const int sampleLimit = (rcSmoothingData.filterInitialized) ? RC_SMOOTHING_FILTER_RETRAINING_SAMPLES : RC_SMOOTHING_FILTER_TRAINING_SAMPLES;
+    const int sampleLimit = (rcSmoothingData.filterInitialized) ? RC_SMOOTHING_FILTER_RETRAINING_SAMPLES :
+                            RC_SMOOTHING_FILTER_TRAINING_SAMPLES;
     if (smoothingData->training.count >= sampleLimit) {
-        smoothingData->training.sum = smoothingData->training.sum - smoothingData->training.min - smoothingData->training.max; // Throw out high and low samples
+        smoothingData->training.sum = smoothingData->training.sum - smoothingData->training.min -
+                                      smoothingData->training.max; // Throw out high and low samples
         smoothingData->averageFrameTimeUs = lrintf(smoothingData->training.sum / (smoothingData->training.count - 2));
         rcSmoothingResetAccumulation(smoothingData);
         return true;
@@ -557,7 +572,8 @@ static FAST_CODE uint8_t processRcSmoothingFilter(void)
             if ((currentPidProfile->ff_interpolate_sp != FF_INTERPOLATE_OFF) && (rcSmoothingData.derivativeCutoffSetting == 0)) {
                 // calculate the fixed derivative cutoff used for interpolated feedforward
                 const float cutoffFactor = (100 - rcSmoothingData.autoSmoothnessFactor) / 100.0f;
-                float derivativeCutoff = RC_SMOOTHING_INTERPOLATED_FEEDFORWARD_DERIVATIVE_PT1_HZ * cutoffFactor;  // PT1 cutoff frequency
+                float derivativeCutoff = RC_SMOOTHING_INTERPOLATED_FEEDFORWARD_DERIVATIVE_PT1_HZ *
+                                         cutoffFactor;  // PT1 cutoff frequency
                 if (rcSmoothingData.derivativeFilterType == RC_SMOOTHING_DERIVATIVE_BIQUAD) {
                     // convert to an equivalent BIQUAD cutoff
                     derivativeCutoff = sqrt(derivativeCutoff * RC_SMOOTHING_IDENTITY_FREQUENCY);
@@ -593,12 +609,14 @@ static FAST_CODE uint8_t processRcSmoothingFilter(void)
 
             // If the filter cutoffs are set to auto and we have good rx data, then determine the average rx frame rate
             // and use that to calculate the filter cutoff frequencies
-            if ((currentTimeMs > RC_SMOOTHING_FILTER_STARTUP_DELAY_MS) && (targetPidLooptime > 0)) { // skip during FC initialization
+            if ((currentTimeMs > RC_SMOOTHING_FILTER_STARTUP_DELAY_MS)
+                && (targetPidLooptime > 0)) { // skip during FC initialization
                 if (rxIsReceivingSignal()  && rcSmoothingRxRateValid(currentRxRefreshRate)) {
 
                     // set the guard time expiration if it's not set
                     if (validRxFrameTimeMs == 0) {
-                        validRxFrameTimeMs = currentTimeMs + (rcSmoothingData.filterInitialized ? RC_SMOOTHING_FILTER_RETRAINING_DELAY_MS : RC_SMOOTHING_FILTER_TRAINING_DELAY_MS);
+                        validRxFrameTimeMs = currentTimeMs + (rcSmoothingData.filterInitialized ? RC_SMOOTHING_FILTER_RETRAINING_DELAY_MS :
+                                                              RC_SMOOTHING_FILTER_TRAINING_DELAY_MS);
                     } else {
                         sampleState = 1;
                     }
@@ -611,7 +629,8 @@ static FAST_CODE uint8_t processRcSmoothingFilter(void)
                         // During initial training process all samples.
                         // During retraining check samples to determine if they vary by more than the limit percentage.
                         if (rcSmoothingData.filterInitialized) {
-                            const float percentChange = (ABS(currentRxRefreshRate - rcSmoothingData.averageFrameTimeUs) / (float)rcSmoothingData.averageFrameTimeUs) * 100;
+                            const float percentChange = (ABS(currentRxRefreshRate - rcSmoothingData.averageFrameTimeUs) /
+                                                         (float)rcSmoothingData.averageFrameTimeUs) * 100;
                             if (percentChange < RC_SMOOTHING_RX_RATE_CHANGE_PERCENT) {
                                 // We received a sample that wasn't more than the limit percent so reset the accumulation
                                 // During retraining we need a contiguous block of samples that are all significantly different than the current average
@@ -659,14 +678,16 @@ static FAST_CODE uint8_t processRcSmoothingFilter(void)
         if ((1 << updatedChannel) & interpolationChannels) {  // only smooth selected channels base on the rc_interp_ch value
             if (rcSmoothingData.filterInitialized) {
                 switch (rcSmoothingData.inputFilterType) {
-                    case RC_SMOOTHING_INPUT_PT1:
-                        rcCommand[updatedChannel] = pt1FilterApply((pt1Filter_t*) &rcSmoothingData.filter[updatedChannel], lastRxData[updatedChannel]);
-                        break;
+                case RC_SMOOTHING_INPUT_PT1:
+                    rcCommand[updatedChannel] = pt1FilterApply((pt1Filter_t *) &rcSmoothingData.filter[updatedChannel],
+                                                               lastRxData[updatedChannel]);
+                    break;
 
-                    case RC_SMOOTHING_INPUT_BIQUAD:
-                    default:
-                        rcCommand[updatedChannel] = biquadFilterApplyDF1((biquadFilter_t*) &rcSmoothingData.filter[updatedChannel], lastRxData[updatedChannel]);
-                        break;
+                case RC_SMOOTHING_INPUT_BIQUAD:
+                default:
+                    rcCommand[updatedChannel] = biquadFilterApplyDF1((biquadFilter_t *) &rcSmoothingData.filter[updatedChannel],
+                                                                     lastRxData[updatedChannel]);
+                    break;
                 }
             } else {
                 // If filter isn't initialized yet then use the actual unsmoothed rx channel data
@@ -719,7 +740,8 @@ FAST_CODE void processRcCommand(void)
     }
 
     if (isRxDataNew || updatedChannel) {
-        const uint8_t maxUpdatedAxis = isRxDataNew ? FD_YAW : MIN(updatedChannel, FD_YAW); // throttle channel doesn't require rate calculation
+        const uint8_t maxUpdatedAxis = isRxDataNew ? FD_YAW : MIN(updatedChannel,
+                                                                  FD_YAW); // throttle channel doesn't require rate calculation
 #if defined(SIMULATOR_BUILD)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunsafe-loop-optimizations"
@@ -753,7 +775,8 @@ FAST_CODE_NOINLINE void updateRcCommands(void)
         throttlePIDAttenuation = 1.0f;
     } else {
         if (rcData[THROTTLE] < 2000) {
-            prop = 100 - (uint16_t)currentControlRateProfile->dynThrPID * (rcData[THROTTLE] - currentControlRateProfile->tpa_breakpoint) / (2000 - currentControlRateProfile->tpa_breakpoint);
+            prop = 100 - (uint16_t)currentControlRateProfile->dynThrPID * (rcData[THROTTLE] -
+                                                                           currentControlRateProfile->tpa_breakpoint) / (2000 - currentControlRateProfile->tpa_breakpoint);
         } else {
             prop = 100 - currentControlRateProfile->dynThrPID;
         }
@@ -830,7 +853,7 @@ FAST_CODE_NOINLINE void updateRcCommands(void)
         imuQuaternionHeadfreeTransformVectorEarthToBody(&rcCommandBuff);
         rcCommand[ROLL] = rcCommandBuff.X;
         rcCommand[PITCH] = rcCommandBuff.Y;
-        if ((!FLIGHT_MODE(ANGLE_MODE)&&(!FLIGHT_MODE(HORIZON_MODE)) && (!FLIGHT_MODE(GPS_RESCUE_MODE)))) {
+        if ((!FLIGHT_MODE(ANGLE_MODE) && (!FLIGHT_MODE(HORIZON_MODE)) && (!FLIGHT_MODE(GPS_RESCUE_MODE)))) {
             rcCommand[YAW] = rcCommandBuff.Z;
         }
     }
@@ -859,8 +882,10 @@ void initRcProcessing(void)
             y = 100 - currentControlRateProfile->thrMid8;
         if (tmp < 0)
             y = currentControlRateProfile->thrMid8;
-        lookupThrottleRC[i] = 10 * currentControlRateProfile->thrMid8 + tmp * (100 - currentControlRateProfile->thrExpo8 + (int32_t) currentControlRateProfile->thrExpo8 * (tmp * tmp) / (y * y)) / 10;
-        lookupThrottleRC[i] = PWM_RANGE_MIN + (PWM_RANGE_MAX - PWM_RANGE_MIN) * lookupThrottleRC[i] / 1000; // [MINTHROTTLE;MAXTHROTTLE]
+        lookupThrottleRC[i] = 10 * currentControlRateProfile->thrMid8 + tmp * (100 - currentControlRateProfile->thrExpo8 +
+                                                                               (int32_t) currentControlRateProfile->thrExpo8 * (tmp * tmp) / (y * y)) / 10;
+        lookupThrottleRC[i] = PWM_RANGE_MIN + (PWM_RANGE_MAX - PWM_RANGE_MIN) * lookupThrottleRC[i] /
+                              1000; // [MINTHROTTLE;MAXTHROTTLE]
     }
 
     switch (currentControlRateProfile->rates_type) {
@@ -921,9 +946,9 @@ bool rcSmoothingIsEnabled(void)
 {
     return !(
 #if defined(USE_RC_SMOOTHING_FILTER)
-        rxConfig()->rc_smoothing_type == RC_SMOOTHING_TYPE_INTERPOLATION &&
+               rxConfig()->rc_smoothing_type == RC_SMOOTHING_TYPE_INTERPOLATION &&
 #endif
-        rxConfig()->rcInterpolation == RC_SMOOTHING_OFF);
+               rxConfig()->rcInterpolation == RC_SMOOTHING_OFF);
 }
 
 #ifdef USE_RC_SMOOTHING_FILTER
@@ -932,7 +957,8 @@ rcSmoothingFilter_t *getRcSmoothingData(void)
     return &rcSmoothingData;
 }
 
-bool rcSmoothingInitializationComplete(void) {
+bool rcSmoothingInitializationComplete(void)
+{
     return (rxConfig()->rc_smoothing_type != RC_SMOOTHING_TYPE_FILTER) || rcSmoothingData.filterInitialized;
 }
 #endif // USE_RC_SMOOTHING_FILTER

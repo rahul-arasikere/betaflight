@@ -250,9 +250,9 @@ void Get_SerialNum(void)
 {
     uint32_t Device_Serial0, Device_Serial1, Device_Serial2;
 
-    Device_Serial0 = *(uint32_t*)ID1;
-    Device_Serial1 = *(uint32_t*)ID2;
-    Device_Serial2 = *(uint32_t*)ID3;
+    Device_Serial0 = *(uint32_t *)ID1;
+    Device_Serial1 = *(uint32_t *)ID2;
+    Device_Serial2 = *(uint32_t *)ID3;
 
     Device_Serial0 += Device_Serial2;
 
@@ -329,7 +329,7 @@ uint32_t CDC_Send_FreeBytes(void)
  * Output         : None.
  * Return         : None.
  *******************************************************************************/
-uint32_t CDC_Receive_DATA(uint8_t* recvBuf, uint32_t len)
+uint32_t CDC_Receive_DATA(uint8_t *recvBuf, uint32_t len)
 {
     static uint8_t offset = 0;
     uint8_t i;

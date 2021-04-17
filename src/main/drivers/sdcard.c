@@ -41,7 +41,7 @@
 #include "sdcard_standard.h"
 
 #ifdef AFATFS_USE_INTROSPECTIVE_LOGGING
-    #define SDCARD_PROFILING
+#define SDCARD_PROFILING
 #endif
 
 #define SDCARD_INIT_NUM_DUMMY_BYTES                 10
@@ -136,7 +136,8 @@ void sdcard_init(const sdcardConfig_t *config)
     }
 }
 
-bool sdcard_readBlock(uint32_t blockIndex, uint8_t *buffer, sdcard_operationCompleteCallback_c callback, uint32_t callbackData)
+bool sdcard_readBlock(uint32_t blockIndex, uint8_t *buffer, sdcard_operationCompleteCallback_c callback,
+                      uint32_t callbackData)
 {
     return sdcardVTable->sdcard_readBlock(blockIndex, buffer, callback, callbackData);
 }
@@ -146,7 +147,8 @@ sdcardOperationStatus_e sdcard_beginWriteBlocks(uint32_t blockIndex, uint32_t bl
     return sdcardVTable->sdcard_beginWriteBlocks(blockIndex, blockCount);
 }
 
-sdcardOperationStatus_e sdcard_writeBlock(uint32_t blockIndex, uint8_t *buffer, sdcard_operationCompleteCallback_c callback, uint32_t callbackData)
+sdcardOperationStatus_e sdcard_writeBlock(uint32_t blockIndex, uint8_t *buffer,
+                                          sdcard_operationCompleteCallback_c callback, uint32_t callbackData)
 {
     return sdcardVTable->sdcard_writeBlock(blockIndex, buffer, callback, callbackData);
 }
@@ -177,7 +179,7 @@ bool sdcard_isInitialized(void)
     return sdcardVTable->sdcard_isInitialized();
 }
 
-const sdcardMetadata_t* sdcard_getMetadata(void)
+const sdcardMetadata_t *sdcard_getMetadata(void)
 {
     return sdcardVTable->sdcard_getMetadata();
 }

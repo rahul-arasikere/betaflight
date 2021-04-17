@@ -91,7 +91,7 @@ static void srxlInitializeFrame(sbuf_t *dst)
 {
     if (srxl2) {
 #if defined(USE_SERIALRX_SRXL2)
-      srxl2InitializeFrame(dst);
+        srxl2InitializeFrame(dst);
 #endif
     } else {
         dst->ptr = srxlFrame;
@@ -107,10 +107,11 @@ static void srxlFinalize(sbuf_t *dst)
 {
     if (srxl2) {
 #if defined(USE_SERIALRX_SRXL2)
-      srxl2FinalizeFrame(dst);
+        srxl2FinalizeFrame(dst);
 #endif
     } else {
-        crc16_ccitt_sbuf_append(dst, &srxlFrame[3]); // start at byte 3, since CRC does not include device address and packet length
+        crc16_ccitt_sbuf_append(dst,
+                                &srxlFrame[3]); // start at byte 3, since CRC does not include device address and packet length
         sbufSwitchToReader(dst, srxlFrame);
         // write the telemetry frame to the receiver.
         srxlRxWriteTelemetryData(sbufPtr(dst), sbufBytesRemaining(dst));
@@ -501,10 +502,10 @@ static bool lineSent[SPEKTRUM_SRXL_DEVICE_TEXTGEN_ROWS];
 int spektrumTmTextGenPutChar(uint8_t col, uint8_t row, char c)
 {
     if (row < SPEKTRUM_SRXL_TEXTGEN_BUFFER_ROWS && col < SPEKTRUM_SRXL_TEXTGEN_BUFFER_COLS) {
-      // Only update and force a tm transmision if something has actually changed.
+        // Only update and force a tm transmision if something has actually changed.
         if (srxlTextBuff[row][col] != c) {
-          srxlTextBuff[row][col] = c;
-          lineSent[row] = false;
+            srxlTextBuff[row][col] = c;
+            lineSent[row] = false;
         }
     }
     return 0;
@@ -543,7 +544,7 @@ bool srxlFrameText(sbuf_t *dst, timeUs_t currentTimeUs)
 
 static uint8_t vtxDeviceType;
 
-static void collectVtxTmData(spektrumVtx_t * vtx)
+static void collectVtxTmData(spektrumVtx_t *vtx)
 {
     const vtxDevice_t *vtxDevice = vtxCommonDevice();
     vtxDeviceType = vtxCommonGetDeviceType(vtxDevice);
@@ -551,16 +552,15 @@ static void collectVtxTmData(spektrumVtx_t * vtx)
     // Collect all data from VTX, if VTX is ready
     unsigned vtxStatus;
     if (vtxDevice == NULL || !(vtxCommonGetBandAndChannel(vtxDevice, &vtx->band, &vtx->channel) &&
-           vtxCommonGetStatus(vtxDevice, &vtxStatus) &&
-           vtxCommonGetPowerIndex(vtxDevice, &vtx->power)) )
-        {
-            vtx->band    = 0;
-            vtx->channel = 0;
-            vtx->power   = 0;
-            vtx->pitMode = 0;
-        } else {
-            vtx->pitMode = (vtxStatus & VTX_STATUS_PIT_MODE) ? 1 : 0;
-        }
+                               vtxCommonGetStatus(vtxDevice, &vtxStatus) &&
+                               vtxCommonGetPowerIndex(vtxDevice, &vtx->power)) ) {
+        vtx->band    = 0;
+        vtx->channel = 0;
+        vtx->power   = 0;
+        vtx->pitMode = 0;
+    } else {
+        vtx->pitMode = (vtxStatus & VTX_STATUS_PIT_MODE) ? 1 : 0;
+    }
 
     vtx->powerValue = 0;
 #ifdef USE_SPEKTRUM_REGION_CODES
@@ -571,46 +571,46 @@ static void collectVtxTmData(spektrumVtx_t * vtx)
 }
 
 // Reverse lookup, device power index to Spektrum power range index.
-static void convertVtxPower(spektrumVtx_t * vtx)
-    {
-        uint8_t const * powerIndexTable = NULL;
+static void convertVtxPower(spektrumVtx_t *vtx)
+{
+    uint8_t const *powerIndexTable = NULL;
 
-        vtxCommonLookupPowerValue(vtxCommonDevice(), vtx->power, &vtx->powerValue);
-        switch (vtxDeviceType) {
+    vtxCommonLookupPowerValue(vtxCommonDevice(), vtx->power, &vtx->powerValue);
+    switch (vtxDeviceType) {
 
 #if defined(USE_VTX_TRAMP)
-        case VTXDEV_TRAMP:
-            powerIndexTable = vtxTrampPi;
-            break;
+    case VTXDEV_TRAMP:
+        powerIndexTable = vtxTrampPi;
+        break;
 #endif
 #if defined(USE_VTX_SMARTAUDIO)
-        case VTXDEV_SMARTAUDIO:
-            powerIndexTable = vtxSaPi;
-            break;
+    case VTXDEV_SMARTAUDIO:
+        powerIndexTable = vtxSaPi;
+        break;
 #endif
 #if defined(USE_VTX_RTC6705)
-        case VTXDEV_RTC6705:
-            powerIndexTable = vtxRTC6705Pi;
-            break;
+    case VTXDEV_RTC6705:
+        powerIndexTable = vtxRTC6705Pi;
+        break;
 #endif
 
-        case VTXDEV_UNKNOWN:
-        case VTXDEV_UNSUPPORTED:
-        default:
-          break;
+    case VTXDEV_UNKNOWN:
+    case VTXDEV_UNSUPPORTED:
+    default:
+        break;
 
-        }
-
-        if (powerIndexTable != NULL) {
-            for (int i = 0; i < SPEKTRUM_VTX_POWER_COUNT; i++)
-                if (powerIndexTable[i] >= vtx->power) {
-                    vtx->power = i;                                    // Translate device power index to Spektrum power index.
-                    break;
-                }
-        }
     }
 
-static void convertVtxTmData(spektrumVtx_t * vtx)
+    if (powerIndexTable != NULL) {
+        for (int i = 0; i < SPEKTRUM_VTX_POWER_COUNT; i++)
+            if (powerIndexTable[i] >= vtx->power) {
+                vtx->power = i;                                    // Translate device power index to Spektrum power index.
+                break;
+            }
+    }
+}
+
+static void convertVtxTmData(spektrumVtx_t *vtx)
 {
     // Convert from internal band indexes to Spektrum indexes
     for (int i = 0; i < SPEKTRUM_VTX_BAND_COUNT; i++) {
@@ -630,15 +630,15 @@ static void convertVtxTmData(spektrumVtx_t * vtx)
 /*
 typedef struct
 {
-    UINT8		identifier;
-    UINT8		sID;	  // Secondary ID
-    UINT8		band;	  // VTX Band (0 = Fatshark, 1 = Raceband, 2 = E, 3 = B, 4 = A, 5-7 = Reserved)
-    UINT8		channel;  // VTX Channel (0-7)
-    UINT8		pit;	  // Pit/Race mode (0 = Race, 1 = Pit). Race = (normal operating) mode. Pit = (reduced power) mode. When PIT is set, it overrides all other power settings
-    UINT8		power;	  // VTX Power (0 = Off, 1 = 1mw to 14mW, 2 = 15mW to 25mW, 3 = 26mW to 99mW, 4 = 100mW to 299mW, 5 = 300mW to 600mW, 6 = 601mW+, 7 = manual control)
-    UINT16		powerDec; // VTX Power as a decimal 1mw/unit
-    UINT8		region;	  // Region (0 = USA, 1 = EU, 0xFF = N/A)
-    UINT8		rfu[7];	  // reserved
+    UINT8       identifier;
+    UINT8       sID;      // Secondary ID
+    UINT8       band;     // VTX Band (0 = Fatshark, 1 = Raceband, 2 = E, 3 = B, 4 = A, 5-7 = Reserved)
+    UINT8       channel;  // VTX Channel (0-7)
+    UINT8       pit;      // Pit/Race mode (0 = Race, 1 = Pit). Race = (normal operating) mode. Pit = (reduced power) mode. When PIT is set, it overrides all other power settings
+    UINT8       power;    // VTX Power (0 = Off, 1 = 1mw to 14mW, 2 = 15mW to 25mW, 3 = 26mW to 99mW, 4 = 100mW to 299mW, 5 = 300mW to 600mW, 6 = 601mW+, 7 = manual control)
+    UINT16      powerDec; // VTX Power as a decimal 1mw/unit
+    UINT8       region;   // Region (0 = USA, 1 = EU, 0xFF = N/A)
+    UINT8       rfu[7];   // reserved
 } STRU_TELE_VTX;
 */
 
@@ -774,19 +774,19 @@ void initSrxlTelemetry(void)
 {
     // check if there is a serial port open for SRXL telemetry (ie opened by the SRXL RX)
     // and feature is enabled, if so, set SRXL telemetry enabled
-  if (srxlRxIsActive()) {
-    srxlTelemetryEnabled = true;
-    srxl2 = false;
+    if (srxlRxIsActive()) {
+        srxlTelemetryEnabled = true;
+        srxl2 = false;
 #if defined(USE_SERIALRX_SRXL2)
-  } else if (srxl2RxIsActive()) {
-    srxlTelemetryEnabled = true;
-    srxl2 = true;
+    } else if (srxl2RxIsActive()) {
+        srxlTelemetryEnabled = true;
+        srxl2 = true;
 #endif
-  } else {
-    srxlTelemetryEnabled = false;
-    srxl2 = false;
-  }
- }
+    } else {
+        srxlTelemetryEnabled = false;
+        srxl2 = false;
+    }
+}
 
 bool checkSrxlTelemetryState(void)
 {
@@ -798,16 +798,16 @@ bool checkSrxlTelemetryState(void)
  */
 void handleSrxlTelemetry(timeUs_t currentTimeUs)
 {
-  if (srxl2) {
+    if (srxl2) {
 #if defined(USE_SERIALRX_SRXL2)
-      if (srxl2TelemetryRequested()) {
-          processSrxl(currentTimeUs);
-      }
+        if (srxl2TelemetryRequested()) {
+            processSrxl(currentTimeUs);
+        }
 #endif
-  } else {
-      if (srxlTelemetryBufferEmpty()) {
-          processSrxl(currentTimeUs);
-      }
-  }
+    } else {
+        if (srxlTelemetryBufferEmpty()) {
+            processSrxl(currentTimeUs);
+        }
+    }
 }
 #endif

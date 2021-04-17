@@ -140,7 +140,7 @@ static void bbSaveDMARegs(dmaResource_t *dmaResource, dmaRegCache_t *dmaRegCache
 }
 #endif
 
-void bbSwitchToOutput(bbPort_t * bbPort)
+void bbSwitchToOutput(bbPort_t *bbPort)
 {
     dbgPinHi(1);
     // Output idle level before switching to output
@@ -214,7 +214,8 @@ void bbSwitchToInput(bbPort_t *bbPort)
 
 void bbDMAPreconfigure(bbPort_t *bbPort, uint8_t direction)
 {
-    DMA_InitTypeDef *dmainit = (direction == DSHOT_BITBANG_DIRECTION_OUTPUT) ?  &bbPort->outputDmaInit : &bbPort->inputDmaInit;
+    DMA_InitTypeDef *dmainit = (direction == DSHOT_BITBANG_DIRECTION_OUTPUT) ?  &bbPort->outputDmaInit :
+                               &bbPort->inputDmaInit;
 
     DMA_StructInit(dmainit);
 
@@ -270,7 +271,7 @@ void bbTIM_TimeBaseInit(bbPort_t *bbPort, uint16_t period)
     TIM_ARRPreloadConfig(bbPort->timhw->tim, ENABLE);
 }
 
-void bbTIM_DMACmd(TIM_TypeDef* TIMx, uint16_t TIM_DMASource, FunctionalState NewState)
+void bbTIM_DMACmd(TIM_TypeDef *TIMx, uint16_t TIM_DMASource, FunctionalState NewState)
 {
     TIM_DMACmd(TIMx, TIM_DMASource, NewState);
 }

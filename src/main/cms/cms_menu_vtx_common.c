@@ -66,8 +66,7 @@ static const void *setStatusMessage(displayPort_t *pDisp)
     return NULL;
 }
 
-static const OSD_Entry vtxErrorMenuEntries[] =
-{
+static const OSD_Entry vtxErrorMenuEntries[] = {
     { "",     OME_Label, NULL, statusLine1,  DYNAMIC },
     { "",     OME_Label, NULL, statusLine2,  DYNAMIC },
     { "",     OME_Label, NULL, NULL, 0 },

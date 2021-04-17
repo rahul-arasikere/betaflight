@@ -60,14 +60,14 @@
 
 #include "flight/pid.h"
 
-static const char * const cmsx_BlackboxDeviceNames[] = {
+static const char *const cmsx_BlackboxDeviceNames[] = {
     "NONE",
     "FLASH",
     "SDCARD",
     "SERIAL"
 };
 
-static const char * const cmsx_BlackboxRateNames[] = {
+static const char *const cmsx_BlackboxRateNames[] = {
     "1/1",
     "1/2",
     "1/4",
@@ -89,15 +89,14 @@ static char cmsx_pidFreq[CMS_BLACKBOX_STRING_LENGTH];
 
 static void cmsx_Blackbox_GetDeviceStatus(void)
 {
-    char * unit = "B";
+    char *unit = "B";
 #if defined(USE_SDCARD) || defined(USE_FLASHFS)
     bool storageDeviceIsWorking = false;
 #endif
     uint32_t storageUsed = 0;
     uint32_t storageFree = 0;
 
-    switch (blackboxConfig()->device)
-    {
+    switch (blackboxConfig()->device) {
 #ifdef USE_SDCARD
     case BLACKBOX_DEVICE_SDCARD:
         unit = "MB";
@@ -198,7 +197,7 @@ static const void *cmsx_Blackbox_onEnter(displayPort_t *pDisp)
     cmsx_BlackboxDevice = blackboxConfig()->device;
     cmsx_BlackboxRate = blackboxConfig()->sample_rate;
     systemConfig_debug_mode = systemConfig()->debug_mode;
-    
+
     const uint16_t pidFreq = (uint16_t)pidGetPidFrequency();
     if (pidFreq > 1000) {
         tfp_sprintf(cmsx_pidFreq, "%1d.%02dKHZ", (pidFreq / 10) / 100, (pidFreq / 10) % 100);
@@ -245,8 +244,7 @@ static CMS_Menu cmsx_menuEraseFlashCheck = {
 };
 #endif
 
-static const OSD_Entry cmsx_menuBlackboxEntries[] =
-{
+static const OSD_Entry cmsx_menuBlackboxEntries[] = {
     { "-- BLACKBOX --", OME_Label, NULL, NULL, 0},
     { "(PID FREQ)",  OME_String,  NULL,            &cmsx_pidFreq,                                             0 },
     { "SAMPLERATE",  OME_TAB,     NULL,            &cmsx_BlackboxRateTable,                                   REBOOT_REQUIRED },

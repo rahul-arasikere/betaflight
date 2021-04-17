@@ -80,7 +80,8 @@ void flashfsEraseCompletely(void)
 {
     if (flashGeometry->sectors > 0 && flashPartitionCount() > 0) {
         // if there's a single FLASHFS partition and it uses the entire flash then do a full erase
-        const bool doFullErase = (flashPartitionCount() == 1) && (FLASH_PARTITION_SECTOR_COUNT(flashPartition) == flashGeometry->sectors);
+        const bool doFullErase = (flashPartitionCount() == 1)
+                                 && (FLASH_PARTITION_SECTOR_COUNT(flashPartition) == flashGeometry->sectors);
         if (doFullErase) {
             flashEraseCompletely();
         } else {
@@ -302,7 +303,7 @@ static void flashfsGetDirtyDataBuffers(uint8_t const *buffers[], uint32_t buffer
  */
 uint32_t flashfsGetOffset(void)
 {
-    uint8_t const * buffers[2];
+    uint8_t const *buffers[2];
     uint32_t bufferSizes[2];
 
     // Dirty data in the buffers contributes to the offset
@@ -341,7 +342,7 @@ bool flashfsFlushAsync(void)
         return true; // Nothing to flush
     }
 
-    uint8_t const * buffers[2];
+    uint8_t const *buffers[2];
     uint32_t bufferSizes[2];
     uint32_t bytesWritten;
 
@@ -364,7 +365,7 @@ void flashfsFlushSync(void)
         return; // Nothing to flush
     }
 
-    uint8_t const * buffers[2];
+    uint8_t const *buffers[2];
     uint32_t bufferSizes[2];
 
     flashfsGetDirtyDataBuffers(buffers, bufferSizes);
@@ -412,7 +413,7 @@ void flashfsWriteByte(uint8_t byte)
  */
 void flashfsWrite(const uint8_t *data, unsigned int len, bool sync)
 {
-    uint8_t const * buffers[3];
+    uint8_t const *buffers[3];
     uint32_t bufferSizes[3];
 
     // There could be two dirty buffers to write out already:
@@ -592,7 +593,7 @@ bool flashfsIsEOF(void)
 
 void flashfsClose(void)
 {
-    switch(flashGeometry->flashType) {
+    switch (flashGeometry->flashType) {
     case FLASH_TYPE_NOR:
         break;
 
@@ -643,7 +644,7 @@ bool flashfsVerifyEntireFlash(void)
 
     for (address = 0; address < testLimit; address += bufferSize) {
         tfp_sprintf(buffer, "%08x >> **0123456789ABCDEF**", address);
-        flashfsWrite((uint8_t*)buffer, strlen(buffer), true);
+        flashfsWrite((uint8_t *)buffer, strlen(buffer), true);
     }
     flashfsFlushSync();
     flashfsClose();

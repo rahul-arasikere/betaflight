@@ -69,8 +69,10 @@ STATIC_UNIT_TESTED volatile bool ghstFrameAvailable = false;
 STATIC_UNIT_TESTED volatile bool ghstValidatedFrameAvailable = false;
 STATIC_UNIT_TESTED volatile bool ghstTransmittingTelemetry = false;
 
-STATIC_UNIT_TESTED ghstFrame_t ghstIncomingFrame;   // incoming frame, raw, not CRC checked, destination address not checked
-STATIC_UNIT_TESTED ghstFrame_t ghstValidatedFrame;  // validated frame, CRC is ok, destination address is ok, ready for decode
+STATIC_UNIT_TESTED ghstFrame_t
+ghstIncomingFrame;   // incoming frame, raw, not CRC checked, destination address not checked
+STATIC_UNIT_TESTED ghstFrame_t
+ghstValidatedFrame;  // validated frame, CRC is ok, destination address is ok, ready for decode
 
 STATIC_UNIT_TESTED uint32_t ghstChannelData[GHST_MAX_NUM_CHANNELS];
 
@@ -159,7 +161,8 @@ STATIC_UNIT_TESTED void ghstDataReceive(uint16_t c, void *data)
 
     // assume frame is 5 bytes long until we have received the frame length
     // full frame length includes the length of the address and framelength fields
-    const int fullFrameLength = ghstFrameIdx < 3 ? 5 : ghstIncomingFrame.frame.len + GHST_FRAME_LENGTH_ADDRESS + GHST_FRAME_LENGTH_FRAMELENGTH;
+    const int fullFrameLength = ghstFrameIdx < 3 ? 5 : ghstIncomingFrame.frame.len + GHST_FRAME_LENGTH_ADDRESS +
+                                GHST_FRAME_LENGTH_FRAMELENGTH;
 
     if (ghstFrameIdx < fullFrameLength) {
         ghstIncomingFrame.bytes[ghstFrameIdx++] = (uint8_t)c;
@@ -181,7 +184,8 @@ static bool shouldSendTelemetryFrame(void)
 {
     const timeUs_t now = micros();
     const timeUs_t timeSinceRxFrameEndUs = cmpTimeUs(now, ghstRxFrameEndAtUs);
-    return telemetryBufLen > 0 && timeSinceRxFrameEndUs > GHST_RX_TO_TELEMETRY_MIN_US && timeSinceRxFrameEndUs < GHST_RX_TO_TELEMETRY_MAX_US;
+    return telemetryBufLen > 0 && timeSinceRxFrameEndUs > GHST_RX_TO_TELEMETRY_MIN_US
+           && timeSinceRxFrameEndUs < GHST_RX_TO_TELEMETRY_MAX_US;
 }
 
 STATIC_UNIT_TESTED uint8_t ghstFrameStatus(rxRuntimeState_t *rxRuntimeState)
@@ -196,7 +200,8 @@ STATIC_UNIT_TESTED uint8_t ghstFrameStatus(rxRuntimeState_t *rxRuntimeState)
         const int fullFrameLength = ghstValidatedFrame.frame.len + GHST_FRAME_LENGTH_ADDRESS + GHST_FRAME_LENGTH_FRAMELENGTH;
         if (crc == ghstValidatedFrame.bytes[fullFrameLength - 1] && ghstValidatedFrame.frame.addr == GHST_ADDR_FC) {
             ghstValidatedFrameAvailable = true;
-            return RX_FRAME_COMPLETE | RX_FRAME_PROCESSING_REQUIRED;            // request callback through ghstProcessFrame to do the decoding  work
+            return RX_FRAME_COMPLETE |
+                   RX_FRAME_PROCESSING_REQUIRED;            // request callback through ghstProcessFrame to do the decoding  work
         }
 
         if (crc != ghstValidatedFrame.bytes[fullFrameLength - 1]) {
@@ -233,7 +238,7 @@ static bool ghstProcessFrame(const rxRuntimeState_t *rxRuntimeState)
 
         if (ghstValidatedFrame.frame.type >= GHST_UL_RC_CHANS_HS4_FIRST &&
             ghstValidatedFrame.frame.type <= GHST_UL_RC_CHANS_HS4_LAST) {
-            const ghstPayloadPulses_t* const rcChannels = (ghstPayloadPulses_t*)&ghstValidatedFrame.frame.payload;
+            const ghstPayloadPulses_t *const rcChannels = (ghstPayloadPulses_t *)&ghstValidatedFrame.frame.payload;
 
             // all uplink frames contain CH1..4 data (12 bit)
             ghstChannelData[0] = rcChannels->ch1to4.ch1 >> 1;
@@ -241,41 +246,47 @@ static bool ghstProcessFrame(const rxRuntimeState_t *rxRuntimeState)
             ghstChannelData[2] = rcChannels->ch1to4.ch3 >> 1;
             ghstChannelData[3] = rcChannels->ch1to4.ch4 >> 1;
 
-            switch(ghstValidatedFrame.frame.type) {
-                case GHST_UL_RC_CHANS_HS4_RSSI: {
-                    const ghstPayloadPulsesRssi_t* const rssiFrame = (ghstPayloadPulsesRssi_t*)&ghstValidatedFrame.frame.payload;
+            switch (ghstValidatedFrame.frame.type) {
+            case GHST_UL_RC_CHANS_HS4_RSSI: {
+                const ghstPayloadPulsesRssi_t *const rssiFrame = (ghstPayloadPulsesRssi_t *)&ghstValidatedFrame.frame.payload;
 
-                    DEBUG_SET(DEBUG_GHST, DEBUG_GHST_RX_RSSI, -rssiFrame->rssi);
-                    DEBUG_SET(DEBUG_GHST, DEBUG_GHST_RX_LQ, rssiFrame->lq);
+                DEBUG_SET(DEBUG_GHST, DEBUG_GHST_RX_RSSI, -rssiFrame->rssi);
+                DEBUG_SET(DEBUG_GHST, DEBUG_GHST_RX_LQ, rssiFrame->lq);
 
-                    if (rssiSource == RSSI_SOURCE_RX_PROTOCOL) {
-                        // rssi sent sign-inverted
-                        const uint16_t rssiPercentScaled = scaleRange(-rssiFrame->rssi, GHST_RSSI_DBM_MIN, 0, GHST_RSSI_DBM_MAX, RSSI_MAX_VALUE);
-                        setRssi(rssiPercentScaled, RSSI_SOURCE_RX_PROTOCOL);
-                    }
+                if (rssiSource == RSSI_SOURCE_RX_PROTOCOL) {
+                    // rssi sent sign-inverted
+                    const uint16_t rssiPercentScaled = scaleRange(-rssiFrame->rssi, GHST_RSSI_DBM_MIN, 0, GHST_RSSI_DBM_MAX,
+                                                                  RSSI_MAX_VALUE);
+                    setRssi(rssiPercentScaled, RSSI_SOURCE_RX_PROTOCOL);
+                }
 
 #ifdef USE_RX_RSSI_DBM
-                    setRssiDbm(-rssiFrame->rssi, RSSI_SOURCE_RX_PROTOCOL);
+                setRssiDbm(-rssiFrame->rssi, RSSI_SOURCE_RX_PROTOCOL);
 #endif
 
 #ifdef USE_RX_LINK_QUALITY_INFO
-                    if (linkQualitySource == LQ_SOURCE_RX_PROTOCOL_GHST) {
-                        setLinkQualityDirect(rssiFrame->lq);
-                    }
-#endif
-                    break;
+                if (linkQualitySource == LQ_SOURCE_RX_PROTOCOL_GHST) {
+                    setLinkQualityDirect(rssiFrame->lq);
                 }
-
-                case GHST_UL_RC_CHANS_HS4_5TO8:     startIdx = 4;  break;
-                case GHST_UL_RC_CHANS_HS4_9TO12:    startIdx = 8;  break;
-                case GHST_UL_RC_CHANS_HS4_13TO16:   startIdx = 12; break;
-                default:
-                    DEBUG_SET(DEBUG_GHST, DEBUG_GHST_UNKNOWN_FRAMES, ++unknownFrameCount);
-                    break;
+#endif
+                break;
             }
 
-            if (startIdx > 0)
-            {
+            case GHST_UL_RC_CHANS_HS4_5TO8:
+                startIdx = 4;
+                break;
+            case GHST_UL_RC_CHANS_HS4_9TO12:
+                startIdx = 8;
+                break;
+            case GHST_UL_RC_CHANS_HS4_13TO16:
+                startIdx = 12;
+                break;
+            default:
+                DEBUG_SET(DEBUG_GHST, DEBUG_GHST_UNKNOWN_FRAMES, ++unknownFrameCount);
+                break;
+            }
+
+            if (startIdx > 0) {
                 // remainder of uplink frame contains 4 more channels (8 bit), sent in a round-robin fashion
 
                 ghstChannelData[startIdx++] = rcChannels->cha << 3;
@@ -302,7 +313,7 @@ STATIC_UNIT_TESTED uint16_t ghstReadRawRC(const rxRuntimeState_t *rxRuntimeState
     // max  1024     1811   2012us
     //
 
-    return (5 * (ghstChannelData[chan]+1) / 8) + 880;
+    return (5 * (ghstChannelData[chan] + 1) / 8) + 880;
 }
 
 static timeUs_t ghstFrameTimeUs(void)
@@ -338,13 +349,13 @@ bool ghstRxInit(const rxConfig_t *rxConfig, rxRuntimeState_t *rxRuntimeState)
     }
 
     serialPort = openSerialPort(portConfig->identifier,
-        FUNCTION_RX_SERIAL,
-        ghstDataReceive,
-        NULL,
-        GHST_RX_BAUDRATE,
-        GHST_PORT_MODE,
-        GHST_PORT_OPTIONS | (rxConfig->serialrx_inverted ? SERIAL_INVERTED : 0)
-        );
+                                FUNCTION_RX_SERIAL,
+                                ghstDataReceive,
+                                NULL,
+                                GHST_RX_BAUDRATE,
+                                GHST_PORT_MODE,
+                                GHST_PORT_OPTIONS | (rxConfig->serialrx_inverted ? SERIAL_INVERTED : 0)
+                               );
     serialPort->idleCallback = ghstIdle;
 
     if (rssiSource == RSSI_SOURCE_NONE) {

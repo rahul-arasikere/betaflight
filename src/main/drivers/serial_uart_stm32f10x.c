@@ -120,9 +120,9 @@ const uartHardware_t uartHardware[UARTDEV_COUNT] = {
 #endif
 };
 
-void uartDmaIrqHandler(dmaChannelDescriptor_t* descriptor)
+void uartDmaIrqHandler(dmaChannelDescriptor_t *descriptor)
 {
-    uartPort_t *s = (uartPort_t*)(descriptor->userParam);
+    uartPort_t *s = (uartPort_t *)(descriptor->userParam);
     DMA_CLEAR_FLAG(descriptor, DMA_IT_TCIF);
     xDMA_Cmd(descriptor->ref, DISABLE); // XXX F1 needs this!!!
 

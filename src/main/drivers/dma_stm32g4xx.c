@@ -90,7 +90,8 @@ void dmaInit(dmaIdentifier_e identifier, resourceOwner_e owner, uint8_t resource
     dmaDescriptors[index].owner.resourceIndex = resourceIndex;
 }
 
-void dmaSetHandler(dmaIdentifier_e identifier, dmaCallbackHandlerFuncPtr callback, uint32_t priority, uint32_t userParam)
+void dmaSetHandler(dmaIdentifier_e identifier, dmaCallbackHandlerFuncPtr callback, uint32_t priority,
+                   uint32_t userParam)
 {
     const int index = DMA_IDENTIFIER_TO_INDEX(identifier);
 
@@ -107,7 +108,7 @@ const resourceOwner_t *dmaGetOwner(dmaIdentifier_e identifier)
     return &dmaDescriptors[DMA_IDENTIFIER_TO_INDEX(identifier)].owner;
 }
 
-dmaIdentifier_e dmaGetIdentifier(const dmaResource_t* stream)
+dmaIdentifier_e dmaGetIdentifier(const dmaResource_t *stream)
 {
     for (int i = 0; i < DMA_LAST_HANDLER; i++) {
         if (dmaDescriptors[i].ref == stream) {
@@ -117,18 +118,18 @@ dmaIdentifier_e dmaGetIdentifier(const dmaResource_t* stream)
     return 0;
 }
 
-dmaResource_t* dmaGetRefByIdentifier(const dmaIdentifier_e identifier)
+dmaResource_t *dmaGetRefByIdentifier(const dmaIdentifier_e identifier)
 {
     return dmaDescriptors[DMA_IDENTIFIER_TO_INDEX(identifier)].ref;
 }
 
-dmaChannelDescriptor_t* dmaGetDescriptorByIdentifier(const dmaIdentifier_e identifier)
+dmaChannelDescriptor_t *dmaGetDescriptorByIdentifier(const dmaIdentifier_e identifier)
 {
     return &dmaDescriptors[DMA_IDENTIFIER_TO_INDEX(identifier)];
 }
 
 uint32_t dmaGetChannel(const uint8_t channel)
 {
-    return ((uint32_t)channel*2)<<24;
+    return ((uint32_t)channel * 2) << 24;
 }
 #endif

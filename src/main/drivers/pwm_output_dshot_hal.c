@@ -61,18 +61,18 @@ void dshotEnableChannels(uint8_t motorCount)
 #endif
 
 void pwmDshotSetDirectionOutput(
-    motorDmaOutput_t * const motor
+    motorDmaOutput_t *const motor
 #ifndef USE_DSHOT_TELEMETRY
-    , LL_TIM_OC_InitTypeDef* pOcInit, LL_DMA_InitTypeDef* pDmaInit
+    , LL_TIM_OC_InitTypeDef *pOcInit, LL_DMA_InitTypeDef *pDmaInit
 #endif
 )
 {
 #ifdef USE_DSHOT_TELEMETRY
-    LL_TIM_OC_InitTypeDef* pOcInit = &motor->ocInitStruct;
-    LL_DMA_InitTypeDef* pDmaInit = &motor->dmaInitStruct;
+    LL_TIM_OC_InitTypeDef *pOcInit = &motor->ocInitStruct;
+    LL_DMA_InitTypeDef *pDmaInit = &motor->dmaInitStruct;
 #endif
 
-    const timerHardware_t * const timerHardware = motor->timerHardware;
+    const timerHardware_t *const timerHardware = motor->timerHardware;
     TIM_TypeDef *timer = timerHardware->tim;
 
     xLL_EX_DMA_DeInit(motor->dmaRef);
@@ -92,12 +92,12 @@ void pwmDshotSetDirectionOutput(
 
 #ifdef USE_DSHOT_TELEMETRY
 FAST_CODE static void pwmDshotSetDirectionInput(
-    motorDmaOutput_t * const motor
+    motorDmaOutput_t *const motor
 )
 {
-    LL_DMA_InitTypeDef* pDmaInit = &motor->dmaInitStruct;
+    LL_DMA_InitTypeDef *pDmaInit = &motor->dmaInitStruct;
 
-    const timerHardware_t * const timerHardware = motor->timerHardware;
+    const timerHardware_t *const timerHardware = motor->timerHardware;
     TIM_TypeDef *timer = timerHardware->tim;
 
     xLL_EX_DMA_DeInit(motor->dmaRef);
@@ -168,10 +168,10 @@ FAST_CODE void pwmCompleteDshotMotorUpdate(void)
     }
 }
 
-FAST_CODE static void motor_DMA_IRQHandler(dmaChannelDescriptor_t* descriptor)
+FAST_CODE static void motor_DMA_IRQHandler(dmaChannelDescriptor_t *descriptor)
 {
     if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_TCIF)) {
-        motorDmaOutput_t * const motor = &dmaMotors[descriptor->userParam];
+        motorDmaOutput_t *const motor = &dmaMotors[descriptor->userParam];
         if (!motor->isInput) {
 #ifdef USE_DSHOT_TELEMETRY
             dshotDMAHandlerCycleCounters.irqAt = getCycleCounter();
@@ -201,7 +201,8 @@ FAST_CODE static void motor_DMA_IRQHandler(dmaChannelDescriptor_t* descriptor)
     }
 }
 
-bool pwmDshotMotorHardwareConfig(const timerHardware_t *timerHardware, uint8_t motorIndex, uint8_t reorderedMotorIndex, motorPwmProtocolTypes_e pwmProtocolType, uint8_t output)
+bool pwmDshotMotorHardwareConfig(const timerHardware_t *timerHardware, uint8_t motorIndex, uint8_t reorderedMotorIndex,
+                                 motorPwmProtocolTypes_e pwmProtocolType, uint8_t output)
 {
 #ifdef USE_DSHOT_TELEMETRY
 #define OCINIT motor->ocInitStruct
@@ -238,7 +239,7 @@ bool pwmDshotMotorHardwareConfig(const timerHardware_t *timerHardware, uint8_t m
         return false;
     }
 
-    motorDmaOutput_t * const motor = &dmaMotors[motorIndex];
+    motorDmaOutput_t *const motor = &dmaMotors[motorIndex];
     motor->dmaRef = dmaRef;
 
     TIM_TypeDef *timer = timerHardware->tim;
@@ -308,10 +309,18 @@ bool pwmDshotMotorHardwareConfig(const timerHardware_t *timerHardware, uint8_t m
 
     uint32_t channel = 0;
     switch (timerHardware->channel) {
-    case TIM_CHANNEL_1: channel = LL_TIM_CHANNEL_CH1; break;
-    case TIM_CHANNEL_2: channel = LL_TIM_CHANNEL_CH2; break;
-    case TIM_CHANNEL_3: channel = LL_TIM_CHANNEL_CH3; break;
-    case TIM_CHANNEL_4: channel = LL_TIM_CHANNEL_CH4; break;
+    case TIM_CHANNEL_1:
+        channel = LL_TIM_CHANNEL_CH1;
+        break;
+    case TIM_CHANNEL_2:
+        channel = LL_TIM_CHANNEL_CH2;
+        break;
+    case TIM_CHANNEL_3:
+        channel = LL_TIM_CHANNEL_CH3;
+        break;
+    case TIM_CHANNEL_4:
+        channel = LL_TIM_CHANNEL_CH4;
+        break;
     }
     motor->llChannel = channel;
 
@@ -387,8 +396,9 @@ bool pwmDshotMotorHardwareConfig(const timerHardware_t *timerHardware, uint8_t m
 
 #ifdef USE_DSHOT_TELEMETRY
     motor->dshotTelemetryDeadtimeUs = DSHOT_TELEMETRY_DEADTIME_US + 1000000 *
-        ( 16 * MOTOR_BITLENGTH) / getDshotHz(pwmProtocolType);
-    motor->timer->outputPeriod = (pwmProtocolType == PWM_TYPE_PROSHOT1000 ? (MOTOR_NIBBLE_LENGTH_PROSHOT) : MOTOR_BITLENGTH) - 1;
+                                      ( 16 * MOTOR_BITLENGTH) / getDshotHz(pwmProtocolType);
+    motor->timer->outputPeriod = (pwmProtocolType == PWM_TYPE_PROSHOT1000 ? (MOTOR_NIBBLE_LENGTH_PROSHOT) : MOTOR_BITLENGTH)
+                                 - 1;
     pwmDshotSetDirectionOutput(motor);
 #else
     pwmDshotSetDirectionOutput(motor, &OCINIT, &DMAINIT);

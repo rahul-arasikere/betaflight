@@ -43,9 +43,9 @@ static uint32_t arm_distance_cm;
 static bool saveRequired = false;
 
 #ifdef USE_GPS
-    #define DISTANCE_FLOWN_CM (GPS_distanceFlownInCm)
+#define DISTANCE_FLOWN_CM (GPS_distanceFlownInCm)
 #else
-    #define DISTANCE_FLOWN_CM (0)
+#define DISTANCE_FLOWN_CM (0)
 #endif
 
 void statsInit(void)
@@ -53,7 +53,7 @@ void statsInit(void)
     dispatchEnable();
 }
 
-void writeStats(struct dispatchEntry_s* self)
+void writeStats(struct dispatchEntry_s *self)
 {
     UNUSED(self);
 
@@ -70,8 +70,7 @@ void writeStats(struct dispatchEntry_s* self)
     }
 }
 
-dispatchEntry_t writeStatsEntry =
-{
+dispatchEntry_t writeStatsEntry = {
     writeStats, 0, NULL, false
 };
 

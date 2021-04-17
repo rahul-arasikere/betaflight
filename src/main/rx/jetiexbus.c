@@ -97,7 +97,7 @@ static timeUs_t lastRcFrameTimeUs = 0;
 uint16_t jetiExBusCalcCRC16(uint8_t *pt, uint8_t msgLen)
 {
     uint16_t crc16_data = 0;
-    uint8_t data=0;
+    uint8_t data = 0;
 
     for (uint8_t mlen = 0; mlen < msgLen; mlen++) {
         data = pt[mlen] ^ ((uint8_t)(crc16_data) & (uint8_t)(0xFF));
@@ -106,7 +106,7 @@ uint16_t jetiExBusCalcCRC16(uint8_t *pt, uint8_t msgLen)
                       ^ (uint8_t)(data >> 4)
                       ^ ((uint16_t)data << 3));
     }
-    return(crc16_data);
+    return (crc16_data);
 }
 
 void jetiExBusDecodeChannelFrame(uint8_t *exBusFrame)
@@ -189,12 +189,14 @@ static void jetiExBusDataReceive(uint16_t c, void *data)
     // Check the header for the message length
     if (jetiExBusFramePosition == EXBUS_HEADER_LEN) {
 
-        if ((jetiExBusFrameState == EXBUS_STATE_IN_PROGRESS) && (jetiExBusFrame[EXBUS_HEADER_MSG_LEN] <= EXBUS_MAX_CHANNEL_FRAME_SIZE)) {
+        if ((jetiExBusFrameState == EXBUS_STATE_IN_PROGRESS)
+            && (jetiExBusFrame[EXBUS_HEADER_MSG_LEN] <= EXBUS_MAX_CHANNEL_FRAME_SIZE)) {
             jetiExBusFrameLength = jetiExBusFrame[EXBUS_HEADER_MSG_LEN];
             return;
         }
 
-        if ((jetiExBusRequestState == EXBUS_STATE_IN_PROGRESS) && (jetiExBusFrame[EXBUS_HEADER_MSG_LEN] <= EXBUS_MAX_REQUEST_FRAME_SIZE)) {
+        if ((jetiExBusRequestState == EXBUS_STATE_IN_PROGRESS)
+            && (jetiExBusFrame[EXBUS_HEADER_MSG_LEN] <= EXBUS_MAX_REQUEST_FRAME_SIZE)) {
             jetiExBusFrameLength = jetiExBusFrame[EXBUS_HEADER_MSG_LEN];
             return;
         }
@@ -270,13 +272,13 @@ bool jetiExBusInit(const rxConfig_t *rxConfig, rxRuntimeState_t *rxRuntimeState)
     }
 
     jetiExBusPort = openSerialPort(portConfig->identifier,
-        FUNCTION_RX_SERIAL,
-        jetiExBusDataReceive,
-        NULL,
-        JETIEXBUS_BAUDRATE,
-        MODE_RXTX,
-        JETIEXBUS_OPTIONS | (rxConfig->serialrx_inverted ? SERIAL_INVERTED : 0) | SERIAL_BIDIR
-        );
+                                   FUNCTION_RX_SERIAL,
+                                   jetiExBusDataReceive,
+                                   NULL,
+                                   JETIEXBUS_BAUDRATE,
+                                   MODE_RXTX,
+                                   JETIEXBUS_OPTIONS | (rxConfig->serialrx_inverted ? SERIAL_INVERTED : 0) | SERIAL_BIDIR
+                                  );
     return jetiExBusPort != NULL;
 }
 #endif // SERIAL_RX

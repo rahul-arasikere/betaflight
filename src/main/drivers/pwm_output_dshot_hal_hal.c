@@ -81,7 +81,7 @@ void pwmChannelDMAStart(TIM_HandleTypeDef *htim, uint32_t Channel, uint32_t *pDa
     case TIM_CHANNEL_1:
         HAL_DMA_Start_IT(htim->hdma[TIM_DMA_ID_CC1], (uint32_t)pData, (uint32_t)&htim->Instance->CCR1, Length);
         __HAL_TIM_ENABLE_DMA(htim, TIM_DMA_CC1);
-    break;
+        break;
 
     case TIM_CHANNEL_2:
         HAL_DMA_Start_IT(htim->hdma[TIM_DMA_ID_CC2], (uint32_t)pData, (uint32_t)&htim->Instance->CCR2, Length);
@@ -89,7 +89,7 @@ void pwmChannelDMAStart(TIM_HandleTypeDef *htim, uint32_t Channel, uint32_t *pDa
         break;
 
     case TIM_CHANNEL_3:
-        HAL_DMA_Start_IT(htim->hdma[TIM_DMA_ID_CC3], (uint32_t)pData, (uint32_t)&htim->Instance->CCR3,Length);
+        HAL_DMA_Start_IT(htim->hdma[TIM_DMA_ID_CC3], (uint32_t)pData, (uint32_t)&htim->Instance->CCR3, Length);
         __HAL_TIM_ENABLE_DMA(htim, TIM_DMA_CC3);
         break;
 
@@ -129,13 +129,14 @@ void pwmChannelDMAStop(TIM_HandleTypeDef *htim, uint32_t Channel)
 // A variant of HAL_TIM_DMABurst_WriteStart that can handle multiple bursts.
 // (HAL_TIM_DMABurst_WriteStart can only handle single burst)
 
-void pwmBurstDMAStart(TIM_HandleTypeDef *htim, uint32_t BurstBaseAddress, uint32_t BurstRequestSrc, uint32_t BurstUnit, uint32_t* BurstBuffer, uint32_t BurstLength)
+void pwmBurstDMAStart(TIM_HandleTypeDef *htim, uint32_t BurstBaseAddress, uint32_t BurstRequestSrc, uint32_t BurstUnit,
+                      uint32_t *BurstBuffer, uint32_t BurstLength)
 {
     // Setup DMA stream
     HAL_DMA_Start_IT(htim->hdma[TIM_DMA_ID_UPDATE], (uint32_t)BurstBuffer, (uint32_t)&htim->Instance->DMAR, BurstLength);
 
     // Configure burst mode DMA */
-   htim->Instance->DCR = BurstBaseAddress | BurstUnit;
+    htim->Instance->DCR = BurstBaseAddress | BurstUnit;
 
     // Enable burst mode DMA
     __HAL_TIM_ENABLE_DMA(htim, BurstRequestSrc);
@@ -162,8 +163,7 @@ FAST_CODE void pwmWriteDshotInt(uint8_t index, uint16_t value)
         // When USE_DMA_SPEC is in effect, motor->timerHardware remains NULL if valid DMA is not assigned.
         || !motor->timerHardware->dmaRef
 #endif
-    )
-    {
+       ) {
         return;
     }
 
@@ -174,7 +174,8 @@ FAST_CODE void pwmWriteDshotInt(uint8_t index, uint16_t value)
 
 #ifdef USE_DSHOT_DMAR
     if (useBurstDshot) {
-        bufferSize = loadDmaBuffer(&motor->timer->dmaBurstBuffer[timerLookupChannelIndex(motor->timerHardware->channel)], 4, packet);
+        bufferSize = loadDmaBuffer(&motor->timer->dmaBurstBuffer[timerLookupChannelIndex(motor->timerHardware->channel)], 4,
+                                   packet);
         motor->timer->dmaBurstLength = bufferSize * 4;
     } else
 #endif
@@ -200,8 +201,8 @@ void pwmCompleteDshotMotorUpdate(void)
 
             // Transfer CCR1 through CCR4 for each burst
             pwmBurstDMAStart(&burstDmaTimer->timHandle,
-                    TIM_DMABASE_CCR1, TIM_DMA_UPDATE, TIM_DMABURSTLENGTH_4TRANSFERS,
-                    (uint32_t*)burstDmaTimer->dmaBurstBuffer, burstDmaTimer->dmaBurstLength);
+                             TIM_DMABASE_CCR1, TIM_DMA_UPDATE, TIM_DMABURSTLENGTH_4TRANSFERS,
+                             (uint32_t *)burstDmaTimer->dmaBurstBuffer, burstDmaTimer->dmaBurstLength);
         }
     } else
 #endif
@@ -210,7 +211,7 @@ void pwmCompleteDshotMotorUpdate(void)
     }
 }
 
-static void motor_DMA_IRQHandler(dmaChannelDescriptor_t* descriptor)
+static void motor_DMA_IRQHandler(dmaChannelDescriptor_t *descriptor)
 {
     if (DMA_GET_FLAG_STATUS(descriptor, DMA_IT_TCIF)) {
 
@@ -223,9 +224,9 @@ static void motor_DMA_IRQHandler(dmaChannelDescriptor_t* descriptor)
         } else
 #endif
         {
-            motorDmaOutput_t * const motor = &dmaMotors[descriptor->userParam];
+            motorDmaOutput_t *const motor = &dmaMotors[descriptor->userParam];
 
-            pwmChannelDMAStop(&motor->TimHandle,motor->timerHardware->channel);
+            pwmChannelDMAStop(&motor->TimHandle, motor->timerHardware->channel);
             HAL_DMA_IRQHandler(motor->TimHandle.hdma[motor->timerDmaIndex]);
         }
 
@@ -233,7 +234,8 @@ static void motor_DMA_IRQHandler(dmaChannelDescriptor_t* descriptor)
     }
 }
 
-bool pwmDshotMotorHardwareConfig(const timerHardware_t *timerHardware, uint8_t motorIndex, uint8_t reorderedMotorIndex, motorPwmProtocolTypes_e pwmProtocolType, uint8_t output)
+bool pwmDshotMotorHardwareConfig(const timerHardware_t *timerHardware, uint8_t motorIndex, uint8_t reorderedMotorIndex,
+                                 motorPwmProtocolTypes_e pwmProtocolType, uint8_t output)
 {
     dmaResource_t *dmaRef = NULL;
     uint32_t dmaChannel;
@@ -269,7 +271,7 @@ bool pwmDshotMotorHardwareConfig(const timerHardware_t *timerHardware, uint8_t m
         return false;
     }
 
-    motorDmaOutput_t * const motor = &dmaMotors[motorIndex];
+    motorDmaOutput_t *const motor = &dmaMotors[motorIndex];
     motor->timerHardware = timerHardware;
 
     TIM_TypeDef *timer = timerHardware->tim; // "timer" is confusing; "tim"?
@@ -294,7 +296,8 @@ bool pwmDshotMotorHardwareConfig(const timerHardware_t *timerHardware, uint8_t m
         RCC_ClockCmd(timerRCC(timer), ENABLE);
 
         motor->TimHandle.Instance = timerHardware->tim; // timer
-        motor->TimHandle.Init.Prescaler = (uint16_t)(lrintf((float) timerClock(timer) / getDshotHz(pwmProtocolType) + 0.01f) - 1);
+        motor->TimHandle.Init.Prescaler = (uint16_t)(lrintf((float) timerClock(timer) / getDshotHz(
+                                                                pwmProtocolType) + 0.01f) - 1);
         motor->TimHandle.Init.Period = pwmProtocolType == PWM_TYPE_PROSHOT1000 ? MOTOR_NIBBLE_LENGTH_PROSHOT : MOTOR_BITLENGTH;
         motor->TimHandle.Init.RepetitionCounter = 0;
         motor->TimHandle.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -309,14 +312,14 @@ bool pwmDshotMotorHardwareConfig(const timerHardware_t *timerHardware, uint8_t m
         }
     }
 
-/*
-From LL version
-chan oinv IDLE NIDLE POL  NPOL
-N    I    -    Low   -    Low
-N    -    -    Low   -    High
-P    I    High -     Low  -
-P    -    High -     High -
-*/
+    /*
+    From LL version
+    chan oinv IDLE NIDLE POL  NPOL
+    N    I    -    Low   -    Low
+    N    -    -    Low   -    High
+    P    I    High -     Low  -
+    P    -    High -     High -
+    */
 
     /* PWM mode 1 configuration */
 
@@ -425,8 +428,8 @@ P    -    High -     High -
 #endif
 
         motor->dmaBuffer = &dshotDmaBuffer[motorIndex][0];
-        motor->dmaBuffer[DSHOT_DMA_BUFFER_SIZE-2] = 0; // XXX Is this necessary? -> probably.
-        motor->dmaBuffer[DSHOT_DMA_BUFFER_SIZE-1] = 0; // XXX Is this necessary?
+        motor->dmaBuffer[DSHOT_DMA_BUFFER_SIZE - 2] = 0; // XXX Is this necessary? -> probably.
+        motor->dmaBuffer[DSHOT_DMA_BUFFER_SIZE - 1] = 0; // XXX Is this necessary?
 
         motor->hdma_tim.Instance = (DMA_ARCH_TYPE *)dmaRef;
         motor->hdma_tim.Init.Request = dmaChannel;

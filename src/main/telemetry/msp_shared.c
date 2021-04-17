@@ -48,9 +48,9 @@
 #define TELEMETRY_REQUEST_SKIPS_AFTER_EEPROMWRITE 5
 
 enum {
-    TELEMETRY_MSP_VER_MISMATCH=0,
-    TELEMETRY_MSP_CRC_ERROR=1,
-    TELEMETRY_MSP_ERROR=2
+    TELEMETRY_MSP_VER_MISMATCH = 0,
+    TELEMETRY_MSP_CRC_ERROR = 1,
+    TELEMETRY_MSP_ERROR = 2
 };
 
 STATIC_UNIT_TESTED uint8_t checksum = 0;
@@ -83,7 +83,8 @@ static void processMspPacket(void)
     mspPackage.responsePacket->buf.end = mspPackage.responseBuffer;
 
     mspPostProcessFnPtr mspPostProcessFn = NULL;
-    if (mspFcProcessCommand(mspSharedDescriptor, mspPackage.requestPacket, mspPackage.responsePacket, &mspPostProcessFn) == MSP_RESULT_ERROR) {
+    if (mspFcProcessCommand(mspSharedDescriptor, mspPackage.requestPacket, mspPackage.responsePacket,
+                            &mspPostProcessFn) == MSP_RESULT_ERROR) {
         sbufWriteU8(&mspPackage.responsePacket->buf, TELEMETRY_MSP_ERROR);
     }
     if (mspPostProcessFn) {
@@ -241,7 +242,7 @@ bool sendMspReply(uint8_t payloadSize, mspResponseFnPtr responseFn)
         }
         sbufWriteU8(payloadBuf, checksum);
 
-        while (sbufBytesRemaining(payloadBuf)>1) {
+        while (sbufBytesRemaining(payloadBuf) > 1) {
             sbufWriteU8(payloadBuf, 0);
         }
 

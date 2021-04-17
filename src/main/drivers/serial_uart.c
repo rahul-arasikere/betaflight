@@ -103,7 +103,8 @@ UART_BUFFERS(9);
 
 #undef UART_BUFFERS
 
-serialPort_t *uartOpen(UARTDevice_e device, serialReceiveCallbackPtr rxCallback, void *rxCallbackData, uint32_t baudRate, portMode_e mode, portOptions_e options)
+serialPort_t *uartOpen(UARTDevice_e device, serialReceiveCallbackPtr rxCallback, void *rxCallbackData,
+                       uint32_t baudRate, portMode_e mode, portOptions_e options)
 {
     uartPort_t *s = serialUART(device, baudRate, mode, options);
 
@@ -145,7 +146,7 @@ static void uartSetMode(serialPort_t *instance, portMode_e mode)
 
 static uint32_t uartTotalRxBytesWaiting(const serialPort_t *instance)
 {
-    const uartPort_t *s = (const uartPort_t*)instance;
+    const uartPort_t *s = (const uartPort_t *)instance;
 
 #ifdef USE_DMA
     if (s->rxDMAResource) {
@@ -175,7 +176,7 @@ static uint32_t uartTotalRxBytesWaiting(const serialPort_t *instance)
 
 static uint32_t uartTotalTxBytesFree(const serialPort_t *instance)
 {
-    const uartPort_t *s = (const uartPort_t*)instance;
+    const uartPort_t *s = (const uartPort_t *)instance;
 
     uint32_t bytesUsed;
 

@@ -139,7 +139,8 @@ void icm20649GyroInit(gyroDev_t *gyro)
     // mode and GYRO_FCHOICE = 1.  When in 1.1KHz mode select the 196.6Hz DLPF (GYRO_DLPFCFG = 0)
     // Unfortunately we can't configure any difference in DLPF based on NORMAL vs. EXPERIMENTAL because
     // the ICM20649 only has a single 9KHz DLPF cutoff.
-    uint8_t raGyroConfigData = gyro->gyroRateKHz > GYRO_RATE_1100_Hz ? 0 : 1; // deactivate GYRO_FCHOICE for sample rates over 1kHz (opposite of other invensense chips)
+    uint8_t raGyroConfigData = gyro->gyroRateKHz > GYRO_RATE_1100_Hz ? 0 :
+                               1; // deactivate GYRO_FCHOICE for sample rates over 1kHz (opposite of other invensense chips)
     raGyroConfigData |= gyro_fsr << 1;
     spiBusWriteRegister(&gyro->bus, ICM20649_RA_GYRO_CONFIG_1, raGyroConfigData);
     delay(15);

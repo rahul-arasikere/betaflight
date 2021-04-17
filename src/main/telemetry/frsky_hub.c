@@ -132,8 +132,7 @@ static frSkyHubWriteByteFn *frSkyHubWriteByte = NULL;
 #define DELAY_FOR_BARO_INITIALISATION_US 5000000
 #define BLADE_NUMBER_DIVIDER  5 // should set 12 blades in Taranis
 
-enum
-{
+enum {
     TELEMETRY_STATE_UNINITIALIZED,
     TELEMETRY_STATE_INITIALIZED_SERIAL,
     TELEMETRY_STATE_INITIALIZED_EXTERNAL,
@@ -150,7 +149,7 @@ static void serializeFrSkyHub(uint8_t data)
     } else if (data == 0x5d) {
         frSkyHubWriteByte(0x5d);
         frSkyHubWriteByte(0x3d);
-    } else{
+    } else {
         frSkyHubWriteByte(data);
     }
 }
@@ -170,9 +169,9 @@ static void sendTelemetryTail(void)
 }
 
 static void frSkyHubWriteByteInternal(const char data)
- {
-   serialWrite(frSkyHubPort, data);
- }
+{
+    serialWrite(frSkyHubPort, data);
+}
 
 #if defined(USE_ACC)
 static void sendAccel(void)
@@ -216,7 +215,7 @@ static void sendTemperature1(void)
         data = escData->dataAge < ESC_DATA_INVALID ? escData->temperature : 0;
     }
 #elif defined(USE_BARO)
-    data = (baro.baroTemperature + 50)/ 100; // Airmamaf
+    data = (baro.baroTemperature + 50) / 100; // Airmamaf
 #else
     data = gyroGetTemperature() / 10;
 #endif
@@ -314,7 +313,7 @@ static void sendSpeed(void)
 static void sendFakeLatLong(void)
 {
     // Heading is only displayed on OpenTX if non-zero lat/long is also sent
-    int32_t coord[2] = {0,0};
+    int32_t coord[2] = {0, 0};
 
     coord[LAT] = ((0.01f * telemetryConfig()->gpsNoFixLatitude) * GPS_DEGREES_DIVIDER);
     coord[LON] = ((0.01f * telemetryConfig()->gpsNoFixLongitude) * GPS_DEGREES_DIVIDER);
@@ -325,7 +324,7 @@ static void sendFakeLatLong(void)
 static void sendGPSLatLong(void)
 {
     static uint8_t gpsFixOccured = 0;
-    int32_t coord[2] = {0,0};
+    int32_t coord[2] = {0, 0};
 
     if (STATE(GPS_FIX) || gpsFixOccured == 1) {
         // If we have ever had a fix, send the last known lat/long
@@ -487,7 +486,8 @@ void freeFrSkyHubTelemetryPort(void)
 static void configureFrSkyHubTelemetryPort(void)
 {
     if (portConfig) {
-        frSkyHubPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_FRSKY_HUB, NULL, NULL, FRSKY_HUB_BAUDRATE, FRSKY_HUB_INITIAL_PORT_MODE, telemetryConfig()->telemetry_inverted ? SERIAL_NOT_INVERTED : SERIAL_INVERTED);
+        frSkyHubPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_FRSKY_HUB, NULL, NULL, FRSKY_HUB_BAUDRATE,
+                                      FRSKY_HUB_INITIAL_PORT_MODE, telemetryConfig()->telemetry_inverted ? SERIAL_NOT_INVERTED : SERIAL_INVERTED);
     }
 }
 
@@ -600,9 +600,9 @@ void processFrSkyHubTelemetry(timeUs_t currentTimeUs)
         } else
 #endif
 #if defined(USE_MAG)
-        if (sensors(SENSOR_MAG)) {
-            sendFakeLatLongThatAllowsHeadingDisplay();
-        }
+            if (sensors(SENSOR_MAG)) {
+                sendFakeLatLongThatAllowsHeadingDisplay();
+            }
 #else
         {}
 #endif

@@ -110,12 +110,12 @@ typedef enum {
     BMI270_VAL_GYRO_CONF_FILTER_PERF = 0x01, // set gyro in high performance filter mode
 
     BMI270_VAL_GYRO_RANGE_2000DPS = 0x08,    // set gyro to 2000dps full scale
-                                             // for some reason you have to enable the ois_range bit (bit 3) for 2000dps as well
-                                             // or else the gyro scale will be 250dps when in prefiltered FIFO mode (not documented in datasheet!)
+    // for some reason you have to enable the ois_range bit (bit 3) for 2000dps as well
+    // or else the gyro scale will be 250dps when in prefiltered FIFO mode (not documented in datasheet!)
 
     BMI270_VAL_INT_MAP_DATA_DRDY_INT1 = 0x04,// enable the data ready interrupt pin 1
     BMI270_VAL_INT_MAP_FIFO_WM_INT1 = 0x02,  // enable the FIFO watermark interrupt pin 1
-    BMI270_VAL_INT1_IO_CTRL_PINMODE = 0x0A,  // active high, push-pull, output enabled, input disabled 
+    BMI270_VAL_INT1_IO_CTRL_PINMODE = 0x0A,  // active high, push-pull, output enabled, input disabled
     BMI270_VAL_FIFO_CONFIG_0 = 0x00,         // don't stop when full, disable sensortime frame
     BMI270_VAL_FIFO_CONFIG_1 = 0x80,         // only gyro data in FIFO, use headerless mode
     BMI270_VAL_FIFO_DOWNS = 0x00,            // select unfiltered gyro data with no downsampling (6.4KHz samples)
@@ -212,13 +212,16 @@ static void bmi270Config(const gyroDev_t *gyro)
     }
 
     // Configure the accelerometer
-    bmi270RegisterWrite(bus, BMI270_REG_ACC_CONF, (BMI270_VAL_ACC_CONF_HP << 7) | (BMI270_VAL_ACC_CONF_BWP << 4) | BMI270_VAL_ACC_CONF_ODR800, 1);
+    bmi270RegisterWrite(bus, BMI270_REG_ACC_CONF,
+                        (BMI270_VAL_ACC_CONF_HP << 7) | (BMI270_VAL_ACC_CONF_BWP << 4) | BMI270_VAL_ACC_CONF_ODR800, 1);
 
     // Configure the accelerometer full-scale range
     bmi270RegisterWrite(bus, BMI270_REG_ACC_RANGE, BMI270_VAL_ACC_RANGE_16G, 1);
 
     // Configure the gyro
-    bmi270RegisterWrite(bus, BMI270_REG_GYRO_CONF, (BMI270_VAL_GYRO_CONF_FILTER_PERF << 7) | (BMI270_VAL_GYRO_CONF_NOISE_PERF << 6) | (BMI270_VAL_GYRO_CONF_BWP << 4) | BMI270_VAL_GYRO_CONF_ODR3200, 1);
+    bmi270RegisterWrite(bus, BMI270_REG_GYRO_CONF,
+                        (BMI270_VAL_GYRO_CONF_FILTER_PERF << 7) | (BMI270_VAL_GYRO_CONF_NOISE_PERF << 6) | (BMI270_VAL_GYRO_CONF_BWP << 4) |
+                        BMI270_VAL_GYRO_CONF_ODR3200, 1);
 
     // Configure the gyro full-range scale
     bmi270RegisterWrite(bus, BMI270_REG_GYRO_RANGE, BMI270_VAL_GYRO_RANGE_2000DPS, 1);

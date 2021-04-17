@@ -160,7 +160,8 @@ typedef struct bmp388_calib_param_s {
     int8_t P11;
 } __attribute__((packed)) bmp388_calib_param_t;
 
-STATIC_ASSERT(sizeof(bmp388_calib_param_t) == BMP388_TRIMMING_DATA_LENGTH, bmp388_calibration_structure_incorrectly_packed);
+STATIC_ASSERT(sizeof(bmp388_calib_param_t) == BMP388_TRIMMING_DATA_LENGTH,
+              bmp388_calibration_structure_incorrectly_packed);
 
 static uint8_t bmp388_chip_id = 0;
 STATIC_UNIT_TESTED bmp388_calib_param_t bmp388_cal;
@@ -181,7 +182,7 @@ static bool bmp388ReadUP(baroDev_t *baro);
 STATIC_UNIT_TESTED void bmp388Calculate(int32_t *pressure, int32_t *temperature);
 
 #ifdef USE_EXTI
-void bmp388_extiHandler(extiCallbackRec_t* cb)
+void bmp388_extiHandler(extiCallbackRec_t *cb)
 {
 #ifdef DEBUG
     static uint32_t bmp388ExtiCallbackCounter = 0;
@@ -285,9 +286,9 @@ bool bmp388Detect(const bmp388Config_t *config, baroDev_t *baro)
 
     // set oversampling
     busWriteRegister(busdev, BMP388_OSR_REG,
-        ((BMP388_PRESSURE_OSR << BMP388_OSR_P_BIT) & BMP388_OSR_P_MASK) |
-        ((BMP388_TEMPERATURE_OSR << BMP388_OSR4_T_BIT) & BMP388_OSR4_T_MASK)
-    );
+                     ((BMP388_PRESSURE_OSR << BMP388_OSR_P_BIT) & BMP388_OSR_P_MASK) |
+                     ((BMP388_TEMPERATURE_OSR << BMP388_OSR4_T_BIT) & BMP388_OSR4_T_MASK)
+                    );
 
     bmp388BeginForcedMeasurement(busdev);
 
@@ -303,8 +304,8 @@ bool bmp388Detect(const bmp388Config_t *config, baroDev_t *baro)
 
     // See datasheet 3.9.2 "Measurement rate in forced mode and normal mode"
     baro->up_delay = 234 +
-        (392 + (powerf(2, BMP388_PRESSURE_OSR + 1) * 2000)) +
-        (313 + (powerf(2, BMP388_TEMPERATURE_OSR + 1) * 2000));
+                     (392 + (powerf(2, BMP388_PRESSURE_OSR + 1) * 2000)) +
+                     (313 + (powerf(2, BMP388_TEMPERATURE_OSR + 1) * 2000));
 
     baro->calculate = bmp388Calculate;
 
@@ -410,7 +411,7 @@ static uint64_t bmp388CompensatePressure(uint32_t uncomp_pressure)
     partial_data4 = (bmp388_cal.P3 * partial_data1) * 4;
     partial_data5 = (bmp388_cal.P2 - 16384) * t_lin * 2097152;
     sensitivity = ((bmp388_cal.P1 - 16384) * 70368744177664) + partial_data2 + partial_data4
-            + partial_data5;
+                  + partial_data5;
 
     partial_data1 = (sensitivity / 16777216) * uncomp_pressure;
     partial_data2 = bmp388_cal.P10 * t_lin;

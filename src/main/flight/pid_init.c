@@ -195,7 +195,7 @@ void pidInitFilters(const pidProfile_t *pidProfile)
     for (int axis = FD_ROLL; axis <= FD_YAW; axis++) {
         biquadFilterInitLPF(&pidRuntime.dMinRange[axis], D_MIN_RANGE_HZ, targetPidLooptime);
         pt1FilterInit(&pidRuntime.dMinLowpass[axis], pt1FilterGain(D_MIN_LOWPASS_HZ, pidRuntime.dT));
-     }
+    }
 #endif
 
 #if defined(USE_AIRMODE_LPF)
@@ -230,12 +230,12 @@ void pidInitSetpointDerivativeLpf(uint16_t filterCutoff, uint8_t debugAxis, uint
         pidRuntime.setpointDerivativeLpfInitialized = true;
         for (int axis = FD_ROLL; axis <= FD_YAW; axis++) {
             switch (pidRuntime.rcSmoothingFilterType) {
-                case RC_SMOOTHING_DERIVATIVE_PT1:
-                    pt1FilterInit(&pidRuntime.setpointDerivativePt1[axis], pt1FilterGain(filterCutoff, pidRuntime.dT));
-                    break;
-                case RC_SMOOTHING_DERIVATIVE_BIQUAD:
-                    biquadFilterInitLPF(&pidRuntime.setpointDerivativeBiquad[axis], filterCutoff, targetPidLooptime);
-                    break;
+            case RC_SMOOTHING_DERIVATIVE_PT1:
+                pt1FilterInit(&pidRuntime.setpointDerivativePt1[axis], pt1FilterGain(filterCutoff, pidRuntime.dT));
+                break;
+            case RC_SMOOTHING_DERIVATIVE_BIQUAD:
+                biquadFilterInitLPF(&pidRuntime.setpointDerivativeBiquad[axis], filterCutoff, targetPidLooptime);
+                break;
             }
         }
     }
@@ -246,12 +246,12 @@ void pidUpdateSetpointDerivativeLpf(uint16_t filterCutoff)
     if ((filterCutoff > 0) && (pidRuntime.rcSmoothingFilterType != RC_SMOOTHING_DERIVATIVE_OFF)) {
         for (int axis = FD_ROLL; axis <= FD_YAW; axis++) {
             switch (pidRuntime.rcSmoothingFilterType) {
-                case RC_SMOOTHING_DERIVATIVE_PT1:
-                    pt1FilterUpdateCutoff(&pidRuntime.setpointDerivativePt1[axis], pt1FilterGain(filterCutoff, pidRuntime.dT));
-                    break;
-                case RC_SMOOTHING_DERIVATIVE_BIQUAD:
-                    biquadFilterUpdateLPF(&pidRuntime.setpointDerivativeBiquad[axis], filterCutoff, targetPidLooptime);
-                    break;
+            case RC_SMOOTHING_DERIVATIVE_PT1:
+                pt1FilterUpdateCutoff(&pidRuntime.setpointDerivativePt1[axis], pt1FilterGain(filterCutoff, pidRuntime.dT));
+                break;
+            case RC_SMOOTHING_DERIVATIVE_BIQUAD:
+                biquadFilterUpdateLPF(&pidRuntime.setpointDerivativeBiquad[axis], filterCutoff, targetPidLooptime);
+                break;
             }
         }
     }
@@ -391,7 +391,8 @@ void pidInitConfig(const pidProfile_t *pidProfile)
         }
     }
     pidRuntime.dMinGyroGain = pidProfile->d_min_gain * D_MIN_GAIN_FACTOR / D_MIN_LOWPASS_HZ;
-    pidRuntime.dMinSetpointGain = pidProfile->d_min_gain * D_MIN_SETPOINT_GAIN_FACTOR * pidProfile->d_min_advance * pidRuntime.pidFrequency / (100 * D_MIN_LOWPASS_HZ);
+    pidRuntime.dMinSetpointGain = pidProfile->d_min_gain * D_MIN_SETPOINT_GAIN_FACTOR * pidProfile->d_min_advance *
+                                  pidRuntime.pidFrequency / (100 * D_MIN_LOWPASS_HZ);
     // lowpass included inversely in gain since stronger lowpass decreases peak effect
 #endif
 

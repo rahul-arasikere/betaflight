@@ -48,7 +48,8 @@
 #include "drivers/serial_uart.h"
 #include "drivers/serial_uart_impl.h"
 
-static void usartConfigurePinInversion(uartPort_t *uartPort) {
+static void usartConfigurePinInversion(uartPort_t *uartPort)
+{
 #if !defined(USE_INVERTER) && !defined(STM32F303xC)
     UNUSED(uartPort);
 #else
@@ -88,16 +89,17 @@ void uartReconfigure(uartPort_t *uartPort)
     // This seems to cause RX to break on STM32F1, see https://github.com/betaflight/betaflight/pull/1654
     if (
 #if defined(STM32F1)
-            false &&
+        false &&
 #endif
-            (uartPort->port.options & SERIAL_PARITY_EVEN)) {
+        (uartPort->port.options & SERIAL_PARITY_EVEN)) {
         USART_InitStructure.USART_WordLength = USART_WordLength_9b;
     } else {
         USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     }
 
     USART_InitStructure.USART_StopBits = (uartPort->port.options & SERIAL_STOPBITS_2) ? USART_StopBits_2 : USART_StopBits_1;
-    USART_InitStructure.USART_Parity   = (uartPort->port.options & SERIAL_PARITY_EVEN) ? USART_Parity_Even : USART_Parity_No;
+    USART_InitStructure.USART_Parity   = (uartPort->port.options & SERIAL_PARITY_EVEN) ? USART_Parity_Even :
+                                         USART_Parity_No;
 
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_InitStructure.USART_Mode = 0;
@@ -246,7 +248,7 @@ void uartTryStartTxDMA(uartPort_t *s)
         }
         s->txDMAEmpty = false;
 
-    reenable:
+reenable:
         xDMA_Cmd(s->txDMAResource, ENABLE);
     }
 }

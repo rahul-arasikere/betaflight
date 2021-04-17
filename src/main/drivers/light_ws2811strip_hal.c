@@ -42,7 +42,7 @@ static IO_t ws2811IO = IO_NONE;
 static TIM_HandleTypeDef TimHandle;
 static uint16_t timerChannel = 0;
 
-void WS2811_DMA_IRQHandler(dmaChannelDescriptor_t* descriptor)
+void WS2811_DMA_IRQHandler(dmaChannelDescriptor_t *descriptor)
 {
     HAL_DMA_IRQHandler(TimHandle.hdma[descriptor->userParam]);
     TIM_DMACmd(&TimHandle, timerChannel, DISABLE);
@@ -105,7 +105,8 @@ bool ws2811LedStripHardwareInit(ioTag_t ioTag)
 
     ws2811IO = IOGetByTag(ioTag);
     IOInit(ws2811IO, OWNER_LED_STRIP, 0);
-    IOConfigGPIOAF(ws2811IO, IO_CONFIG(GPIO_MODE_AF_PP, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_PULLDOWN), timerHardware->alternateFunction);
+    IOConfigGPIOAF(ws2811IO, IO_CONFIG(GPIO_MODE_AF_PP, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_PULLDOWN),
+                   timerHardware->alternateFunction);
 
     __DMA1_CLK_ENABLE();
     __DMA2_CLK_ENABLE();
@@ -152,9 +153,11 @@ bool ws2811LedStripHardwareInit(ioTag_t ioTag)
     /* PWM1 Mode configuration: Channel1 */
     TIM_OCInitStructure.OCMode = TIM_OCMODE_PWM1;
     TIM_OCInitStructure.OCIdleState = TIM_OCIDLESTATE_RESET;
-    TIM_OCInitStructure.OCPolarity = (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCPOLARITY_LOW : TIM_OCPOLARITY_HIGH;
+    TIM_OCInitStructure.OCPolarity = (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCPOLARITY_LOW :
+                                     TIM_OCPOLARITY_HIGH;
     TIM_OCInitStructure.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-    TIM_OCInitStructure.OCNPolarity = (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCNPOLARITY_LOW : TIM_OCNPOLARITY_HIGH;
+    TIM_OCInitStructure.OCNPolarity = (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCNPOLARITY_LOW :
+                                      TIM_OCNPOLARITY_HIGH;
     TIM_OCInitStructure.Pulse = 0;
     TIM_OCInitStructure.OCFastMode = TIM_OCFAST_DISABLE;
     if (HAL_TIM_PWM_ConfigChannel(&TimHandle, &TIM_OCInitStructure, timerChannel) != HAL_OK) {
@@ -184,8 +187,8 @@ void ws2811LedStripDMAEnable(void)
         return;
     }
     /* Reset timer counter */
-    __HAL_TIM_SET_COUNTER(&TimHandle,0);
+    __HAL_TIM_SET_COUNTER(&TimHandle, 0);
     /* Enable channel DMA requests */
-    TIM_DMACmd(&TimHandle,timerChannel,ENABLE);
+    TIM_DMACmd(&TimHandle, timerChannel, ENABLE);
 }
 #endif

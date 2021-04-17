@@ -42,7 +42,7 @@
 
 #include "current.h"
 
-const char * const currentMeterSourceNames[CURRENT_METER_COUNT] = {
+const char *const currentMeterSourceNames[CURRENT_METER_COUNT] = {
     "NONE", "ADC", "VIRTUAL", "ESC", "MSP"
 };
 
@@ -101,9 +101,9 @@ static pt1Filter_t adciBatFilter;
 PG_REGISTER_WITH_RESET_TEMPLATE(currentSensorADCConfig_t, currentSensorADCConfig, PG_CURRENT_SENSOR_ADC_CONFIG, 0);
 
 PG_RESET_TEMPLATE(currentSensorADCConfig_t, currentSensorADCConfig,
-    .scale = CURRENT_METER_SCALE_DEFAULT,
-    .offset = CURRENT_METER_OFFSET_DEFAULT,
-);
+                  .scale = CURRENT_METER_SCALE_DEFAULT,
+                  .offset = CURRENT_METER_OFFSET_DEFAULT,
+                 );
 
 #ifdef USE_VIRTUAL_CURRENT_METER
 PG_REGISTER(currentSensorVirtualConfig_t, currentSensorVirtualConfig, PG_CURRENT_SENSOR_VIRTUAL_CONFIG, 0);
@@ -141,7 +141,8 @@ currentMeterADCState_t currentMeterADCState;
 void currentMeterADCInit(void)
 {
     memset(&currentMeterADCState, 0, sizeof(currentMeterADCState_t));
-    pt1FilterInit(&adciBatFilter, pt1FilterGain(GET_BATTERY_LPF_FREQUENCY(batteryConfig()->ibatLpfPeriod), HZ_TO_INTERVAL(50)));
+    pt1FilterInit(&adciBatFilter, pt1FilterGain(GET_BATTERY_LPF_FREQUENCY(batteryConfig()->ibatLpfPeriod),
+                                                HZ_TO_INTERVAL(50)));
 }
 
 void currentMeterADCRefresh(int32_t lastUpdateAt)
@@ -315,8 +316,7 @@ void currentMeterRead(currentMeterId_e id, currentMeter_t *meter)
 #ifdef USE_ESC_SENSOR
     else if (id == CURRENT_METER_ID_ESC_COMBINED_1) {
         currentMeterESCReadCombined(meter);
-    }
-    else if (id >= CURRENT_METER_ID_ESC_MOTOR_1 && id <= CURRENT_METER_ID_ESC_MOTOR_20 ) {
+    } else if (id >= CURRENT_METER_ID_ESC_MOTOR_1 && id <= CURRENT_METER_ID_ESC_MOTOR_20 ) {
         int motor = id - CURRENT_METER_ID_ESC_MOTOR_1;
         currentMeterESCReadMotor(motor, meter);
     }

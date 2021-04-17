@@ -207,7 +207,8 @@ static uint8_t w25n01g_readRegister(flashDeviceIO_t *io, uint8_t reg)
         QUADSPI_TypeDef *quadSpi = io->handle.quadSpi;
 
         uint8_t in[1];
-        quadSpiReceiveWithAddress1LINE(quadSpi, W25N01G_INSTRUCTION_READ_STATUS_REG, 0, reg, W28N01G_STATUS_REGISTER_SIZE, in, sizeof(in));
+        quadSpiReceiveWithAddress1LINE(quadSpi, W25N01G_INSTRUCTION_READ_STATUS_REG, 0, reg, W28N01G_STATUS_REGISTER_SIZE, in,
+                                       sizeof(in));
 
         return in[0];
     }
@@ -224,13 +225,14 @@ static void w25n01g_writeRegister(flashDeviceIO_t *io, uint8_t reg, uint8_t data
         ENABLE(busdev);
         spiTransfer(busdev->busdev_u.spi.instance, cmd, NULL, sizeof(cmd));
         DISABLE(busdev);
-   }
+    }
 #ifdef USE_QUADSPI
-   else if (io->mode == FLASHIO_QUADSPI) {
-       QUADSPI_TypeDef *quadSpi = io->handle.quadSpi;
+    else if (io->mode == FLASHIO_QUADSPI) {
+        QUADSPI_TypeDef *quadSpi = io->handle.quadSpi;
 
-       quadSpiTransmitWithAddress1LINE(quadSpi, W25N01G_INSTRUCTION_WRITE_STATUS_REG, 0, reg, W28N01G_STATUS_REGISTER_SIZE, &data, 1);
-   }
+        quadSpiTransmitWithAddress1LINE(quadSpi, W25N01G_INSTRUCTION_WRITE_STATUS_REG, 0, reg, W28N01G_STATUS_REGISTER_SIZE,
+                                        &data, 1);
+    }
 #endif
 }
 
@@ -252,7 +254,7 @@ static void w25n01g_deviceReset(flashDevice_t *fdevice)
     w25n01g_writeRegister(io, W25N01G_PROT_REG, W25N01G_PROT_CLEAR);
 
     // Buffered read mode (BUF = 1), ECC enabled (ECC = 1)
-    w25n01g_writeRegister(io, W25N01G_CONF_REG, W25N01G_CONFIG_ECC_ENABLE|W25N01G_CONFIG_BUFFER_READ_MODE);
+    w25n01g_writeRegister(io, W25N01G_CONF_REG, W25N01G_CONFIG_ECC_ENABLE | W25N01G_CONFIG_BUFFER_READ_MODE);
 }
 
 bool w25n01g_isReady(flashDevice_t *fdevice)
@@ -320,8 +322,8 @@ bool w25n01g_detect(flashDevice_t *fdevice, uint32_t chipID)
     fdevice->geometry.totalSize = fdevice->geometry.sectorSize * fdevice->geometry.sectors;
 
     flashPartitionSet(FLASH_PARTITION_TYPE_BADBLOCK_MANAGEMENT,
-            W25N01G_BB_MANAGEMENT_START_BLOCK,
-            W25N01G_BB_MANAGEMENT_START_BLOCK + W25N01G_BB_MANAGEMENT_BLOCKS - 1);
+                      W25N01G_BB_MANAGEMENT_START_BLOCK,
+                      W25N01G_BB_MANAGEMENT_START_BLOCK + W25N01G_BB_MANAGEMENT_BLOCKS - 1);
 
     fdevice->couldBeBusy = true; // Just for luck we'll assume the chip could be busy even though it isn't specced to be
 
@@ -387,19 +389,21 @@ static void w25n01g_programDataLoad(flashDevice_t *fdevice, uint16_t columnAddre
         spiTransfer(busdev->busdev_u.spi.instance, cmd, NULL, sizeof(cmd));
         spiTransfer(busdev->busdev_u.spi.instance, data, NULL, length);
         DISABLE(busdev);
-   }
+    }
 #ifdef USE_QUADSPI
-   else if (fdevice->io.mode == FLASHIO_QUADSPI) {
-       QUADSPI_TypeDef *quadSpi = fdevice->io.handle.quadSpi;
+    else if (fdevice->io.mode == FLASHIO_QUADSPI) {
+        QUADSPI_TypeDef *quadSpi = fdevice->io.handle.quadSpi;
 
-       quadSpiTransmitWithAddress1LINE(quadSpi, W25N01G_INSTRUCTION_PROGRAM_DATA_LOAD, 0, columnAddress, W28N01G_STATUS_COLUMN_ADDRESS_SIZE, data, length);
+        quadSpiTransmitWithAddress1LINE(quadSpi, W25N01G_INSTRUCTION_PROGRAM_DATA_LOAD, 0, columnAddress,
+                                        W28N01G_STATUS_COLUMN_ADDRESS_SIZE, data, length);
     }
 #endif
 
     w25n01g_setTimeout(fdevice, W25N01G_TIMEOUT_PAGE_PROGRAM_MS);
 }
 
-static void w25n01g_randomProgramDataLoad(flashDevice_t *fdevice, uint16_t columnAddress, const uint8_t *data, int length)
+static void w25n01g_randomProgramDataLoad(flashDevice_t *fdevice, uint16_t columnAddress, const uint8_t *data,
+                                          int length)
 {
     const uint8_t cmd[] = { W25N01G_INSTRUCTION_RANDOM_PROGRAM_DATA_LOAD, columnAddress >> 8, columnAddress & 0xff };
 
@@ -418,8 +422,9 @@ static void w25n01g_randomProgramDataLoad(flashDevice_t *fdevice, uint16_t colum
     else if (fdevice->io.mode == FLASHIO_QUADSPI) {
         QUADSPI_TypeDef *quadSpi = fdevice->io.handle.quadSpi;
 
-        quadSpiTransmitWithAddress1LINE(quadSpi, W25N01G_INSTRUCTION_RANDOM_PROGRAM_DATA_LOAD, 0, columnAddress, W28N01G_STATUS_COLUMN_ADDRESS_SIZE, data, length);
-     }
+        quadSpiTransmitWithAddress1LINE(quadSpi, W25N01G_INSTRUCTION_RANDOM_PROGRAM_DATA_LOAD, 0, columnAddress,
+                                        W28N01G_STATUS_COLUMN_ADDRESS_SIZE, data, length);
+    }
 #endif
 
     w25n01g_setTimeout(fdevice, W25N01G_TIMEOUT_PAGE_PROGRAM_MS);
@@ -646,7 +651,8 @@ int w25n01g_readBytes(flashDevice_t *fdevice, uint32_t address, uint8_t *buffer,
         QUADSPI_TypeDef *quadSpi = fdevice->io.handle.quadSpi;
 
         //quadSpiReceiveWithAddress1LINE(quadSpi, W25N01G_INSTRUCTION_READ_DATA, 8, column, W28N01G_STATUS_COLUMN_ADDRESS_SIZE, buffer, length);
-        quadSpiReceiveWithAddress4LINES(quadSpi, W25N01G_INSTRUCTION_FAST_READ_QUAD_OUTPUT, 8, column, W28N01G_STATUS_COLUMN_ADDRESS_SIZE, buffer, length);
+        quadSpiReceiveWithAddress4LINES(quadSpi, W25N01G_INSTRUCTION_FAST_READ_QUAD_OUTPUT, 8, column,
+                                        W28N01G_STATUS_COLUMN_ADDRESS_SIZE, buffer, length);
     }
 #endif
 
@@ -682,7 +688,8 @@ int w25n01g_readExtensionBytes(flashDevice_t *fdevice, uint32_t address, uint8_t
         return 0;
     }
 
-    w25n01g_performCommandWithPageAddress(&fdevice->io, W25N01G_INSTRUCTION_PAGE_DATA_READ, W25N01G_LINEAR_TO_PAGE(address));
+    w25n01g_performCommandWithPageAddress(&fdevice->io, W25N01G_INSTRUCTION_PAGE_DATA_READ,
+                                          W25N01G_LINEAR_TO_PAGE(address));
 
     uint32_t column = 2048;
 
@@ -705,7 +712,8 @@ int w25n01g_readExtensionBytes(flashDevice_t *fdevice, uint32_t address, uint8_t
     else if (fdevice->io.mode == FLASHIO_QUADSPI) {
         QUADSPI_TypeDef *quadSpi = fdevice->io.handle.quadSpi;
 
-        quadSpiReceiveWithAddress1LINE(quadSpi, W25N01G_INSTRUCTION_READ_DATA, 8, column, W28N01G_STATUS_COLUMN_ADDRESS_SIZE, buffer, length);
+        quadSpiReceiveWithAddress1LINE(quadSpi, W25N01G_INSTRUCTION_READ_DATA, 8, column, W28N01G_STATUS_COLUMN_ADDRESS_SIZE,
+                                       buffer, length);
     }
 #endif
 
@@ -719,7 +727,7 @@ int w25n01g_readExtensionBytes(flashDevice_t *fdevice, uint32_t address, uint8_t
  *
  * Can be called before calling w25n01g_init() (the result would have totalSize = 0).
  */
-const flashGeometry_t* w25n01g_getGeometry(flashDevice_t *fdevice)
+const flashGeometry_t *w25n01g_getGeometry(flashDevice_t *fdevice)
 {
     return &fdevice->geometry;
 }
@@ -757,8 +765,8 @@ void w25n01g_readBBLUT(flashDevice_t *fdevice, bblut_t *bblut, int lutsize)
 
         for (int i = 0 ; i < lutsize ; i++) {
             spiTransfer(busdev->busdev_u.spi.instance, NULL, in, 4);
-            bblut[i].pba = (in[0] << 16)|in[1];
-            bblut[i].lba = (in[2] << 16)|in[3];
+            bblut[i].pba = (in[0] << 16) | in[1];
+            bblut[i].lba = (in[2] << 16) | in[3];
         }
 
         DISABLE(busdev);
@@ -775,8 +783,8 @@ void w25n01g_readBBLUT(flashDevice_t *fdevice, bblut_t *bblut, int lutsize)
 
         for (int i = 0, offset = 0 ; i < lutsize ; i++, offset += 4) {
             if (i < W25N01G_BBLUT_TABLE_ENTRY_COUNT) {
-                bblut[i].pba = (in[offset + 0] << 16)|in[offset + 1];
-                bblut[i].lba = (in[offset + 2] << 16)|in[offset + 3];
+                bblut[i].pba = (in[offset + 0] << 16) | in[offset + 1];
+                bblut[i].lba = (in[offset + 2] << 16) | in[offset + 3];
             }
         }
     }

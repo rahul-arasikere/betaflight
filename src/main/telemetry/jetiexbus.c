@@ -164,7 +164,7 @@ enum exSensors_e {
     EX_GFORCE_Z
 };
 
-union{
+union {
     int32_t vInt;
     uint16_t vWord[2];
     char    vBytes[4];
@@ -184,12 +184,12 @@ static uint8_t getNextActiveSensor(uint8_t currentSensor);
 // Jeti Ex Telemetry CRC calculations for a frame
 uint8_t calcCRC8(uint8_t *pt, uint8_t msgLen)
 {
-    uint8_t crc=0;
+    uint8_t crc = 0;
     for (uint8_t mlen = 0; mlen < msgLen; mlen++) {
         crc  ^= pt[mlen];
         crc = crc ^ (crc << 1) ^ (crc << 2) ^ (0x0e090700 >> ((crc >> 3) & 0x18));
     }
-    return(crc);
+    return (crc);
 }
 
 void enableGpsTelemetry(bool enable)
@@ -233,7 +233,8 @@ void initJetiExBusTelemetry(void)
     jetiExTelemetryFrame[EXTEL_HEADER_SYNC] = 0x9F;              // Startbyte
     jetiExTelemetryFrame[EXTEL_HEADER_USN_LB] = 0x1E;            // Serial Number 4 Byte
     jetiExTelemetryFrame[EXTEL_HEADER_USN_HB] = 0xA4;
-    jetiExTelemetryFrame[EXTEL_HEADER_LSN_LB] = 0x00;            // increment by telemetry count (%16) > only 15 values per device possible
+    jetiExTelemetryFrame[EXTEL_HEADER_LSN_LB] =
+        0x00;            // increment by telemetry count (%16) > only 15 values per device possible
     jetiExTelemetryFrame[EXTEL_HEADER_LSN_HB] = 0x00;
     jetiExTelemetryFrame[EXTEL_HEADER_RES] = 0x00;               // reserved, by default 0x00
 
@@ -244,7 +245,8 @@ void initJetiExBusTelemetry(void)
     if (batteryConfig()->currentMeterSource != CURRENT_METER_NONE) {
         bitArraySet(&exSensorEnabled, EX_CURRENT);
     }
-    if ((batteryConfig()->voltageMeterSource != VOLTAGE_METER_NONE) && (batteryConfig()->currentMeterSource != CURRENT_METER_NONE)) {
+    if ((batteryConfig()->voltageMeterSource != VOLTAGE_METER_NONE)
+        && (batteryConfig()->currentMeterSource != CURRENT_METER_NONE)) {
         bitArraySet(&exSensorEnabled, EX_POWER);
         bitArraySet(&exSensorEnabled, EX_CAPACITY);
     }
@@ -283,7 +285,8 @@ void createExTelemetryTextMessage(uint8_t *exMessage, uint8_t messageID, const e
     memcpy(&exMessage[EXTEL_HEADER_DATA + 1], sensor->label, labelLength);
     memcpy(&exMessage[EXTEL_HEADER_DATA + 1 + labelLength], sensor->unit, unitLength);
 
-    exMessage[exMessage[EXTEL_HEADER_TYPE_LEN] + EXTEL_CRC_LEN] = calcCRC8(&exMessage[EXTEL_HEADER_TYPE_LEN], exMessage[EXTEL_HEADER_TYPE_LEN]);
+    exMessage[exMessage[EXTEL_HEADER_TYPE_LEN] + EXTEL_CRC_LEN] = calcCRC8(&exMessage[EXTEL_HEADER_TYPE_LEN],
+                                                                           exMessage[EXTEL_HEADER_TYPE_LEN]);
 }
 
 uint32_t calcGpsDDMMmmm(int32_t value, bool isLong)
@@ -346,49 +349,49 @@ int32_t getSensorValue(uint8_t sensor)
 #ifdef USE_GPS
     case EX_GPS_SATS:
         return gpsSol.numSat;
-    break;
+        break;
 
     case EX_GPS_LONG:
         return calcGpsDDMMmmm(gpsSol.llh.lon, true);
-    break;
+        break;
 
     case EX_GPS_LAT:
         return calcGpsDDMMmmm(gpsSol.llh.lat, false);
-    break;
+        break;
 
     case EX_GPS_SPEED:
         return gpsSol.groundSpeed;
-    break;
+        break;
 
     case EX_GPS_DISTANCE_TO_HOME:
         return GPS_distanceToHome;
-    break;
+        break;
 
     case EX_GPS_DIRECTION_TO_HOME:
         return GPS_directionToHome;
-    break;
+        break;
 
     case EX_GPS_HEADING:
         return gpsSol.groundCourse;
-    break;
+        break;
 
     case EX_GPS_ALTITUDE:
         return gpsSol.llh.altCm;
-    break;
+        break;
 #endif
 
 #if defined(USE_ACC)
     case EX_GFORCE_X:
-       return (int16_t)(((float)acc.accADC[0] / acc.dev.acc_1G) * 1000);
-    break;
+        return (int16_t)(((float)acc.accADC[0] / acc.dev.acc_1G) * 1000);
+        break;
 
     case EX_GFORCE_Y:
-       return (int16_t)(((float)acc.accADC[1] / acc.dev.acc_1G) * 1000);
-    break;
+        return (int16_t)(((float)acc.accADC[1] / acc.dev.acc_1G) * 1000);
+        break;
 
     case EX_GFORCE_Z:
         return (int16_t)(((float)acc.accADC[2] / acc.dev.acc_1G) * 1000);
-    break;
+        break;
 #endif
 
     default:
@@ -398,7 +401,7 @@ int32_t getSensorValue(uint8_t sensor)
 
 uint8_t getNextActiveSensor(uint8_t currentSensor)
 {
-    while( ++currentSensor < JETI_EX_SENSOR_COUNT) {
+    while ( ++currentSensor < JETI_EX_SENSOR_COUNT) {
         if (bitArrayGet(&exSensorEnabled, currentSensor)) {
             break;
         }
@@ -447,7 +450,7 @@ uint8_t createExTelemetryValueMessage(uint8_t *exMessage, uint8_t item)
             break;
         }
     }
-    messageSize = (EXTEL_HEADER_LEN + (p-&exMessage[EXTEL_HEADER_ID]));
+    messageSize = (EXTEL_HEADER_LEN + (p - &exMessage[EXTEL_HEADER_ID]));
     exMessage[EXTEL_HEADER_TYPE_LEN] = EXTEL_DATA_MSG | messageSize;
     exMessage[messageSize + EXTEL_CRC_LEN] = calcCRC8(&exMessage[EXTEL_HEADER_TYPE_LEN], messageSize);
 
@@ -459,7 +462,8 @@ void createExBusMessage(uint8_t *exBusMessage, uint8_t *exMessage, uint8_t packe
     uint16_t crc16;
 
     exBusMessage[EXBUS_HEADER_PACKET_ID] = packetID;
-    exBusMessage[EXBUS_HEADER_SUBLEN] = (exMessage[EXTEL_HEADER_TYPE_LEN] & EXTEL_UNMASK_TYPE) + 2;    // +2: startbyte & CRC8
+    exBusMessage[EXBUS_HEADER_SUBLEN] = (exMessage[EXTEL_HEADER_TYPE_LEN] & EXTEL_UNMASK_TYPE) +
+                                        2;    // +2: startbyte & CRC8
     exBusMessage[EXBUS_HEADER_MSG_LEN] = EXBUS_OVERHEAD + exBusMessage[EXBUS_HEADER_SUBLEN];
 
     crc16 = jetiExBusCalcCRC16(exBusMessage, exBusMessage[EXBUS_HEADER_MSG_LEN] - EXBUS_CRC_LEN);
@@ -490,7 +494,8 @@ void handleJetiExBusTelemetry(void)
             return;
         }
 
-        if ((jetiExBusRequestFrame[EXBUS_HEADER_DATA_ID] == EXBUS_EX_REQUEST) && (jetiExBusCalcCRC16(jetiExBusRequestFrame, jetiExBusRequestFrame[EXBUS_HEADER_MSG_LEN]) == 0)) {
+        if ((jetiExBusRequestFrame[EXBUS_HEADER_DATA_ID] == EXBUS_EX_REQUEST)
+            && (jetiExBusCalcCRC16(jetiExBusRequestFrame, jetiExBusRequestFrame[EXBUS_HEADER_MSG_LEN]) == 0)) {
             if (serialRxBytesWaiting(jetiExBusPort) == 0) {
                 jetiExBusTransceiveState = EXBUS_TRANS_TX;
                 item = sendJetiExBusTelemetry(jetiExBusRequestFrame[EXBUS_HEADER_PACKET_ID], item);
@@ -520,8 +525,9 @@ uint8_t sendJetiExBusTelemetry(uint8_t packetID, uint8_t item)
     uint8_t *jetiExTelemetryFrame = &jetiExBusTelemetryFrame[EXBUS_HEADER_DATA];
 
     if (requestLoop) {
-        while( ++sensorDescriptionCounter < JETI_EX_SENSOR_COUNT) {
-            if (bitArrayGet(&exSensorEnabled, sensorDescriptionCounter) || (jetiExSensors[sensorDescriptionCounter].exDataType == EX_TYPE_DES)) {
+        while ( ++sensorDescriptionCounter < JETI_EX_SENSOR_COUNT) {
+            if (bitArrayGet(&exSensorEnabled, sensorDescriptionCounter)
+                || (jetiExSensors[sensorDescriptionCounter].exDataType == EX_TYPE_DES)) {
                 break;
             }
         }

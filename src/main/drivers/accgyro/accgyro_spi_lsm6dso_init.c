@@ -100,7 +100,8 @@ static void lsm6dsoWriteRegister(const busDevice_t *bus, lsm6dsoRegister_e regis
     }
 }
 
-static void lsm6dsoWriteRegisterBits(const busDevice_t *bus, lsm6dsoRegister_e registerID, lsm6dsoConfigMasks_e mask, uint8_t value, unsigned delayMs)
+static void lsm6dsoWriteRegisterBits(const busDevice_t *bus, lsm6dsoRegister_e registerID, lsm6dsoConfigMasks_e mask,
+                                     uint8_t value, unsigned delayMs)
 {
     uint8_t newValue;
     if (busReadRegisterBuffer(bus, registerID, &newValue, 1)) {
@@ -125,23 +126,29 @@ static void lsm6dsoConfig(const gyroDev_t *gyro)
 
     // Configure the accelerometer
     // 833hz ODR, 16G scale, use LPF1 output
-    lsm6dsoWriteRegister(bus, LSM6DSO_REG_CTRL1_XL, (LSM6DSO_VAL_CTRL1_XL_ODR833 << 4) | (LSM6DSO_VAL_CTRL1_XL_16G << 2) | (LSM6DSO_VAL_CTRL1_XL_LPF1 << 1), 1);
+    lsm6dsoWriteRegister(bus, LSM6DSO_REG_CTRL1_XL,
+                         (LSM6DSO_VAL_CTRL1_XL_ODR833 << 4) | (LSM6DSO_VAL_CTRL1_XL_16G << 2) | (LSM6DSO_VAL_CTRL1_XL_LPF1 << 1), 1);
 
     // Configure the gyro
     // 6664hz ODR, 2000dps scale
-    lsm6dsoWriteRegister(bus, LSM6DSO_REG_CTRL2_G, (LSM6DSO_VAL_CTRL2_G_ODR6664 << 4) | (LSM6DSO_VAL_CTRL2_G_2000DPS << 2), 1);
+    lsm6dsoWriteRegister(bus, LSM6DSO_REG_CTRL2_G, (LSM6DSO_VAL_CTRL2_G_ODR6664 << 4) | (LSM6DSO_VAL_CTRL2_G_2000DPS << 2),
+                         1);
 
     // Configure control register 3
     // latch LSB/MSB during reads; set interrupt pins active high; set interrupt pins push/pull; set 4-wire SPI; enable auto-increment burst reads
-    lsm6dsoWriteRegisterBits(bus, LSM6DSO_REG_CTRL3_C, LSM6DSO_MASK_CTRL3_C, (LSM6DSO_VAL_CTRL3_C_BDU | LSM6DSO_VAL_CTRL3_C_H_LACTIVE | LSM6DSO_VAL_CTRL3_C_PP_OD | LSM6DSO_VAL_CTRL3_C_SIM | LSM6DSO_VAL_CTRL3_C_IF_INC), 1);
+    lsm6dsoWriteRegisterBits(bus, LSM6DSO_REG_CTRL3_C, LSM6DSO_MASK_CTRL3_C,
+                             (LSM6DSO_VAL_CTRL3_C_BDU | LSM6DSO_VAL_CTRL3_C_H_LACTIVE | LSM6DSO_VAL_CTRL3_C_PP_OD | LSM6DSO_VAL_CTRL3_C_SIM |
+                              LSM6DSO_VAL_CTRL3_C_IF_INC), 1);
 
     // Configure control register 4
     // enable accelerometer high performane mode; set gyro LPF1 cutoff to 335.5hz
-    lsm6dsoWriteRegisterBits(bus, LSM6DSO_REG_CTRL4_C, LSM6DSO_MASK_CTRL4_C, (LSM6DSO_VAL_CTRL4_C_I2C_DISABLE | LSM6DSO_VAL_CTRL4_C_LPF1_SEL_G), 1);
+    lsm6dsoWriteRegisterBits(bus, LSM6DSO_REG_CTRL4_C, LSM6DSO_MASK_CTRL4_C,
+                             (LSM6DSO_VAL_CTRL4_C_I2C_DISABLE | LSM6DSO_VAL_CTRL4_C_LPF1_SEL_G), 1);
 
     // Configure control register 6
     // disable I2C interface; enable gyro LPF1
-    lsm6dsoWriteRegisterBits(bus, LSM6DSO_REG_CTRL6_C, LSM6DSO_MASK_CTRL6_C, (LSM6DSO_VAL_CTRL6_C_XL_HM_MODE | LSM6DSO_VAL_CTRL6_C_FTYPE_335HZ), 1);
+    lsm6dsoWriteRegisterBits(bus, LSM6DSO_REG_CTRL6_C, LSM6DSO_MASK_CTRL6_C,
+                             (LSM6DSO_VAL_CTRL6_C_XL_HM_MODE | LSM6DSO_VAL_CTRL6_C_FTYPE_335HZ), 1);
 
     // Configure control register 9
     // disable I3C interface

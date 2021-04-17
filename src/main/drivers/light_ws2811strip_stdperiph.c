@@ -118,7 +118,8 @@ bool ws2811LedStripHardwareInit(ioTag_t ioTag)
 #ifdef STM32F1
     IOConfigGPIO(ws2811IO, IO_CONFIG(GPIO_Speed_50MHz, GPIO_Mode_AF_PP));
 #else
-    IOConfigGPIOAF(ws2811IO, IO_CONFIG(GPIO_Mode_AF, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_UP), timerHardware->alternateFunction);
+    IOConfigGPIOAF(ws2811IO, IO_CONFIG(GPIO_Mode_AF, GPIO_Speed_50MHz, GPIO_OType_PP, GPIO_PuPd_UP),
+                   timerHardware->alternateFunction);
 #endif
 
     RCC_ClockCmd(timerRCC(timer), ENABLE);
@@ -148,11 +149,13 @@ bool ws2811LedStripHardwareInit(ioTag_t ioTag)
     if (timerHardware->output & TIMER_OUTPUT_N_CHANNEL) {
         TIM_OCInitStructure.TIM_OutputNState = TIM_OutputNState_Enable;
         TIM_OCInitStructure.TIM_OCNIdleState = TIM_OCNIdleState_Reset;
-        TIM_OCInitStructure.TIM_OCNPolarity =  (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCNPolarity_Low : TIM_OCNPolarity_High;
+        TIM_OCInitStructure.TIM_OCNPolarity =  (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCNPolarity_Low :
+                                               TIM_OCNPolarity_High;
     } else {
         TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
         TIM_OCInitStructure.TIM_OCIdleState = TIM_OCIdleState_Set;
-        TIM_OCInitStructure.TIM_OCPolarity =  (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCPolarity_Low : TIM_OCPolarity_High;
+        TIM_OCInitStructure.TIM_OCPolarity =  (timerHardware->output & TIMER_OUTPUT_INVERTED) ? TIM_OCPolarity_Low :
+                                              TIM_OCPolarity_High;
     }
 
     TIM_OCInitStructure.TIM_Pulse = 0;

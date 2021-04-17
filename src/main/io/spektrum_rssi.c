@@ -50,7 +50,8 @@ static uint16_t spek_fade_last_sec_count = 0; // Stores the fade count at the la
 #endif
 
 // Linear mapping and interpolation function
-int32_t map(int32_t x, int32_t in_min, int32_t in_max, int32_t out_min, int32_t out_max) {
+int32_t map(int32_t x, int32_t in_min, int32_t in_max, int32_t out_min, int32_t out_max)
+{
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
@@ -60,7 +61,7 @@ int32_t map(int32_t x, int32_t in_min, int32_t in_max, int32_t out_min, int32_t 
 
 static const dbm_table_t dbmTable[] = {
     {SPEKTRUM_RSSI_MAX, 101},
-    {-49,100},
+    {-49, 100},
     {-56, 98},
     {-61, 95},
     {-66, 89},
@@ -71,33 +72,35 @@ static const dbm_table_t dbmTable[] = {
     {-75, 66},
     {-76, 63},
     {-77, 60},
-/*
-    {-78, 56}, // Linear part of the table, can be interpolated
-    {-79, 52},
-    {-80, 48},
-    {-81, 44},
-    {-82, 40},
-    {-83, 36},
-    {-84, 32},
-    {-85, 28},
-    {-86, 24},
-    {-87, 20}, // Beta Flight default RSSI % alatm point
-    {-88, 16},
-    {-89, 12},
-    {-90,  8}, // Failsafe usually hits here
-    {-91,  4}, // Linear part of the table end
-*/
-    {SPEKTRUM_RSSI_MIN, 0}};
+    /*
+        {-78, 56}, // Linear part of the table, can be interpolated
+        {-79, 52},
+        {-80, 48},
+        {-81, 44},
+        {-82, 40},
+        {-83, 36},
+        {-84, 32},
+        {-85, 28},
+        {-86, 24},
+        {-87, 20}, // Beta Flight default RSSI % alatm point
+        {-88, 16},
+        {-89, 12},
+        {-90,  8}, // Failsafe usually hits here
+        {-91,  4}, // Linear part of the table end
+    */
+    {SPEKTRUM_RSSI_MIN, 0}
+};
 
 // Convert dBm to Range %
-static int8_t dBm2range (int8_t dBm) {
+static int8_t dBm2range (int8_t dBm)
+{
     int8_t  retval = dbmTable[0].reportAs;
 
     dBm = constrain(dBm, SPEKTRUM_RSSI_MIN, SPEKTRUM_RSSI_MAX);
     for ( uint8_t i = 1; i < ARRAYLEN(dbmTable); i++ ) {
         if (dBm >= dbmTable[i].dBm) {
             // Linear interpolation between table points.
-            retval = map(dBm, dbmTable[i-1].dBm, dbmTable[i].dBm, dbmTable[i-1].reportAs, dbmTable[i].reportAs);
+            retval = map(dBm, dbmTable[i - 1].dBm, dbmTable[i].dBm, dbmTable[i - 1].reportAs, dbmTable[i].reportAs);
             break;
         }
     }
@@ -107,7 +110,8 @@ static int8_t dBm2range (int8_t dBm) {
 }
 #endif
 
-void spektrumHandleRSSI(volatile uint8_t spekFrame[]) {
+void spektrumHandleRSSI(volatile uint8_t spekFrame[])
+{
 #ifdef USE_SPEKTRUM_REAL_RSSI
     static int8_t spek_last_rssi = SPEKTRUM_RSSI_MAX;
     static uint8_t spek_fade_count = 0;
@@ -141,18 +145,18 @@ void spektrumHandleRSSI(volatile uint8_t spekFrame[]) {
             spek_fade_count = 0;
         }
 
-        if(rssi_channel != 0) {
+        if (rssi_channel != 0) {
 #ifdef USE_SPEKTRUM_RSSI_PERCENT_CONVERSION
             // Do an dBm to percent conversion with an approxatelly linear distance
             // and map the percentage to RSSI RC channel range
             spekChannelData[rssi_channel] = (uint16_t)(map(dBm2range (rssi),
-                                                       0, 100,
-                                                       0,resolution));
+                                                           0, 100,
+                                                           0, resolution));
 #else
             // Do a direkt dBm to percent mapping, keeping the non-linear dBm logarithmic curve.
             spekChannelData[rssi_channel] = (uint16_t)(map(rssi),
                                                        SPEKTRUM_RSSI_MIN, SPEKTRUM_RSSI_MAX,
-                                                       0,resolution));
+                                                       0, resolution));
 #endif
         }
         spek_last_rssi = rssi;
@@ -181,8 +185,8 @@ void spektrumHandleRSSI(volatile uint8_t spekFrame[]) {
             if ( !( (system == SPEKTRUM_DSM2_22) |
                     (system == SPEKTRUM_DSM2_11) |
                     (system == SPEKTRUM_DSMX_22) |
-                    (system == SPEKTRUM_DSMX_11) ) ){
-                spektrumSatInternal =false; // Nope, this is an externally bound Sat Rx
+                    (system == SPEKTRUM_DSMX_11) ) ) {
+                spektrumSatInternal = false; // Nope, this is an externally bound Sat Rx
             }
         } else {
             // External Rx, bind values 4, 6, 8, 10

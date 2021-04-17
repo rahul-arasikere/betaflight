@@ -126,7 +126,7 @@ static bool l3gd20GyroRead(gyroDev_t *gyro)
 {
     uint8_t buf[6];
 
-    spiBusReadRegisterBuffer(&gyro->bus, OUT_X_L_ADDR | READ_CMD | MULTIPLEBYTE_CMD,buf, sizeof(buf));
+    spiBusReadRegisterBuffer(&gyro->bus, OUT_X_L_ADDR | READ_CMD | MULTIPLEBYTE_CMD, buf, sizeof(buf));
 
     gyro->gyroADCRaw[0] = (int16_t)((buf[0] << 8) | buf[1]);
     gyro->gyroADCRaw[1] = (int16_t)((buf[2] << 8) | buf[3]);
@@ -144,7 +144,7 @@ uint8_t l3gd20Detect(const busDevice_t *bus)
 
     return L3GD20_SPI; // blindly assume it's present, for now.
 }
-    
+
 bool l3gd20GyroDetect(gyroDev_t *gyro)
 {
     gyro->initFn = l3gd20GyroInit;

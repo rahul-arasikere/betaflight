@@ -107,7 +107,8 @@ const serialPortIdentifier_e serialPortIdentifiers[SERIAL_PORT_COUNT] = {
 static uint8_t serialPortCount;
 
 const uint32_t baudRates[] = {0, 9600, 19200, 38400, 57600, 115200, 230400, 250000,
-        400000, 460800, 500000, 921600, 1000000, 1500000, 2000000, 2470000}; // see baudRate_e
+                              400000, 460800, 500000, 921600, 1000000, 1500000, 2000000, 2470000
+                             }; // see baudRate_e
 
 #define BAUD_RATE_COUNT (sizeof(baudRates) / sizeof(baudRates[0]))
 
@@ -154,7 +155,7 @@ void pgResetFn_serialConfig(serialConfig_t *serialConfig)
 
 #if defined(USE_VCP) && defined(USE_MSP_UART)
     if (serialConfig->portConfigs[0].identifier == SERIAL_PORT_USB_VCP) {
-        serialPortConfig_t * uart1Config = serialFindPortConfigurationMutable(SERIAL_PORT_USART1);
+        serialPortConfig_t *uart1Config = serialFindPortConfigurationMutable(SERIAL_PORT_USART1);
         if (uart1Config) {
             uart1Config->functionMask = FUNCTION_MSP;
         }
@@ -199,7 +200,8 @@ serialPortUsage_t *findSerialPortUsageByIdentifier(serialPortIdentifier_e identi
     return NULL;
 }
 
-serialPortUsage_t *findSerialPortUsageByPort(serialPort_t *serialPort) {
+serialPortUsage_t *findSerialPortUsageByPort(serialPort_t *serialPort)
+{
     uint8_t index;
     for (index = 0; index < SERIAL_PORT_COUNT; index++) {
         serialPortUsage_t *candidate = &serialPortUsageList[index];
@@ -243,7 +245,8 @@ portSharing_e determinePortSharing(const serialPortConfig_t *portConfig, serialP
     return portConfig->functionMask == function ? PORTSHARING_NOT_SHARED : PORTSHARING_SHARED;
 }
 
-bool isSerialPortShared(const serialPortConfig_t *portConfig, uint16_t functionMask, serialPortFunction_e sharedWithFunction)
+bool isSerialPortShared(const serialPortConfig_t *portConfig, uint16_t functionMask,
+                        serialPortFunction_e sharedWithFunction)
 {
     return (portConfig) && (portConfig->functionMask & sharedWithFunction) && (portConfig->functionMask & functionMask);
 }
@@ -364,60 +367,62 @@ serialPort_t *openSerialPort(
 
     switch (identifier) {
 #ifdef USE_VCP
-        case SERIAL_PORT_USB_VCP:
-            serialPort = usbVcpOpen();
-            break;
+    case SERIAL_PORT_USB_VCP:
+        serialPort = usbVcpOpen();
+        break;
 #endif
 
 #if defined(USE_UART)
 #ifdef USE_UART1
-        case SERIAL_PORT_USART1:
+    case SERIAL_PORT_USART1:
 #endif
 #ifdef USE_UART2
-        case SERIAL_PORT_USART2:
+    case SERIAL_PORT_USART2:
 #endif
 #ifdef USE_UART3
-        case SERIAL_PORT_USART3:
+    case SERIAL_PORT_USART3:
 #endif
 #ifdef USE_UART4
-        case SERIAL_PORT_UART4:
+    case SERIAL_PORT_UART4:
 #endif
 #ifdef USE_UART5
-        case SERIAL_PORT_UART5:
+    case SERIAL_PORT_UART5:
 #endif
 #ifdef USE_UART6
-        case SERIAL_PORT_USART6:
+    case SERIAL_PORT_USART6:
 #endif
 #ifdef USE_UART7
-        case SERIAL_PORT_USART7:
+    case SERIAL_PORT_USART7:
 #endif
 #ifdef USE_UART8
-        case SERIAL_PORT_USART8:
+    case SERIAL_PORT_USART8:
 #endif
 #ifdef USE_UART9
-        case SERIAL_PORT_LPUART1:
+    case SERIAL_PORT_LPUART1:
 #endif
 #if defined(SIMULATOR_BUILD)
-            // emulate serial ports over TCP
-            serialPort = serTcpOpen(SERIAL_PORT_IDENTIFIER_TO_UARTDEV(identifier), rxCallback, rxCallbackData, baudRate, mode, options);
+        // emulate serial ports over TCP
+        serialPort = serTcpOpen(SERIAL_PORT_IDENTIFIER_TO_UARTDEV(identifier), rxCallback, rxCallbackData, baudRate, mode,
+                                options);
 #else
-            serialPort = uartOpen(SERIAL_PORT_IDENTIFIER_TO_UARTDEV(identifier), rxCallback, rxCallbackData, baudRate, mode, options);
+        serialPort = uartOpen(SERIAL_PORT_IDENTIFIER_TO_UARTDEV(identifier), rxCallback, rxCallbackData, baudRate, mode,
+                              options);
 #endif
-            break;
+        break;
 #endif
 
 #ifdef USE_SOFTSERIAL1
-        case SERIAL_PORT_SOFTSERIAL1:
-            serialPort = openSoftSerial(SOFTSERIAL1, rxCallback, rxCallbackData, baudRate, mode, options);
-            break;
+    case SERIAL_PORT_SOFTSERIAL1:
+        serialPort = openSoftSerial(SOFTSERIAL1, rxCallback, rxCallbackData, baudRate, mode, options);
+        break;
 #endif
 #ifdef USE_SOFTSERIAL2
-        case SERIAL_PORT_SOFTSERIAL2:
-            serialPort = openSoftSerial(SOFTSERIAL2, rxCallback, rxCallbackData, baudRate, mode, options);
-            break;
+    case SERIAL_PORT_SOFTSERIAL2:
+        serialPort = openSoftSerial(SOFTSERIAL2, rxCallback, rxCallbackData, baudRate, mode, options);
+        break;
 #endif
-        default:
-            break;
+    default:
+        break;
     }
 
     if (!serialPort) {
@@ -478,15 +483,15 @@ void serialInit(bool softserialEnabled, serialPortIdentifier_e serialPortToDisab
 
         else if ((serialPortUsageList[index].identifier == SERIAL_PORT_SOFTSERIAL1
 #ifdef USE_SOFTSERIAL1
-            && !(softserialEnabled && (serialPinConfig()->ioTagTx[RESOURCE_SOFT_OFFSET + SOFTSERIAL1] ||
-                serialPinConfig()->ioTagRx[RESOURCE_SOFT_OFFSET + SOFTSERIAL1]))
+                  && !(softserialEnabled && (serialPinConfig()->ioTagTx[RESOURCE_SOFT_OFFSET + SOFTSERIAL1] ||
+                                             serialPinConfig()->ioTagRx[RESOURCE_SOFT_OFFSET + SOFTSERIAL1]))
 #endif
-           ) || (serialPortUsageList[index].identifier == SERIAL_PORT_SOFTSERIAL2
+                 ) || (serialPortUsageList[index].identifier == SERIAL_PORT_SOFTSERIAL2
 #ifdef USE_SOFTSERIAL2
-            && !(softserialEnabled && (serialPinConfig()->ioTagTx[RESOURCE_SOFT_OFFSET + SOFTSERIAL2] ||
-                serialPinConfig()->ioTagRx[RESOURCE_SOFT_OFFSET + SOFTSERIAL2]))
+                       && !(softserialEnabled && (serialPinConfig()->ioTagTx[RESOURCE_SOFT_OFFSET + SOFTSERIAL2] ||
+                                                  serialPinConfig()->ioTagRx[RESOURCE_SOFT_OFFSET + SOFTSERIAL2]))
 #endif
-            )) {
+                      )) {
             serialPortUsageList[index].identifier = SERIAL_PORT_NONE;
             serialPortCount--;
         }
@@ -566,16 +571,16 @@ void serialPassthrough(serialPort_t *left, serialPort_t *right, serialConsumer *
             serialWrite(right, c);
             leftC(c);
             LED0_OFF;
-         }
-         if (serialRxBytesWaiting(right)) {
-             LED0_ON;
-             uint8_t c = serialRead(right);
-             // Make sure there is space in the tx buffer
-             while (!serialTxBytesFree(left));
-             serialWrite(left, c);
-             rightC(c);
-             LED0_OFF;
-         }
-     }
- }
- #endif
+        }
+        if (serialRxBytesWaiting(right)) {
+            LED0_ON;
+            uint8_t c = serialRead(right);
+            // Make sure there is space in the tx buffer
+            while (!serialTxBytesFree(left));
+            serialWrite(left, c);
+            rightC(c);
+            LED0_OFF;
+        }
+    }
+}
+#endif

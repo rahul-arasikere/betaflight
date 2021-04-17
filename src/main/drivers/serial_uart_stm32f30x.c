@@ -199,9 +199,9 @@ const uartHardware_t uartHardware[UARTDEV_COUNT] = {
 #endif
 };
 
-void uartDmaIrqHandler(dmaChannelDescriptor_t* descriptor)
+void uartDmaIrqHandler(dmaChannelDescriptor_t *descriptor)
 {
-    uartPort_t *s = (uartPort_t*)(descriptor->userParam);
+    uartPort_t *s = (uartPort_t *)(descriptor->userParam);
     DMA_CLEAR_FLAG(descriptor, DMA_IT_TCIF);
     xDMA_Cmd(descriptor->ref, DISABLE);
 
@@ -212,9 +212,10 @@ void serialUARTInitIO(IO_t txIO, IO_t rxIO, portMode_e mode, portOptions_e optio
 {
     if ((options & SERIAL_BIDIR) && txIO) {
         ioConfig_t ioCfg = IO_CONFIG(GPIO_Mode_AF, GPIO_Speed_50MHz,
-            ((options & SERIAL_INVERTED) || (options & SERIAL_BIDIR_PP) || (options & SERIAL_BIDIR_PP_PD)) ? GPIO_OType_PP : GPIO_OType_OD,
-            ((options & SERIAL_INVERTED) || (options & SERIAL_BIDIR_PP_PD)) ? GPIO_PuPd_DOWN : GPIO_PuPd_UP
-        );
+                                     ((options & SERIAL_INVERTED) || (options & SERIAL_BIDIR_PP)
+                                      || (options & SERIAL_BIDIR_PP_PD)) ? GPIO_OType_PP : GPIO_OType_OD,
+                                     ((options & SERIAL_INVERTED) || (options & SERIAL_BIDIR_PP_PD)) ? GPIO_PuPd_DOWN : GPIO_PuPd_UP
+                                    );
 
         IOInit(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(index));
         IOConfigGPIOAF(txIO, ioCfg, af);
@@ -222,7 +223,8 @@ void serialUARTInitIO(IO_t txIO, IO_t rxIO, portMode_e mode, portOptions_e optio
         if (!(options & SERIAL_INVERTED))
             IOLo(txIO);   // OpenDrain output should be inactive
     } else {
-        ioConfig_t ioCfg = IO_CONFIG(GPIO_Mode_AF, GPIO_Speed_50MHz, GPIO_OType_PP, (options & SERIAL_INVERTED) ? GPIO_PuPd_DOWN : GPIO_PuPd_UP);
+        ioConfig_t ioCfg = IO_CONFIG(GPIO_Mode_AF, GPIO_Speed_50MHz, GPIO_OType_PP,
+                                     (options & SERIAL_INVERTED) ? GPIO_PuPd_DOWN : GPIO_PuPd_UP);
         if ((mode & MODE_TX) && txIO) {
             IOInit(txIO, OWNER_SERIAL_TX, RESOURCE_INDEX(index));
             IOConfigGPIOAF(txIO, ioCfg, af);
@@ -304,8 +306,7 @@ void uartIrqHandler(uartPort_t *s)
         }
     }
 
-    if (ISR & USART_FLAG_ORE)
-    {
+    if (ISR & USART_FLAG_ORE) {
         USART_ClearITPendingBit(s->USARTx, USART_IT_ORE);
     }
 

@@ -144,7 +144,8 @@ static void ms5611ReadAdc(busDevice_t *busdev)
 
 static void ms5611StartUT(baroDev_t *baro)
 {
-    busRawWriteRegisterStart(&baro->busdev, CMD_ADC_CONV + CMD_ADC_D2 + ms5611_osr, 1); // D2 (temperature) conversion start!
+    busRawWriteRegisterStart(&baro->busdev, CMD_ADC_CONV + CMD_ADC_D2 + ms5611_osr,
+                             1); // D2 (temperature) conversion start!
 }
 
 static bool ms5611ReadUT(baroDev_t *baro)
@@ -217,7 +218,7 @@ STATIC_UNIT_TESTED void ms5611Calculate(int32_t *pressure, int32_t *temperature)
             off -= 7 * delt;
             sens -= (11 * delt) >> 1;
         }
-    temp -= ((dT * dT) >> 31);
+        temp -= ((dT * dT) >> 31);
     }
     press = ((((int64_t)ms5611_up * sens) >> 21) - off) >> 15;
 
@@ -276,7 +277,8 @@ bool ms5611Detect(baroDev_t *baro)
 
     return true;
 
-fail:;
+fail:
+    ;
     ms5611BusDeinit(busdev);
 
     if (defaultAddressApplied) {

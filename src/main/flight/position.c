@@ -53,8 +53,8 @@ typedef enum {
 PG_REGISTER_WITH_RESET_TEMPLATE(positionConfig_t, positionConfig, PG_POSITION, 1);
 
 PG_RESET_TEMPLATE(positionConfig_t, positionConfig,
-    .altSource = DEFAULT,
-);
+                  .altSource = DEFAULT,
+                 );
 
 static int32_t estimatedAltitudeCm = 0;                // in cm
 
@@ -63,7 +63,8 @@ static int32_t estimatedAltitudeCm = 0;                // in cm
 #ifdef USE_VARIO
 static int16_t estimatedVario = 0;                   // in cm/s
 
-int16_t calculateEstimatedVario(int32_t baroAlt, const uint32_t dTime) {
+int16_t calculateEstimatedVario(int32_t baroAlt, const uint32_t dTime)
+{
     static float vel = 0;
     static int32_t lastBaroAlt = 0;
 
@@ -75,7 +76,8 @@ int16_t calculateEstimatedVario(int32_t baroAlt, const uint32_t dTime) {
     baroVel = constrain(baroVel, -1500.0f, 1500.0f);
     baroVel = applyDeadband(baroVel, 10.0f);
 
-    vel = vel * CONVERT_PARAMETER_TO_FLOAT(barometerConfig()->baro_cf_vel) + baroVel * (1.0f - CONVERT_PARAMETER_TO_FLOAT(barometerConfig()->baro_cf_vel));
+    vel = vel * CONVERT_PARAMETER_TO_FLOAT(barometerConfig()->baro_cf_vel) + baroVel * (1.0f - CONVERT_PARAMETER_TO_FLOAT(
+                barometerConfig()->baro_cf_vel));
     int32_t vel_tmp = lrintf(vel);
     vel_tmp = applyDeadband(vel_tmp, 5.0f);
 
@@ -167,7 +169,7 @@ void calculateEstimatedAltitude(timeUs_t currentTimeUs)
 #endif
     }
 
-	
+
 
     DEBUG_SET(DEBUG_ALTITUDE, 0, (int32_t)(100 * gpsTrust));
     DEBUG_SET(DEBUG_ALTITUDE, 1, baroAlt);

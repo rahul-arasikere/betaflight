@@ -72,8 +72,7 @@ static const void *menuOsdActiveElemsOnExit(displayPort_t *pDisp, const OSD_Entr
     return NULL;
 }
 
-const OSD_Entry menuOsdActiveElemsEntries[] =
-{
+const OSD_Entry menuOsdActiveElemsEntries[] = {
     {"--- ACTIV ELEM ---", OME_Label,   NULL, NULL, 0},
     {"RSSI",               OME_VISIBLE, NULL, &osdConfig_item_pos[OSD_RSSI_VALUE], DYNAMIC},
 #ifdef USE_RX_RSSI_DBM
@@ -157,7 +156,7 @@ const OSD_Entry menuOsdActiveElemsEntries[] =
 #endif
 #ifdef USE_OSD_STICK_OVERLAY
     {"STICK OVERLAY LEFT", OME_VISIBLE, NULL, &osdConfig_item_pos[OSD_STICK_OVERLAY_LEFT], DYNAMIC},
-    {"STICK OVERLAY RIGHT",OME_VISIBLE, NULL, &osdConfig_item_pos[OSD_STICK_OVERLAY_RIGHT], DYNAMIC},
+    {"STICK OVERLAY RIGHT", OME_VISIBLE, NULL, &osdConfig_item_pos[OSD_STICK_OVERLAY_RIGHT], DYNAMIC},
 #endif
     {"DISPLAY NAME",       OME_VISIBLE, NULL, &osdConfig_item_pos[OSD_DISPLAY_NAME], DYNAMIC},
     {"RC CHANNELS",        OME_VISIBLE, NULL, &osdConfig_item_pos[OSD_RC_CHANNELS], DYNAMIC},
@@ -220,8 +219,7 @@ static const void *menuAlarmsOnExit(displayPort_t *pDisp, const OSD_Entry *self)
     return NULL;
 }
 
-const OSD_Entry menuAlarmsEntries[] =
-{
+const OSD_Entry menuAlarmsEntries[] = {
     {"--- ALARMS ---", OME_Label, NULL, NULL, 0},
     {"RSSI",     OME_UINT8,  NULL, &(OSD_UINT8_t){&osdConfig_rssi_alarm, 5, 90, 5}, 0},
     {"LINK QUALITY", OME_UINT16,  NULL, &(OSD_UINT16_t){&osdConfig_link_quality_alarm, 5, 300, 5}, 0},
@@ -276,10 +274,9 @@ static const void *menuTimersOnExit(displayPort_t *pDisp, const OSD_Entry *self)
     return NULL;
 }
 
-static const char * osdTimerPrecisionNames[] = {"SCND", "HDTH"};
+static const char *osdTimerPrecisionNames[] = {"SCND", "HDTH"};
 
-const OSD_Entry menuTimersEntries[] =
-{
+const OSD_Entry menuTimersEntries[] = {
     {"--- TIMERS ---", OME_Label, NULL, NULL, 0},
     {"1 SRC",          OME_TAB,   NULL, &(OSD_TAB_t){&timerSource[OSD_TIMER_1], OSD_TIMER_SRC_COUNT - 1, osdTimerSourceNames}, 0 },
     {"1 PREC",         OME_TAB,   NULL, &(OSD_TAB_t){&timerPrecision[OSD_TIMER_1], OSD_TIMER_PREC_COUNT - 1, osdTimerPrecisionNames}, 0},
@@ -368,8 +365,7 @@ static const void *cmsx_osdBackgroundUpdate(displayPort_t *pDisp, const void *se
     return NULL;
 }
 
-const OSD_Entry cmsx_menuOsdEntries[] =
-{
+const OSD_Entry cmsx_menuOsdEntries[] = {
     {"---OSD---",   OME_Label,   NULL,          NULL,                0},
 #ifdef USE_OSD_PROFILES
     {"OSD PROFILE", OME_UINT8, NULL, &(OSD_UINT8_t){&osdConfig_osdProfileIndex, 1, 3, 1}, 0},
@@ -384,7 +380,7 @@ const OSD_Entry cmsx_menuOsdEntries[] =
     {"BRT BLACK", OME_UINT8, cmsx_max7456Update, &(OSD_UINT8_t){&displayPortProfileMax7456_blackBrightness, 0, 3, 1}, 0},
     {"BRT WHITE", OME_UINT8, cmsx_max7456Update, &(OSD_UINT8_t){&displayPortProfileMax7456_whiteBrightness, 0, 3, 1}, 0},
 #endif
-    {"BACKGROUND",OME_TAB,   cmsx_osdBackgroundUpdate, &(OSD_TAB_t){&osdMenuBackgroundType, DISPLAY_BACKGROUND_COUNT - 1, lookupTableCMSMenuBackgroundType}, 0},
+    {"BACKGROUND", OME_TAB,   cmsx_osdBackgroundUpdate, &(OSD_TAB_t){&osdMenuBackgroundType, DISPLAY_BACKGROUND_COUNT - 1, lookupTableCMSMenuBackgroundType}, 0},
     {"BACK", OME_Back, NULL, NULL, 0},
     {NULL,   OME_END,  NULL, NULL, 0}
 };
