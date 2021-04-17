@@ -103,18 +103,6 @@ void updateState(const fdm_packet* pkt) {
         return;
     }
 
-    int16_t x,y,z;
-    x = constrain(-pkt->imu_linear_acceleration_xyz[0] * ACC_SCALE, -32767, 32767);
-    y = constrain(-pkt->imu_linear_acceleration_xyz[1] * ACC_SCALE, -32767, 32767);
-    z = constrain(-pkt->imu_linear_acceleration_xyz[2] * ACC_SCALE, -32767, 32767);
-    fakeAccSet(fakeAccDev, x, y, z);
-//    printf("[acc]%lf,%lf,%lf\n", pkt->imu_linear_acceleration_xyz[0], pkt->imu_linear_acceleration_xyz[1], pkt->imu_linear_acceleration_xyz[2]);
-
-    x = constrain(pkt->imu_angular_velocity_rpy[0] * GYRO_SCALE * RAD2DEG, -32767, 32767);
-    y = constrain(-pkt->imu_angular_velocity_rpy[1] * GYRO_SCALE * RAD2DEG, -32767, 32767);
-    z = constrain(-pkt->imu_angular_velocity_rpy[2] * GYRO_SCALE * RAD2DEG, -32767, 32767);
-    fakeGyroSet(fakeGyroDev, x, y, z);
-//    printf("[gyr]%lf,%lf,%lf\n", pkt->imu_angular_velocity_rpy[0], pkt->imu_angular_velocity_rpy[1], pkt->imu_angular_velocity_rpy[2]);
 
 #if !defined(USE_IMU_CALC)
 #if defined(SET_IMU_FROM_EULER)
@@ -213,7 +201,7 @@ void systemInit(void) {
     clock_gettime(CLOCK_MONOTONIC, &start_time);
     printf("[system]Init...\n");
 
-    SystemCoreClock = 500 * 1e6; // fake 500MHz
+    SystemCoreClock = 500 * 1e6; // iio 500MHz
 
     if (pthread_mutex_init(&updateLock, NULL) != 0) {
         printf("Create updateLock error!\n");
@@ -515,7 +503,7 @@ uint16_t adcGetChannel(uint8_t channel) {
 char _estack;
 char _Min_Stack_Size;
 
-// fake EEPROM
+// iio EEPROM
 static FILE *eepromFd = NULL;
 
 void FLASH_Unlock(void) {
