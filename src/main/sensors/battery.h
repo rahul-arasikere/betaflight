@@ -96,7 +96,7 @@ void batteryUpdatePresence(void);
 batteryState_e getBatteryState(void);
 batteryState_e getVoltageState(void);
 batteryState_e getConsumptionState(void);
-const  char * getBatteryStateString(void);
+const  char *getBatteryStateString(void);
 
 void batteryUpdateStates(timeUs_t currentTimeUs);
 void batteryUpdateAlarms(void);

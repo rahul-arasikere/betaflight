@@ -28,7 +28,7 @@ typedef enum {
 
     // the order of these 8 values also correlate to corresponding code in ALIGNMENT_TO_BITMASK.
 
-                            // R, P, Y
+    // R, P, Y
     CW0_DEG = 1,            // 00,00,00
     CW90_DEG = 2,           // 00,00,01
     CW180_DEG = 3,          // 00,00,10
@@ -69,5 +69,5 @@ typedef union sensorAlignment_u {
 #define CUSTOM_ALIGN_CW180_DEG_FLIP  SENSOR_ALIGNMENT(  0, 180, 180)
 #define CUSTOM_ALIGN_CW270_DEG_FLIP  SENSOR_ALIGNMENT(  0, 180, 270)
 
-void buildRotationMatrixFromAlignment(const sensorAlignment_t* alignment, fp_rotationMatrix_t* rm);
-void buildAlignmentFromStandardAlignment(sensorAlignment_t* sensorAlignment, sensor_align_e alignment);
+void buildRotationMatrixFromAlignment(const sensorAlignment_t *alignment, fp_rotationMatrix_t *rm);
+void buildAlignmentFromStandardAlignment(sensorAlignment_t *sensorAlignment, sensor_align_e alignment);

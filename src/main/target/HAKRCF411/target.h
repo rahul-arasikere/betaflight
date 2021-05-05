@@ -17,7 +17,7 @@
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 
 #pragma once
 
@@ -42,7 +42,7 @@
 
 // XXX CAMERA_CONTROL_PIN is deprecated.
 // XXX Target maintainer must create a valid timerHardware[] array entry for PB5 with TIM_USE_CAMERA_CONTROL
-//#define CAMERA_CONTROL_PIN 	PB5
+//#define CAMERA_CONTROL_PIN    PB5
 
 #define USE_SPI
 #define USE_SPI_DEVICE_1
@@ -99,19 +99,19 @@
 
 #define USE_SPI_DEVICE_2
 #define SPI3_SCK_PIN            PB13
-#define SPI3_MISO_PIN           PB14 
+#define SPI3_MISO_PIN           PB14
 #define SPI3_MOSI_PIN           PB15
 
 #define USE_OSD
 #define USE_MAX7456
 #define MAX7456_SPI_INSTANCE    SPI2
-#define MAX7456_SPI_CS_PIN      PB12 
+#define MAX7456_SPI_CS_PIN      PB12
 
 #define USE_ADC
 #define VBAT_ADC_PIN            PA0
 #define CURRENT_METER_ADC_PIN   PA1
 
- 
+
 #define DEFAULT_VOLTAGE_METER_SOURCE    VOLTAGE_METER_ADC
 #define DEFAULT_CURRENT_METER_SOURCE    CURRENT_METER_ADC
 
@@ -124,7 +124,7 @@
 #define USE_ESCSERIAL
 #define ESCSERIAL_TIMER_TX_PIN PA3
 
-#define INVERTER_PIN_UART1      PB4 
+#define INVERTER_PIN_UART1      PB4
 
 #define TARGET_IO_PORTA         0xffff
 #define TARGET_IO_PORTB         0xffff

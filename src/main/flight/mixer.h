@@ -30,8 +30,7 @@
 #define QUAD_MOTOR_COUNT 4
 
 // Note: this is called MultiType/MULTITYPE_* in baseflight.
-typedef enum mixerMode
-{
+typedef enum mixerMode {
     MIXER_TRI = 1,
     MIXER_QUADP = 2,
     MIXER_QUADX = 3,
@@ -60,8 +59,7 @@ typedef enum mixerMode
     MIXER_QUADX_1234 = 26
 } mixerMode_e;
 
-typedef enum mixerType
-{
+typedef enum mixerType {
     MIXER_LEGACY = 0,
     MIXER_LINEAR = 1,
     MIXER_DYNAMIC = 2,

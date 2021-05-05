@@ -35,7 +35,7 @@
 #define GYRO_1_EXTI_PIN         PC4
 #define GYRO_2_EXTI_PIN         PB0
 
-#define GYRO_1_CS_PIN                       PB2   
+#define GYRO_1_CS_PIN                       PB2
 #define GYRO_1_SPI_INSTANCE                 SPI1
 #define GYRO_2_CS_PIN                       PB1
 #define GYRO_2_SPI_INSTANCE                 SPI1
@@ -55,7 +55,7 @@
 
 #define GYRO_2_ALIGN                CW180_DEG
 
-#define GYRO_CONFIG_USE_GYRO_DEFAULT GYRO_CONFIG_USE_GYRO_1 
+#define GYRO_CONFIG_USE_GYRO_DEFAULT GYRO_CONFIG_USE_GYRO_1
 
 #define USE_BARO
 #define USE_BARO_MS5611
@@ -85,7 +85,7 @@
 
 #define UART5_TX_PIN            PC12
 #define UART5_RX_PIN            PD2
-#define SERIAL_PORT_COUNT       6 
+#define SERIAL_PORT_COUNT       6
 
 #define USE_I2C
 #define USE_I2C_DEVICE_1

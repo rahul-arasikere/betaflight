@@ -30,7 +30,7 @@
 #include "sensors/esc_sensor.h"
 
 #define OSD_NUM_TIMER_TYPES 4
-extern const char * const osdTimerSourceNames[OSD_NUM_TIMER_TYPES];
+extern const char *const osdTimerSourceNames[OSD_NUM_TIMER_TYPES];
 
 #define OSD_ELEMENT_BUFFER_LENGTH 32
 
@@ -354,4 +354,5 @@ bool osdElementVisible(uint16_t value);
 bool osdGetVisualBeeperState(void);
 statistic_t *osdGetStats(void);
 bool osdNeedsAccelerometer(void);
-int osdPrintFloat(char *buffer, char leadingSymbol, float value, char *formatString, unsigned decimalPlaces, bool round, char trailingSymbol);
+int osdPrintFloat(char *buffer, char leadingSymbol, float value, char *formatString, unsigned decimalPlaces, bool round,
+                  char trailingSymbol);

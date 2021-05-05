@@ -79,7 +79,7 @@
 #define USE_I2C_DEVICE_1
 #define I2C_DEVICE              (I2CDEV_1)
 #define I2C1_SCL                PB6
-#define I2C1_SDA                PB7      
+#define I2C1_SDA                PB7
 
 // *************** BARO **************************
 #define USE_BARO
@@ -90,7 +90,7 @@
 
 // *************** MAG **************************
 #define USE_MAG
-#define MAG_I2C_INSTANCE        (I2CDEV_1) 
+#define MAG_I2C_INSTANCE        (I2CDEV_1)
 #define USE_MAG_AK8975
 #define USE_MAG_HMC5883
 #define USE_MAG_QMC5883l

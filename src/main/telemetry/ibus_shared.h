@@ -80,8 +80,8 @@ typedef enum {
 
 #if defined(USE_TELEMETRY) && defined(USE_TELEMETRY_IBUS)
 
-uint8_t respondToIbusRequest(uint8_t const * const ibusPacket);
-void initSharedIbusTelemetry(serialPort_t * port);
+uint8_t respondToIbusRequest(uint8_t const *const ibusPacket);
+void initSharedIbusTelemetry(serialPort_t *port);
 
 #endif //defined(TELEMETRY) && defined(TELEMETRY_IBUS)
 

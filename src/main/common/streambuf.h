@@ -47,8 +47,8 @@ uint32_t sbufReadU32(sbuf_t *src);
 void sbufReadData(sbuf_t *dst, void *data, int len);
 
 int sbufBytesRemaining(sbuf_t *buf);
-uint8_t* sbufPtr(sbuf_t *buf);
-const uint8_t* sbufConstPtr(const sbuf_t *buf);
+uint8_t *sbufPtr(sbuf_t *buf);
+const uint8_t *sbufConstPtr(const sbuf_t *buf);
 void sbufAdvance(sbuf_t *buf, int size);
 
-void sbufSwitchToReader(sbuf_t *buf, uint8_t * base);
+void sbufSwitchToReader(sbuf_t *buf, uint8_t *base);

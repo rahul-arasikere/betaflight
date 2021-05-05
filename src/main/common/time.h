@@ -43,7 +43,10 @@ typedef uint32_t timeUs_t;
 #define TIMEZONE_OFFSET_MINUTES_MIN -780  // -13 hours
 #define TIMEZONE_OFFSET_MINUTES_MAX 780   // +13 hours
 
-static inline timeDelta_t cmpTimeUs(timeUs_t a, timeUs_t b) { return (timeDelta_t)(a - b); }
+static inline timeDelta_t cmpTimeUs(timeUs_t a, timeUs_t b)
+{
+    return (timeDelta_t)(a - b);
+}
 
 #define FORMATTED_DATE_TIME_BUFSIZE 30
 

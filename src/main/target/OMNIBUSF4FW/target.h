@@ -31,7 +31,7 @@
 #define TARGET_BOARD_IDENTIFIER "OBV6"
 #elif defined(OMNIBUSF4FW1)
 #define TARGET_BOARD_IDENTIFIER "OFW1"
-#else 
+#else
 #define TARGET_BOARD_IDENTIFIER "OBFW"
 #endif
 

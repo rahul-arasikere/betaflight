@@ -101,7 +101,7 @@
 #define UART5_RX_PIN            PD2
 
 #if (SPRACINGF7DUAL_REV <= 1)
-    #define TARGET_USART_CONFIG
+#define TARGET_USART_CONFIG
 #endif
 
 // TODO
@@ -159,7 +159,7 @@
 #define USE_ADC
 // It's possible to use ADC1 or ADC3 on this target, same pins.
 //#define ADC_INSTANCE                        ADC1
-//#define ADC1_DMA_OPT                        0  // DMA 2 Stream 0 Channel 0 
+//#define ADC1_DMA_OPT                        0  // DMA 2 Stream 0 Channel 0
 
 
 // Using ADC3 frees up DMA2_Stream0 for SPI1_RX (not necessarily, SPI1_RX has DMA2_Stream2 as well)

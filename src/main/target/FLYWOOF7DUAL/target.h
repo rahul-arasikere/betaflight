@@ -20,7 +20,7 @@
 
 #pragma once
 
-#define USE_TARGET_CONFIG					 
+#define USE_TARGET_CONFIG
 #define TARGET_BOARD_IDENTIFIER "FWF7"
 #define USBD_PRODUCT_STRING  "FLYWOOF7DUAL"
 
@@ -37,7 +37,7 @@
 #define GYRO_1_EXTI_PIN         PC3
 #define GYRO_2_EXTI_PIN         PC4
 
-#define GYRO_1_CS_PIN                       PA4 
+#define GYRO_1_CS_PIN                       PA4
 #define GYRO_1_SPI_INSTANCE                 SPI1
 #define GYRO_2_CS_PIN                       PB2
 #define GYRO_2_SPI_INSTANCE                 SPI1
@@ -53,7 +53,7 @@
 #define USE_ACC_SPI_MPU6000
 #define USE_ACC_SPI_ICM20689
 #define GYRO_1_ALIGN                CW180_DEG_FLIP
-#define GYRO_2_ALIGN                CW270_DEG 
+#define GYRO_2_ALIGN                CW270_DEG
 #define GYRO_CONFIG_USE_GYRO_DEFAULT GYRO_CONFIG_USE_GYRO_2
 
 #define USE_BARO

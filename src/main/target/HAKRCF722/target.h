@@ -83,7 +83,7 @@
 #define USE_FLASHFS
 #define USE_FLASH_M25P16
 #define FLASH_CS_PIN           PB12
-#define FLASH_SPI_INSTANCE     SPI2          
+#define FLASH_SPI_INSTANCE     SPI2
 
 #define ENABLE_DSHOT_DMAR       DSHOT_DMAR_ON
 

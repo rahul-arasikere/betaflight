@@ -76,17 +76,18 @@
    command class requests. */
 typedef struct __attribute__ ((packed))
 {
-  uint32_t bitrate;
-  uint8_t  format;
-  uint8_t  paritytype;
-  uint8_t  datatype;
-} LINE_CODING;
+    uint32_t bitrate;
+    uint8_t  format;
+    uint8_t  paritytype;
+    uint8_t  datatype;
+}
+LINE_CODING;
 
 extern USBD_CDC_ItfTypeDef  USBD_CDC_fops;
 
 uint32_t CDC_Send_DATA(const uint8_t *ptrBuffer, uint32_t sendLength);
 uint32_t CDC_Send_FreeBytes(void);
-uint32_t CDC_Receive_DATA(uint8_t* recvBuf, uint32_t len);
+uint32_t CDC_Receive_DATA(uint8_t *recvBuf, uint32_t len);
 uint32_t CDC_Receive_BytesAvailable(void);
 uint8_t usbIsConfigured(void);
 uint8_t usbIsConnected(void);

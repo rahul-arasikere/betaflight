@@ -115,7 +115,7 @@ typedef struct resourceOwner_s {
     uint8_t resourceIndex;
 } resourceOwner_t;
 
-extern const char * const ownerNames[OWNER_TOTAL_COUNT];
+extern const char *const ownerNames[OWNER_TOTAL_COUNT];
 
 #define RESOURCE_INDEX(x) (x + 1)
 #define RESOURCE_SOFT_OFFSET    10

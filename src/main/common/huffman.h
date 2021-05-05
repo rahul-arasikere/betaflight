@@ -43,5 +43,7 @@ struct huffmanInfo_s {
 
 #define HUFFMAN_INFO_SIZE sizeof(struct huffmanInfo_s)
 
-int huffmanEncodeBuf(uint8_t *outBuf, int outBufLen, const uint8_t *inBuf, int inLen, const huffmanTable_t *huffmanTable);
-int huffmanEncodeBufStreaming(huffmanState_t *state, const uint8_t *inBuf, int inLen, const huffmanTable_t *huffmanTable);
+int huffmanEncodeBuf(uint8_t *outBuf, int outBufLen, const uint8_t *inBuf, int inLen,
+                     const huffmanTable_t *huffmanTable);
+int huffmanEncodeBufStreaming(huffmanState_t *state, const uint8_t *inBuf, int inLen,
+                              const huffmanTable_t *huffmanTable);

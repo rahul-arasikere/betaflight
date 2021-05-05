@@ -69,7 +69,7 @@ typedef enum {
     FAILSAFE_PROCEDURE_COUNT   // must be last
 } failsafeProcedure_e;
 
-extern const char * const failsafeProcedureNames[FAILSAFE_PROCEDURE_COUNT];
+extern const char *const failsafeProcedureNames[FAILSAFE_PROCEDURE_COUNT];
 
 typedef enum {
     FAILSAFE_SWITCH_MODE_STAGE1 = 0,

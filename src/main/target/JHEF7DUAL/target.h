@@ -55,7 +55,7 @@
 #define USE_ACC_SPI_MPU6000
 #define USE_ACC_SPI_ICM20689
 
-#define GYRO_1_ALIGN            CW90_DEG 
+#define GYRO_1_ALIGN            CW90_DEG
 
 #define GYRO_2_ALIGN            CW90_DEG
 

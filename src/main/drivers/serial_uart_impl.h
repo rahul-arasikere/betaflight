@@ -163,7 +163,7 @@ typedef struct uartPinDef_s {
 
 typedef struct uartHardware_s {
     UARTDevice_e device;    // XXX Not required for full allocation
-    USART_TypeDef* reg;
+    USART_TypeDef *reg;
 
 #ifdef USE_DMA
     dmaResource_t *txDMAResource;
@@ -226,7 +226,7 @@ void uartReconfigure(uartPort_t *uartPort);
 
 void uartConfigureDma(uartDevice_t *uartdev);
 
-void uartDmaIrqHandler(dmaChannelDescriptor_t* descriptor);
+void uartDmaIrqHandler(dmaChannelDescriptor_t *descriptor);
 
 #if defined(STM32F3) || defined(STM32F7) || defined(STM32H7) || defined(STM32G4)
 #define UART_REG_RXD(base) ((base)->RDR)

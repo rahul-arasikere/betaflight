@@ -45,14 +45,16 @@ __STATIC_INLINE uint32_t LL_EX_DMA_Channel_to_Channel(DMA_Channel_TypeDef *DMAx_
 #undef DMA_FIRST_CHANNEL_OFFSET
 #undef DMA_CHANNEL_SIZE
 
-__STATIC_INLINE uint32_t LL_EX_DMA_Init(DMA_Channel_TypeDef *DMAx_Channely, LL_DMA_InitTypeDef *DMA_InitStruct) {
+__STATIC_INLINE uint32_t LL_EX_DMA_Init(DMA_Channel_TypeDef *DMAx_Channely, LL_DMA_InitTypeDef *DMA_InitStruct)
+{
     DMA_TypeDef *DMA = LL_EX_DMA_Channel_to_DMA(DMAx_Channely);
     const uint32_t Channel = LL_EX_DMA_Channel_to_Channel(DMAx_Channely);
 
     return LL_DMA_Init(DMA, Channel, DMA_InitStruct);
 }
 
-__STATIC_INLINE uint32_t LL_EX_DMA_DeInit(DMA_Channel_TypeDef *DMAx_Channely) {
+__STATIC_INLINE uint32_t LL_EX_DMA_DeInit(DMA_Channel_TypeDef *DMAx_Channely)
+{
     DMA_TypeDef *DMA = LL_EX_DMA_Channel_to_DMA(DMAx_Channely);
     const uint32_t Channel = LL_EX_DMA_Channel_to_Channel(DMAx_Channely);
 
@@ -74,12 +76,12 @@ __STATIC_INLINE void LL_EX_DMA_EnableIT_TC(DMA_Channel_TypeDef *DMAx_Channely)
     SET_BIT(DMAx_Channely->CCR, DMA_CCR_TCIE);
 }
 
-__STATIC_INLINE void LL_EX_DMA_SetDataLength(DMA_Channel_TypeDef* DMAx_Channely, uint32_t NbData)
+__STATIC_INLINE void LL_EX_DMA_SetDataLength(DMA_Channel_TypeDef *DMAx_Channely, uint32_t NbData)
 {
     MODIFY_REG(DMAx_Channely->CNDTR, DMA_CNDTR_NDT, NbData);
 }
 
-__STATIC_INLINE uint32_t LL_EX_DMA_GetDataLength(DMA_Channel_TypeDef* DMAx_Channely)
+__STATIC_INLINE uint32_t LL_EX_DMA_GetDataLength(DMA_Channel_TypeDef *DMAx_Channely)
 {
     return READ_BIT(DMAx_Channely->CNDTR, DMA_CNDTR_NDT);
 }

@@ -31,7 +31,7 @@
 #define USE_BEEPER
 #define BEEPER_PIN              PA15
 #define BEEPER_INVERTED
-#define BEEPER_PWM_HZ           2500 
+#define BEEPER_PWM_HZ           2500
 
 // *************** SPI1 & SPI4, Gyro & ACC *******************
 
@@ -53,7 +53,7 @@
 #define USE_ACC_SPI_MPU6000
 #define GYRO_1_ALIGN            CW0_DEG_FLIP
 
-#define USE_SPI_DEVICE_4 
+#define USE_SPI_DEVICE_4
 #define GYRO_2_SPI_INSTANCE     SPI4  //ICM20602
 #define SPI4_SCK_PIN            PE12
 #define SPI4_MISO_PIN           PE13
@@ -148,7 +148,7 @@
 #define USE_UART8
 #define UART8_TX_PIN            PE1
 #define UART8_RX_PIN            PE0
-     
+
 #define USE_SOFTSERIAL1
 #define SOFTSERIAL1_TX_PIN      PC6 // TX6 Pad
 

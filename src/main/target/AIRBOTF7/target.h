@@ -51,7 +51,7 @@
 
 
 #define GYRO_2_SPI_INSTANCE     SPI1
-#define GYRO_2_CS_PIN           PC4        
+#define GYRO_2_CS_PIN           PC4
 #define GYRO_2_EXTI_PIN         NONE
 #define GYRO_2_ALIGN            CW0_DEG
 

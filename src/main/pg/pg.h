@@ -56,10 +56,22 @@ typedef struct pgRegistry_s {
     } reset;
 } pgRegistry_t;
 
-static inline uint16_t pgN(const pgRegistry_t* reg) {return reg->pgn & PGR_PGN_MASK;}
-static inline uint8_t pgVersion(const pgRegistry_t* reg) {return (uint8_t)(reg->pgn >> 12);}
-static inline uint16_t pgSize(const pgRegistry_t* reg) {return reg->size & PGR_SIZE_MASK;}
-static inline uint16_t pgElementSize(const pgRegistry_t* reg) {return (reg->size & PGR_SIZE_MASK) / reg->length;}
+static inline uint16_t pgN(const pgRegistry_t *reg)
+{
+    return reg->pgn & PGR_PGN_MASK;
+}
+static inline uint8_t pgVersion(const pgRegistry_t *reg)
+{
+    return (uint8_t)(reg->pgn >> 12);
+}
+static inline uint16_t pgSize(const pgRegistry_t *reg)
+{
+    return reg->size & PGR_SIZE_MASK;
+}
+static inline uint16_t pgElementSize(const pgRegistry_t *reg)
+{
+    return (reg->size & PGR_SIZE_MASK) / reg->length;
+}
 
 #define PG_PACKED __attribute__((packed))
 
@@ -191,11 +203,11 @@ extern const uint8_t __pg_resetdata_end[];
 #define CONVERT_PARAMETER_TO_FLOAT(param) (0.001f * param)
 #define CONVERT_PARAMETER_TO_PERCENT(param) (0.01f * param)
 
-const pgRegistry_t* pgFind(pgn_t pgn);
+const pgRegistry_t *pgFind(pgn_t pgn);
 
-bool pgLoad(const pgRegistry_t* reg, const void *from, int size, int version);
-int pgStore(const pgRegistry_t* reg, void *to, int size);
+bool pgLoad(const pgRegistry_t *reg, const void *from, int size, int version);
+int pgStore(const pgRegistry_t *reg, void *to, int size);
 void pgResetAll(void);
 void pgResetInstance(const pgRegistry_t *reg, uint8_t *base);
 bool pgResetCopy(void *copy, pgn_t pgn);
-void pgReset(const pgRegistry_t* reg);
+void pgReset(const pgRegistry_t *reg);

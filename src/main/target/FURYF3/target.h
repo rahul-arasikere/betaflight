@@ -21,10 +21,10 @@
 #pragma once
 
 #ifdef FURYF3OSD
-    #define TARGET_BOARD_IDENTIFIER "FY3O"
+#define TARGET_BOARD_IDENTIFIER "FY3O"
 //    #define USBD_PRODUCT_STRING     "FuryF3OSD"
 #else
-    #define TARGET_BOARD_IDENTIFIER "FYF3"
+#define TARGET_BOARD_IDENTIFIER "FYF3"
 //    #define USBD_PRODUCT_STRING     "FuryF3"
 #endif
 
@@ -67,39 +67,39 @@
 #define SPI2_MOSI_PIN           PB15
 
 #ifdef FURYF3OSD
-    // include the max7456 driver
-    #define USE_MAX7456
-    #define MAX7456_SPI_INSTANCE    SPI1
-    #define MAX7456_SPI_CS_PIN      PC13
+// include the max7456 driver
+#define USE_MAX7456
+#define MAX7456_SPI_INSTANCE    SPI1
+#define MAX7456_SPI_CS_PIN      PC13
 
-    #define USE_FLASHFS
-    #define USE_FLASH_M25P16
-    #define FLASH_CS_PIN            PB12
-    #define FLASH_SPI_INSTANCE      SPI2
+#define USE_FLASHFS
+#define USE_FLASH_M25P16
+#define FLASH_CS_PIN            PB12
+#define FLASH_SPI_INSTANCE      SPI2
 
-    #define ENABLE_BLACKBOX_LOGGING_ON_SPIFLASH_BY_DEFAULT
+#define ENABLE_BLACKBOX_LOGGING_ON_SPIFLASH_BY_DEFAULT
 
-    #define DEFAULT_FEATURES        (FEATURE_OSD)
-    #define DEFAULT_CURRENT_METER_SOURCE CURRENT_METER_ADC
+#define DEFAULT_FEATURES        (FEATURE_OSD)
+#define DEFAULT_CURRENT_METER_SOURCE CURRENT_METER_ADC
 #else
 
-    #define USE_SDCARD
-    #define USE_SDCARD_SPI
-    #define SDCARD_DETECT_INVERTED
-    #define SDCARD_DETECT_PIN                   PB2
-    #define SDCARD_SPI_INSTANCE                 SPI2
-    #define SDCARD_SPI_CS_PIN                   SPI2_NSS_PIN
+#define USE_SDCARD
+#define USE_SDCARD_SPI
+#define SDCARD_DETECT_INVERTED
+#define SDCARD_DETECT_PIN                   PB2
+#define SDCARD_SPI_INSTANCE                 SPI2
+#define SDCARD_SPI_CS_PIN                   SPI2_NSS_PIN
 
-    // Note, this is the same DMA channel as UART1_RX. Luckily we don't use DMA for USART Rx.
-    #define SDCARD_DMA_CHANNEL_TX               DMA1_Channel5
+// Note, this is the same DMA channel as UART1_RX. Luckily we don't use DMA for USART Rx.
+#define SDCARD_DMA_CHANNEL_TX               DMA1_Channel5
 
-    // Performance logging for SD card operations:
-    // #define AFATFS_USE_INTROSPECTIVE_LOGGING
+// Performance logging for SD card operations:
+// #define AFATFS_USE_INTROSPECTIVE_LOGGING
 
-    #define ENABLE_BLACKBOX_LOGGING_ON_SDCARD_BY_DEFAULT
+#define ENABLE_BLACKBOX_LOGGING_ON_SDCARD_BY_DEFAULT
 
-    #define USE_BARO
-    #define USE_BARO_MS5611
+#define USE_BARO
+#define USE_BARO_MS5611
 
 #endif
 

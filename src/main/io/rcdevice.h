@@ -97,8 +97,8 @@ typedef enum {
 
 typedef enum {
     RCDEVICE_PROTOCOL_RCSPLIT_VERSION = 0x00, // this is used to indicate the
-                                              // device that using rcsplit
-                                              // firmware version that <= 1.1.0
+    // device that using rcsplit
+    // firmware version that <= 1.1.0
     RCDEVICE_PROTOCOL_VERSION_1_0 = 0x01,
     RCDEVICE_PROTOCOL_UNKNOWN
 } rcdevice_protocol_version_e;
@@ -126,7 +126,7 @@ typedef enum {
 } rcdeviceResponseStatus_e;
 
 typedef struct rcdeviceResponseParseContext_s rcdeviceResponseParseContext_t;
-typedef void(*rcdeviceRespParseFunc)(rcdeviceResponseParseContext_t*);
+typedef void(*rcdeviceRespParseFunc)(rcdeviceResponseParseContext_t *);
 struct rcdeviceResponseParseContext_s {
     uint8_t command;
     uint8_t expectedRespLen; // total length of response data
@@ -167,9 +167,10 @@ bool runcamDeviceSimulateCameraButton(runcamDevice_t *device, uint8_t operation)
 // 5 key osd cable simulation
 void runcamDeviceOpen5KeyOSDCableConnection(runcamDevice_t *device, rcdeviceRespParseFunc parseFunc);
 void runcamDeviceClose5KeyOSDCableConnection(runcamDevice_t *device, rcdeviceRespParseFunc parseFunc);
-void runcamDeviceSimulate5KeyOSDCableButtonPress(runcamDevice_t *device, uint8_t operation, rcdeviceRespParseFunc parseFunc);
+void runcamDeviceSimulate5KeyOSDCableButtonPress(runcamDevice_t *device, uint8_t operation,
+                                                 rcdeviceRespParseFunc parseFunc);
 void runcamDeviceSimulate5KeyOSDCableButtonRelease(runcamDevice_t *device, rcdeviceRespParseFunc parseFunc);
 
 void runcamDeviceSendAttitude(runcamDevice_t *device);
 
-runcamDeviceRequest_t* rcdeviceGetRequest();
+runcamDeviceRequest_t *rcdeviceGetRequest();

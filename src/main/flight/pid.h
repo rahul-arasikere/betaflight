@@ -426,11 +426,11 @@ float pidGetAirmodeThrottleOffset();
 #include "sensors/acceleration.h"
 extern float axisError[XYZ_AXIS_COUNT];
 void applyItermRelax(const int axis, const float iterm,
-    const float gyroRate, float *itermErrorRate, float *currentPidSetpoint);
+                     const float gyroRate, float *itermErrorRate, float *currentPidSetpoint);
 void applyAbsoluteControl(const int axis, const float gyroRate, float *currentPidSetpoint, float *itermErrorRate);
 void rotateItermAndAxisError();
 float pidLevel(int axis, const pidProfile_t *pidProfile,
-    const rollAndPitchTrims_t *angleTrim, float currentPidSetpoint);
+               const rollAndPitchTrims_t *angleTrim, float currentPidSetpoint);
 float calcHorizonLevelStrength(void);
 #endif
 void dynLpfDTermUpdate(float throttle);

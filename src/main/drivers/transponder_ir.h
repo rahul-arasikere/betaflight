@@ -74,19 +74,19 @@
  */
 #if defined(STM32F3) || defined(UNIT_TEST)
 
-    typedef union transponderIrDMABuffer_s {
-        uint8_t arcitimer[TRANSPONDER_DMA_BUFFER_SIZE_ARCITIMER]; // 620
-        uint8_t ilap[TRANSPONDER_DMA_BUFFER_SIZE_ILAP]; // 720
-        uint8_t erlt[TRANSPONDER_DMA_BUFFER_SIZE_ERLT]; // 91-200
-    } transponderIrDMABuffer_t;
+typedef union transponderIrDMABuffer_s {
+    uint8_t arcitimer[TRANSPONDER_DMA_BUFFER_SIZE_ARCITIMER]; // 620
+    uint8_t ilap[TRANSPONDER_DMA_BUFFER_SIZE_ILAP]; // 720
+    uint8_t erlt[TRANSPONDER_DMA_BUFFER_SIZE_ERLT]; // 91-200
+} transponderIrDMABuffer_t;
 
 #elif defined(STM32F4) || defined(STM32F7) || defined(STM32H7) || defined(STM32G4)
 
-    typedef union transponderIrDMABuffer_s {
-        uint32_t arcitimer[TRANSPONDER_DMA_BUFFER_SIZE_ARCITIMER]; // 620
-        uint32_t ilap[TRANSPONDER_DMA_BUFFER_SIZE_ILAP]; // 720
-        uint32_t erlt[TRANSPONDER_DMA_BUFFER_SIZE_ERLT]; // 91-200
-    } transponderIrDMABuffer_t;
+typedef union transponderIrDMABuffer_s {
+    uint32_t arcitimer[TRANSPONDER_DMA_BUFFER_SIZE_ARCITIMER]; // 620
+    uint32_t ilap[TRANSPONDER_DMA_BUFFER_SIZE_ILAP]; // 720
+    uint32_t erlt[TRANSPONDER_DMA_BUFFER_SIZE_ERLT]; // 91-200
+} transponderIrDMABuffer_t;
 #endif
 
 typedef struct transponder_s {
@@ -96,9 +96,9 @@ typedef struct transponder_s {
     uint16_t bitToggleOne;
     uint32_t dma_buffer_size;
 
-    #if defined(STM32F3) || defined(STM32F4)|| defined(STM32F7) || defined(STM32H7) || defined(STM32G4) || defined(UNIT_TEST)
-        transponderIrDMABuffer_t transponderIrDMABuffer;
-    #endif
+#if defined(STM32F3) || defined(STM32F4)|| defined(STM32F7) || defined(STM32H7) || defined(STM32G4) || defined(UNIT_TEST)
+    transponderIrDMABuffer_t transponderIrDMABuffer;
+#endif
 
     const struct transponderVTable *vTable;
 } transponder_t;
@@ -113,7 +113,7 @@ typedef enum {
 #define TRANSPONDER_PROVIDER_COUNT 3
 
 struct transponderVTable {
-    void (*updateTransponderDMABuffer)(transponder_t *transponder, const uint8_t* transponderData);
+    void (*updateTransponderDMABuffer)(transponder_t *transponder, const uint8_t *transponderData);
 };
 
 bool transponderIrInit(const ioTag_t ioTag, const transponderProvider_e provider);
@@ -124,7 +124,7 @@ void transponderIrDMAEnable(transponder_t *transponder);
 
 void transponderIrWaitForTransmitComplete(void);
 
-void transponderIrUpdateData(const uint8_t* transponderData);
+void transponderIrUpdateData(const uint8_t *transponderData);
 void transponderIrTransmit(void);
 
 bool isTransponderIrReady(void);

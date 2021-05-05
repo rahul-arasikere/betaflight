@@ -44,7 +44,7 @@ struct dmaChannelDescriptor_s;
 typedef void (*dmaCallbackHandlerFuncPtr)(struct dmaChannelDescriptor_s *channelDescriptor);
 
 typedef struct dmaChannelDescriptor_s {
-    DMA_TypeDef*                dma;
+    DMA_TypeDef                *dma;
     dmaResource_t               *ref;
 #if defined(STM32F4) || defined(STM32F7) || defined(STM32H7) || defined(STM32G4)
     uint8_t                     stream;
@@ -125,7 +125,7 @@ typedef enum {
 #define DMA_IT_FEIF         ((uint32_t)0x00000001)
 
 dmaIdentifier_e dmaGetIdentifier(const dmaResource_t *stream);
-dmaChannelDescriptor_t* dmaGetDmaDescriptor(const dmaResource_t *stream);
+dmaChannelDescriptor_t *dmaGetDmaDescriptor(const dmaResource_t *stream);
 dmaResource_t *dmaGetRefByIdentifier(const dmaIdentifier_e identifier);
 uint32_t dmaGetChannel(const uint8_t channel);
 
@@ -220,8 +220,8 @@ typedef enum {
 #define DMA_IT_HTIF         ((uint32_t)0x00000004)
 #define DMA_IT_TEIF         ((uint32_t)0x00000008)
 
-dmaIdentifier_e dmaGetIdentifier(const dmaResource_t* channel);
-dmaResource_t* dmaGetRefByIdentifier(const dmaIdentifier_e identifier);
+dmaIdentifier_e dmaGetIdentifier(const dmaResource_t *channel);
+dmaResource_t *dmaGetRefByIdentifier(const dmaIdentifier_e identifier);
 
 #endif
 
@@ -263,10 +263,11 @@ dmaResource_t* dmaGetRefByIdentifier(const dmaIdentifier_e identifier);
 #endif
 
 void dmaInit(dmaIdentifier_e identifier, resourceOwner_e owner, uint8_t resourceIndex);
-void dmaSetHandler(dmaIdentifier_e identifier, dmaCallbackHandlerFuncPtr callback, uint32_t priority, uint32_t userParam);
+void dmaSetHandler(dmaIdentifier_e identifier, dmaCallbackHandlerFuncPtr callback, uint32_t priority,
+                   uint32_t userParam);
 
 const resourceOwner_t *dmaGetOwner(dmaIdentifier_e identifier);
-dmaChannelDescriptor_t* dmaGetDescriptorByIdentifier(const dmaIdentifier_e identifier);
+dmaChannelDescriptor_t *dmaGetDescriptorByIdentifier(const dmaIdentifier_e identifier);
 
 //
 // Wrapper macros to cast dmaResource_t back into DMA_ARCH_TYPE

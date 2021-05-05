@@ -235,11 +235,11 @@ void bbGpioSetup(bbMotor_t *bbMotor);
 void bbTimerChannelInit(bbPort_t *bbPort);
 void bbDMAPreconfigure(bbPort_t *bbPort, uint8_t direction);
 void bbDMAIrqHandler(dmaChannelDescriptor_t *descriptor);
-void bbSwitchToOutput(bbPort_t * bbPort);
-void bbSwitchToInput(bbPort_t * bbPort);
+void bbSwitchToOutput(bbPort_t *bbPort);
+void bbSwitchToInput(bbPort_t *bbPort);
 
 void bbTIM_TimeBaseInit(bbPort_t *bbPort, uint16_t period);
-void bbTIM_DMACmd(TIM_TypeDef* TIMx, uint16_t TIM_DMASource, FunctionalState NewState);
+void bbTIM_DMACmd(TIM_TypeDef *TIMx, uint16_t TIM_DMASource, FunctionalState NewState);
 void bbDMA_ITConfig(bbPort_t *bbPort);
 void bbDMA_Cmd(bbPort_t *bbPort, FunctionalState NewState);
 int  bbDMA_Count(bbPort_t *bbPort);

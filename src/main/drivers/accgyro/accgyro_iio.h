@@ -19,7 +19,6 @@
  */
 
 #pragma once
-#include "drivers/accgyro/accgyro.h"
 
 bool iioAccDetect(accDev_t *acc);
 bool iioGyroDetect(gyroDev_t *gyro);

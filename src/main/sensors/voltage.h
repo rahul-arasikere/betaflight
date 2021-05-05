@@ -36,7 +36,7 @@ typedef enum {
     VOLTAGE_METER_COUNT
 } voltageMeterSource_e;
 
-extern const char * const voltageMeterSourceNames[VOLTAGE_METER_COUNT];
+extern const char *const voltageMeterSourceNames[VOLTAGE_METER_COUNT];
 
 // WARNING - do not mix usage of VOLTAGE_METER_* and VOLTAGE_SENSOR_*, they are separate concerns.
 

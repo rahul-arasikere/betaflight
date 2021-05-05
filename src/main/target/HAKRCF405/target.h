@@ -17,7 +17,7 @@
  *
  * If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 
 #pragma once
 
@@ -93,9 +93,9 @@
 #define UART4_RX_PIN            PA1
 #define UART4_TX_PIN            PA0
 
-#define USE_UART5   
-#define UART5_RX_PIN            PD2  
-#define UART5_TX_PIN            PC12  
+#define USE_UART5
+#define UART5_RX_PIN            PD2
+#define UART5_TX_PIN            PC12
 
 #define USE_SOFTSERIAL1
 #define USE_SOFTSERIAL2
@@ -122,13 +122,13 @@
 
 #define USE_SPI_DEVICE_3
 #define SPI3_SCK_PIN            PC10
-#define SPI3_MISO_PIN           PC11 
+#define SPI3_MISO_PIN           PC11
 #define SPI3_MOSI_PIN           PB5
 
 #define USE_OSD
 #define USE_MAX7456
 #define MAX7456_SPI_INSTANCE    SPI3
-#define MAX7456_SPI_CS_PIN      PA15 
+#define MAX7456_SPI_CS_PIN      PA15
 
 #define USE_ADC
 #define ADC_INSTANCE            ADC1  // Default added
@@ -136,8 +136,8 @@
 
 #define VBAT_ADC_PIN            PC1
 #define CURRENT_METER_ADC_PIN   PC2
-#define RSSI_ADC_PIN            PC0  
- 
+#define RSSI_ADC_PIN            PC0
+
 #define DEFAULT_VOLTAGE_METER_SOURCE    VOLTAGE_METER_ADC
 #define DEFAULT_CURRENT_METER_SOURCE    CURRENT_METER_ADC
 
@@ -146,7 +146,7 @@
 #define USE_ESCSERIAL
 #define ESCSERIAL_TIMER_TX_PIN PA3
 
-#define INVERTER_PIN_UART1      PB4 
+#define INVERTER_PIN_UART1      PB4
 
 #define TARGET_IO_PORTA         0xffff
 #define TARGET_IO_PORTB         0xffff

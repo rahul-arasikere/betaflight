@@ -65,8 +65,7 @@
 
 typedef int32_t fix12_t;
 
-typedef struct stdev_s
-{
+typedef struct stdev_s {
     float m_oldM, m_newM, m_oldS, m_newS;
     int m_n;
 } stdev_t;
@@ -120,15 +119,15 @@ void rotateV(struct fp_vector *v, fp_angles_t *delta);
 void buildRotationMatrix(fp_angles_t *delta, fp_rotationMatrix_t *rotation);
 void applyRotation(float *v, fp_rotationMatrix_t *rotationMatrix);
 
-int32_t quickMedianFilter3(int32_t * v);
-int32_t quickMedianFilter5(int32_t * v);
-int32_t quickMedianFilter7(int32_t * v);
-int32_t quickMedianFilter9(int32_t * v);
+int32_t quickMedianFilter3(int32_t *v);
+int32_t quickMedianFilter5(int32_t *v);
+int32_t quickMedianFilter7(int32_t *v);
+int32_t quickMedianFilter9(int32_t *v);
 
-float quickMedianFilter3f(float * v);
-float quickMedianFilter5f(float * v);
-float quickMedianFilter7f(float * v);
-float quickMedianFilter9f(float * v);
+float quickMedianFilter3f(float *v);
+float quickMedianFilter5f(float *v);
+float quickMedianFilter7f(float *v);
+float quickMedianFilter9f(float *v);
 
 #if defined(FAST_MATH) || defined(VERY_FAST_MATH)
 float sin_approx(float x);

@@ -62,7 +62,7 @@ typedef enum {
 
 #ifdef USE_LAUNCH_CONTROL
 #define LAUNCH_CONTROL_THROTTLE_TRIGGER_MAX 90
-extern const char * const osdLaunchControlModeNames[LAUNCH_CONTROL_MODE_COUNT];
+extern const char *const osdLaunchControlModeNames[LAUNCH_CONTROL_MODE_COUNT];
 #endif
 
 PG_DECLARE(throttleCorrectionConfig_t, throttleCorrectionConfig);

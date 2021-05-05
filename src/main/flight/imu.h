@@ -30,12 +30,12 @@ extern bool canUseGPSHeading;
 extern float accAverage[XYZ_AXIS_COUNT];
 
 typedef struct {
-    float w,x,y,z;
+    float w, x, y, z;
 } quaternion;
 #define QUATERNION_INITIALIZE  {.w=1, .x=0, .y=0,.z=0}
 
 typedef struct {
-    float ww,wx,wy,wz,xx,xy,xz,yy,yz,zz;
+    float ww, wx, wy, wz, xx, xy, xz, yy, yz, zz;
 } quaternionProducts;
 #define QUATERNION_PRODUCTS_INITIALIZE  {.ww=1, .wx=0, .wy=0, .wz=0, .xx=0, .xy=0, .xz=0, .yy=0, .yz=0, .zz=0}
 
@@ -69,7 +69,7 @@ typedef struct imuRuntimeConfig_s {
 void imuConfigure(uint16_t throttle_correction_angle, uint8_t throttle_correction_value);
 
 float getCosTiltAngle(void);
-void getQuaternion(quaternion * q);
+void getQuaternion(quaternion *q);
 void imuUpdateAttitude(timeUs_t currentTimeUs);
 
 void imuInit(void);
@@ -83,6 +83,6 @@ void imuSetHasNewData(uint32_t dt);
 #endif
 
 bool imuQuaternionHeadfreeOffsetSet(void);
-void imuQuaternionHeadfreeTransformVectorEarthToBody(t_fp_vector_def * v);
+void imuQuaternionHeadfreeTransformVectorEarthToBody(t_fp_vector_def *v);
 bool shouldInitializeGPSHeading(void);
 bool isUpright(void);

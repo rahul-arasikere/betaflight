@@ -46,7 +46,7 @@ typedef struct busDevice_s {
             uint16_t modeCache;        // XXX cr1Value may be a better name?
 #endif
 #if defined(USE_HAL_DRIVER)
-            SPI_HandleTypeDef* handle; // cached here for efficiency
+            SPI_HandleTypeDef *handle; // cached here for efficiency
 #endif
             IO_t csnPin;
         } spi;

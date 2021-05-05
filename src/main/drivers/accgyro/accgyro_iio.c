@@ -28,6 +28,17 @@
 #include <pthread.h>
 #endif
 
+#if defined(USE_IIO_GYRO) && defined(USE_IIO_ACC)
+#include <iio.h>
+
+static struct iio_context *ctx = NULL;
+static struct iio_buffer *imubuf = NULL;
+
+#define GRAVITY 9.805f
+#define SCALE 10.0f
+
+#endif
+
 #ifdef USE_IIO_GYRO
 
 #include "build/build_config.h"
@@ -38,13 +49,33 @@
 #include "drivers/accgyro/accgyro.h"
 #include "drivers/accgyro/accgyro_iio.h"
 
+#define ANGVL_X "anglvel_x"
+#define ANGVL_Y "anglvel_y"
+#define ANGVL_Z "anglvel_z"
+
 static void iioGyroInit(gyroDev_t *gyro)
 {
 #if defined(SIMULATOR_BUILD) && defined(SIMULATOR_MULTITHREAD)
-    if (pthread_mutex_init(&gyro->lock, NULL) != 0) {
+    if (pthread_mutex_init(&gyro->lock, NULL) != 0)
+    {
         printf("Create gyro lock error!\n");
     }
 #endif
+
+    if (ctx == NULL)
+    {
+        ctx = iio_create_default_context();
+    }
+
+    if (ctx == NULL)
+    {
+        printf("failed to acquire default iio context!\n");
+    }
+
+    if (!iio_context_get_devices_count(ctx))
+    {
+        printf("No IIO devices found!\n");
+    }
 }
 
 bool iioGyroDetect(gyroDev_t *gyro)
@@ -55,13 +86,28 @@ bool iioGyroDetect(gyroDev_t *gyro)
 
 #ifdef USE_IIO_ACC
 
+#define ACCEL_X "accel_x"
+#define ACCEL_Y "accel_y"
+#define ACCEL_Z "accel_z"
+
 static void iioAccInit(accDev_t *acc)
 {
 #if defined(SIMULATOR_BUILD) && defined(SIMULATOR_MULTITHREAD)
-    if (pthread_mutex_init(&acc->lock, NULL) != 0) {
+    if (pthread_mutex_init(&acc->lock, NULL) != 0)
+    {
         printf("Create acc lock error!\n");
     }
 #endif
+
+    if (ctx == NULL)
+    {
+        ctx = iio_create_default_context();
+    }
+
+    if (ctx == NULL)
+    {
+        printf("failed to acquire default iio context!\n");
+    }
 }
 
 bool iioAccDetect(accDev_t *acc)

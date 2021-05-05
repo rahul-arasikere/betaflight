@@ -33,9 +33,9 @@ typedef struct rangefinderHardwarePins_s {
 } rangefinderHardwarePins_t;
 
 struct rangefinderDev_s;
-typedef void (*rangefinderOpInitFuncPtr)(struct rangefinderDev_s * dev);
-typedef void (*rangefinderOpStartFuncPtr)(struct rangefinderDev_s * dev);
-typedef int32_t (*rangefinderOpReadFuncPtr)(struct rangefinderDev_s * dev);
+typedef void (*rangefinderOpInitFuncPtr)(struct rangefinderDev_s *dev);
+typedef void (*rangefinderOpStartFuncPtr)(struct rangefinderDev_s *dev);
+typedef int32_t (*rangefinderOpReadFuncPtr)(struct rangefinderDev_s *dev);
 
 typedef struct rangefinderDev_s {
     timeMs_t delayMs;

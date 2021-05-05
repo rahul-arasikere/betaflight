@@ -69,10 +69,10 @@ typedef struct adcTagMap_s {
 #define ADC_DEVICES_345 ((1 << ADCDEV_3)|(1 << ADCDEV_4)|(1 << ADCDEV_5))
 
 typedef struct adcDevice_s {
-    ADC_TypeDef* ADCx;
+    ADC_TypeDef *ADCx;
     rccPeriphTag_t rccADC;
 #if !defined(USE_DMA_SPEC)
-    dmaResource_t* dmaResource;
+    dmaResource_t *dmaResource;
 #if defined(STM32F4) || defined(STM32F7) || defined(STM32H7) || defined(STM32G4)
     uint32_t channel;
 #endif

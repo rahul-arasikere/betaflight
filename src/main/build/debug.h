@@ -118,4 +118,4 @@ typedef enum {
     DEBUG_COUNT
 } debugType_e;
 
-extern const char * const debugModeNames[DEBUG_COUNT];
+extern const char *const debugModeNames[DEBUG_COUNT];

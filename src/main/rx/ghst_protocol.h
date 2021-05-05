@@ -110,7 +110,7 @@ typedef struct ghstPayloadPulses_s {
 /* Pulses payload (channel data), with RSSI/LQ, and other related data */
 typedef struct ghstPayloadPulsesRssi_s {
     // 80 bits, or 10 bytes
-   ghstPayloadServo4_t ch1to4;
+    ghstPayloadServo4_t ch1to4;
 
     unsigned int lq: 8;                 // 0-100
     unsigned int rssi: 8;               // 0 - 128 sign inverted, dBm

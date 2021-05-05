@@ -150,7 +150,7 @@ typedef enum {
 } lookupTableIndex_e;
 
 typedef struct lookupTableEntry_s {
-    const char * const *values;
+    const char *const *values;
     const uint8_t valueCount;
 } lookupTableEntry_t;
 
@@ -239,33 +239,33 @@ extern const uint16_t valueTableEntryCount;
 extern const clivalue_t valueTable[];
 //extern const uint8_t lookupTablesEntryCount;
 
-extern const char * const lookupTableGyroHardware[];
+extern const char *const lookupTableGyroHardware[];
 
-extern const char * const lookupTableAccHardware[];
+extern const char *const lookupTableAccHardware[];
 //extern const uint8_t lookupTableAccHardwareEntryCount;
 
-extern const char * const lookupTableBaroHardware[];
+extern const char *const lookupTableBaroHardware[];
 //extern const uint8_t lookupTableBaroHardwareEntryCount;
 
-extern const char * const lookupTableMagHardware[];
+extern const char *const lookupTableMagHardware[];
 //extern const uint8_t lookupTableMagHardwareEntryCount;
 
-extern const char * const lookupTableRangefinderHardware[];
+extern const char *const lookupTableRangefinderHardware[];
 
-extern const char * const lookupTableLedstripColors[];
+extern const char *const lookupTableLedstripColors[];
 
-extern const char * const lookupTableRescueAltitudeMode[];
+extern const char *const lookupTableRescueAltitudeMode[];
 
-extern const char * const lookupTableItermRelax[];
+extern const char *const lookupTableItermRelax[];
 
-extern const char * const lookupTableItermRelaxType[];
+extern const char *const lookupTableItermRelaxType[];
 
-extern const char * const lookupTableOsdDisplayPortDevice[];
+extern const char *const lookupTableOsdDisplayPortDevice[];
 
-extern const char * const lookupTableInterpolatedSetpoint[];
+extern const char *const lookupTableInterpolatedSetpoint[];
 
-extern const char * const lookupTableOffOn[];
+extern const char *const lookupTableOffOn[];
 
-extern const char * const lookupTableSimplifiedTuningPidsMode[];
+extern const char *const lookupTableSimplifiedTuningPidsMode[];
 
-extern const char * const lookupTableCMSMenuBackgroundType[];
+extern const char *const lookupTableCMSMenuBackgroundType[];

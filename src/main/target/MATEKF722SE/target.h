@@ -59,7 +59,7 @@
 #define USE_ACC
 #define USE_ACC_SPI_MPU6000
 #define USE_ACC_SPI_MPU6500
- 
+
 #define GYRO_1_ALIGN            CW180_DEG_FLIP
 
 #define GYRO_2_ALIGN            CW90_DEG
@@ -146,7 +146,7 @@
 #define USE_UART6
 #define UART6_TX_PIN            PC6
 #define UART6_RX_PIN            PC7
-     
+
 #define USE_SOFTSERIAL1
 
 #define SERIAL_PORT_COUNT       7

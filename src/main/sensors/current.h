@@ -32,7 +32,7 @@ typedef enum {
     CURRENT_METER_COUNT
 } currentMeterSource_e;
 
-extern const char * const currentMeterSourceNames[CURRENT_METER_COUNT];
+extern const char *const currentMeterSourceNames[CURRENT_METER_COUNT];
 
 typedef struct currentMeter_s {
     int32_t amperage;           // current read by current sensor in centiampere (1/100th A)

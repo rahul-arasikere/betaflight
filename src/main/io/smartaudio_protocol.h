@@ -96,6 +96,7 @@ size_t smartaudioFrameGetSettings(smartaudioFrame_t *smartaudioFrame);
 size_t smartaudioFrameGetPitmodeFrequency(smartaudioFrame_t *smartaudioFrame);
 size_t smartaudioFrameSetPower(smartaudioFrame_t *smartaudioFrame, const uint8_t power);
 size_t smartaudioFrameSetBandChannel(smartaudioFrame_t *smartaudioFrame, const uint8_t band, const uint8_t channel);
-size_t smartaudioFrameSetFrequency(smartaudioFrame_t *smartaudioFrame, const uint16_t frequency, const bool pitmodeFrequency);
+size_t smartaudioFrameSetFrequency(smartaudioFrame_t *smartaudioFrame, const uint16_t frequency,
+                                   const bool pitmodeFrequency);
 size_t smartaudioFrameSetOperationMode(smartaudioFrame_t *smartaudioFrame, const smartaudioSettings_t *settings);
 bool smartaudioParseResponseBuffer(smartaudioSettings_t *settings, const uint8_t *buffer);

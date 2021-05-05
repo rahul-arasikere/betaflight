@@ -53,8 +53,8 @@ typedef struct {
 } cfCheckFuncInfo_t;
 
 typedef struct {
-    const char * taskName;
-    const char * subTaskName;
+    const char *taskName;
+    const char *subTaskName;
     bool         isEnabled;
     int8_t       staticPriority;
     timeDelta_t  desiredPeriodUs;
@@ -161,8 +161,8 @@ typedef enum {
 typedef struct {
     // Configuration
 #if defined(USE_TASK_STATISTICS)
-    const char * taskName;
-    const char * subTaskName;
+    const char *taskName;
+    const char *subTaskName;
 #endif
     bool (*checkFunc)(timeUs_t currentTimeUs, timeDelta_t currentDeltaTimeUs);
     void (*taskFunc)(timeUs_t currentTimeUs);

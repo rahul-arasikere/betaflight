@@ -25,9 +25,9 @@
 #include "pg/pg.h"
 
 typedef enum {
-  FRSKY_SPI_A1_SOURCE_VBAT = 0,
-  FRSKY_SPI_A1_SOURCE_EXTADC,
-  FRSKY_SPI_A1_SOURCE_CONST
+    FRSKY_SPI_A1_SOURCE_VBAT = 0,
+    FRSKY_SPI_A1_SOURCE_EXTADC,
+    FRSKY_SPI_A1_SOURCE_CONST
 } frSkySpiA1Source_e;
 
 typedef struct rxCc2500SpiConfig_s {

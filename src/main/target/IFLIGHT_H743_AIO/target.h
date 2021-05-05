@@ -27,7 +27,7 @@
 
 #define USE_BEEPER
 #define BEEPER_PIN              PD15
-#define BEEPER_INVERTED 
+#define BEEPER_INVERTED
 
 #define USE_UART
 
@@ -129,7 +129,7 @@
 
 #define GYRO_1_CS_PIN           SPI1_NSS_PIN
 #define GYRO_1_SPI_INSTANCE     SPI1
-#define GYRO_1_ALIGN            CW0_DEG 
+#define GYRO_1_ALIGN            CW0_DEG
 
 #define GYRO_2_CS_PIN           SPI2_NSS_PIN
 #define GYRO_2_SPI_INSTANCE     SPI2
@@ -147,7 +147,7 @@
 #define FLASH_CS_PIN            SPI3_NSS_PIN
 #define FLASH_SPI_INSTANCE      SPI3
 #define ENABLE_BLACKBOX_LOGGING_ON_SPIFLASH_BY_DEFAULT
- 
+
 #define USE_MAX7456
 #define MAX7456_SPI_INSTANCE    SPI4
 #define MAX7456_SPI_CS_PIN      SPI4_NSS_PIN

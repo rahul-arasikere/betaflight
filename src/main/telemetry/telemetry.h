@@ -63,9 +63,9 @@ typedef enum {
     ESC_SENSOR_RPM         = 1 << 17,
     ESC_SENSOR_TEMPERATURE = 1 << 18,
     ESC_SENSOR_ALL         = ESC_SENSOR_CURRENT \
-                            | ESC_SENSOR_VOLTAGE \
-                            | ESC_SENSOR_RPM \
-                            | ESC_SENSOR_TEMPERATURE,
+                             | ESC_SENSOR_VOLTAGE \
+                             | ESC_SENSOR_RPM \
+                             | ESC_SENSOR_TEMPERATURE,
     SENSOR_TEMPERATURE     = 1 << 19,
     SENSOR_CAP_USED        = 1 << 20,
     SENSOR_ALL             = (1 << 21) - 1,

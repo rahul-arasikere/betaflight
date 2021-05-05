@@ -104,11 +104,11 @@
 #define USE_I2C_DEVICE_1
 #define I2C_DEVICE              (I2CDEV_1)
 #if (SPRACINGF4EVO_REV >= 2)
-    #define I2C1_SCL                PB8
-    #define I2C1_SDA                PB9
+#define I2C1_SCL                PB8
+#define I2C1_SDA                PB9
 #else
-    #define I2C1_SCL                PB6
-    #define I2C1_SDA                PB7
+#define I2C1_SCL                PB6
+#define I2C1_SDA                PB7
 #endif
 
 #define USE_SPI
@@ -160,7 +160,7 @@
 #define USE_ADC
 // It's possible to use ADC1 or ADC3 on this target, same pins.
 //#define ADC_INSTANCE            ADC1
-//#define ADC1_DMA_OPT    0  // DMA 2 Stream 0 Channel 0 
+//#define ADC1_DMA_OPT    0  // DMA 2 Stream 0 Channel 0
 
 
 // Using ADC3 frees up DMA2_Stream0 for SPI1_RX

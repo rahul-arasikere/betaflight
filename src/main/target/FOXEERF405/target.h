@@ -24,14 +24,14 @@
 #define USBD_PRODUCT_STRING  "FOXEERF405"
 //----------------------------------------
 
-//LED & BEE------------------------------- 
+//LED & BEE-------------------------------
 #define LED0_PIN                PC15
 
 #define USE_BEEPER
 #define BEEPER_PIN              PA4
 #define BEEPER_INVERTED
 
-//Gyro & ACC------------------------------- 
+//Gyro & ACC-------------------------------
 #define USE_SPI
 #define USE_SPI_DEVICE_1
 
@@ -58,12 +58,12 @@
 #define USE_GYRO_SPI_MPU6000
 #define USE_ACC_SPI_MPU6000
 
-//Baro & MAG------------------------------- 
+//Baro & MAG-------------------------------
 #define USE_I2C
 #define USE_I2C_DEVICE_1
 #define I2C_DEVICE              (I2CDEV_1)
-#define I2C1_SCL                PB8      
-#define I2C1_SDA                PB9 
+#define I2C1_SCL                PB8
+#define I2C1_SDA                PB9
 
 //ON BOARD FLASH -----------------------------------
 #define USE_SPI_DEVICE_2
@@ -84,12 +84,12 @@
 //OSD ----------------------------------------------
 #define USE_SPI_DEVICE_3
 #define SPI3_SCK_PIN            PC10
-#define SPI3_MISO_PIN           PC11 
+#define SPI3_MISO_PIN           PC11
 #define SPI3_MOSI_PIN           PB5
 
 #define USE_MAX7456
 #define MAX7456_SPI_INSTANCE    SPI3
-#define MAX7456_SPI_CS_PIN      PA15 
+#define MAX7456_SPI_CS_PIN      PA15
 
 //UART ----------------------------------------------
 #define USE_VCP
@@ -110,9 +110,9 @@
 #define UART4_RX_PIN            PA1
 #define UART4_TX_PIN            PA0
 
-#define USE_UART5   
-#define UART5_RX_PIN            PD2  
-#define UART5_TX_PIN            PC12  
+#define USE_UART5
+#define UART5_RX_PIN            PD2
+#define UART5_TX_PIN            PC12
 
 #define USE_SOFTSERIAL1
 #define USE_SOFTSERIAL2
@@ -130,7 +130,7 @@
 #define VBAT_ADC_PIN            PC0
 #define CURRENT_METER_ADC_PIN   PC1
 #define RSSI_ADC_PIN            PA0  //TIM5_CH1 & UART4_TX & TELEMETRY & FPORT
- 
+
 #define DEFAULT_VOLTAGE_METER_SOURCE    VOLTAGE_METER_ADC
 #define DEFAULT_CURRENT_METER_SOURCE    CURRENT_METER_ADC
 

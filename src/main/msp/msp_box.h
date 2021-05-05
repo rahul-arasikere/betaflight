@@ -25,7 +25,8 @@
 typedef struct box_s {
     const uint8_t boxId;            // see boxId_e
     const char *boxName;            // GUI-readable box name
-    const uint8_t permanentId;      // permanent ID used to identify BOX. This ID is unique for one function, DO NOT REUSE IT
+    const uint8_t
+    permanentId;      // permanent ID used to identify BOX. This ID is unique for one function, DO NOT REUSE IT
 } box_t;
 
 #define PERMANENT_ID_NONE 255

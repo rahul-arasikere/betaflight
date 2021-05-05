@@ -115,7 +115,7 @@
 
 // *************** ADC *****************************
 #define USE_ADC
-#define ADC_INSTANCE         ADC1  
+#define ADC_INSTANCE         ADC1
 #define ADC1_DMA_OPT            0  // DMA 2 Stream 0 Channel 0 
 
 #define VBAT_ADC_PIN            PA0
@@ -127,7 +127,7 @@
 
 #define USE_LED_STRIP
 
-#define ENABLE_DSHOT_DMAR       DSHOT_DMAR_ON									
+#define ENABLE_DSHOT_DMAR       DSHOT_DMAR_ON
 #define USE_PINIO
 #define PINIO1_PIN              PB5  // VTX  switcher
 //#define PINIO2_PIN              PA15 // Camera switcher

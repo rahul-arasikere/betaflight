@@ -110,29 +110,29 @@ typedef enum {
 #define SRXL_BIND_OPT_BIND_TX_ENABLE    (0x02)  // Set if this device should reply to a bind request with a Discover packet over RF
 
 typedef struct {
-  uint8_t request;
-  uint8_t deviceId;
-  uint8_t bindType;
-  uint8_t options;
-  uint64_t guid;
-  uint32_t uid;
+    uint8_t request;
+    uint8_t deviceId;
+    uint8_t bindType;
+    uint8_t options;
+    uint64_t guid;
+    uint32_t uid;
 } PACKED Srxl2BindInfoPayload;
 
 typedef struct {
-  Srxl2Header header;
-  Srxl2BindInfoPayload payload;
-  uint8_t crcHigh;
-  uint8_t crcLow;
+    Srxl2Header header;
+    Srxl2BindInfoPayload payload;
+    uint8_t crcHigh;
+    uint8_t crcLow;
 } PACKED Srxl2BindInfoFrame;
 
 // VTX Data
 typedef struct {
-  uint8_t   band;     // VTX Band (0 = Fatshark, 1 = Raceband, 2 = E, 3 = B, 4 = A)
-  uint8_t   channel;  // VTX Channel (0-7)
-  uint8_t   pit;      // Pit/Race mode (0 = Race, 1 = Pit). Race = (normal operating) mode. Pit = (reduced power) mode.
-  uint8_t   power;    // VTX Power (0 = Off, 1 = 1mw to 14mW, 2 = 15mW to 25mW, 3 = 26mW to 99mW, 4 = 100mW to 299mW, 5 = 300mW to 600mW, 6 = 601mW+, 7 = manual control)
-  uint16_t  powerDec; // VTX Power as a decimal 1mw/unit
-  uint8_t   region;   // Region (0 = USA, 1 = EU)
+    uint8_t   band;     // VTX Band (0 = Fatshark, 1 = Raceband, 2 = E, 3 = B, 4 = A)
+    uint8_t   channel;  // VTX Channel (0-7)
+    uint8_t   pit;      // Pit/Race mode (0 = Race, 1 = Pit). Race = (normal operating) mode. Pit = (reduced power) mode.
+    uint8_t   power;    // VTX Power (0 = Off, 1 = 1mw to 14mW, 2 = 15mW to 25mW, 3 = 26mW to 99mW, 4 = 100mW to 299mW, 5 = 300mW to 600mW, 6 = 601mW+, 7 = manual control)
+    uint16_t  powerDec; // VTX Power as a decimal 1mw/unit
+    uint8_t   region;   // Region (0 = USA, 1 = EU)
 } PACKED Srxl2VtxData;
 
 #undef PACKED

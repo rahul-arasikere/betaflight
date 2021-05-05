@@ -42,7 +42,6 @@
 #include "drivers/timer_def.h"
 const timerHardware_t timerHardware[1]; // unused
 
-#include "drivers/accgyro/accgyro_iio.h"
 #include "flight/imu.h"
 
 #include "config/feature.h"

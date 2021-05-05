@@ -33,7 +33,7 @@
 
 #define USE_EXTI
 #define USE_GYRO_EXTI
-#define USE_MPU_DATA_READY_SIGNAL                   
+#define USE_MPU_DATA_READY_SIGNAL
 
 #define USE_ACC
 #define USE_GYRO
@@ -44,7 +44,7 @@
 #define USE_ACC_SPI_MPU6000
 #define USE_ACC_SPI_MPU6500
 
-#define GYRO_1_CS_PIN           PA4 
+#define GYRO_1_CS_PIN           PA4
 #define GYRO_1_SPI_INSTANCE     SPI1
 #define GYRO_1_EXTI_PIN PC4
 #define GYRO_1_ALIGN      CW270_DEG_FLIP
@@ -76,12 +76,12 @@
 
 #define UART5_TX_PIN            PC12
 #define UART5_RX_PIN            PD2
-#define SERIAL_PORT_COUNT       6 
+#define SERIAL_PORT_COUNT       6
 
 #define USE_I2C
 #define USE_I2C_DEVICE_1
 #define I2C_DEVICE              I2CDEV_1
-#define I2C1_SCL                PB8      
+#define I2C1_SCL                PB8
 #define I2C1_SDA                PB9
 
 #define USE_SPI

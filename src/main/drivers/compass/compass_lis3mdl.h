@@ -22,4 +22,4 @@
 
 #include "drivers/io_types.h"
 
-bool lis3mdlDetect(magDev_t* mag);
+bool lis3mdlDetect(magDev_t *mag);

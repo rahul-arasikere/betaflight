@@ -40,9 +40,9 @@ uint32_t bstTimeoutUserCallback(void);
 uint16_t bstGetErrorCounter(void);
 
 bool bstWriteBusy(void);
-bool bstMasterWrite(uint8_t* data);
-bool bstSlaveRead(uint8_t* buf);
-bool bstSlaveWrite(uint8_t* data);
+bool bstMasterWrite(uint8_t *data);
+bool bstSlaveRead(uint8_t *buf);
+bool bstSlaveWrite(uint8_t *data);
 
 void bstMasterWriteLoop(void);
 

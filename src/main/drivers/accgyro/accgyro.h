@@ -40,8 +40,7 @@
 #define GYRO_SCALE_2000DPS (2000.0f / (1 << 15)) // 16.384 dps/lsb scalefactor for 2000dps sensors
 #define GYRO_SCALE_4000DPS (4000.0f / (1 << 15)) //  8.192 dps/lsb scalefactor for 4000dps sensors
 
-typedef enum
-{
+typedef enum {
     GYRO_NONE = 0,
     GYRO_DEFAULT,
     GYRO_MPU6050,
@@ -63,16 +62,14 @@ typedef enum
     GYRO_FAKE
 } gyroHardware_e;
 
-typedef enum
-{
+typedef enum {
     GYRO_HARDWARE_LPF_NORMAL,
 #ifdef USE_GYRO_DLPF_EXPERIMENTAL
     GYRO_HARDWARE_LPF_EXPERIMENTAL
 #endif
 } gyroHardwareLpf_e;
 
-typedef enum
-{
+typedef enum {
     GYRO_RATE_1_kHz,
     GYRO_RATE_1100_Hz,
     GYRO_RATE_3200_Hz,
@@ -83,8 +80,7 @@ typedef enum
     GYRO_RATE_32_kHz,
 } gyroRateKHz_e;
 
-typedef struct gyroDev_s
-{
+typedef struct gyroDev_s {
 #if defined(SIMULATOR_BUILD) && defined(SIMULATOR_MULTITHREAD)
     pthread_mutex_t lock;
 #endif
@@ -115,8 +111,7 @@ typedef struct gyroDev_s
     uint16_t accSampleRateHz;
 } gyroDev_t;
 
-typedef struct accDev_s
-{
+typedef struct accDev_s {
 #if defined(SIMULATOR_BUILD) && defined(SIMULATOR_MULTITHREAD)
     pthread_mutex_t lock;
 #endif
