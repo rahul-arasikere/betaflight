@@ -188,8 +188,10 @@ static void iioGyroInit(gyroDev_t *gyro)
 
 bool iioGyroDetect(gyroDev_t *gyro)
 {
+    mpuGyroInit(gyro);
     gyro->initFn = iioGyroInit;
     gyro->readFn = iioGyroRead;
+    gyro->scale = GYRO_SCALE_2000DPS;
     return true;
 }
 
