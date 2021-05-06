@@ -132,6 +132,7 @@ bool iioGyroRead(gyroDev_t *gyro)
     gyro->gyroADCRaw[Y] = ((int16_t *)data)[1];
     data += inc;
     gyro->gyroADCRaw[Z] = ((int16_t *)data)[2];
+    gyro->dataReady = true;
     return true;
 }
 
