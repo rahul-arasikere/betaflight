@@ -18,7 +18,7 @@
  * If not, see <http://www.gnu.org/licenses/>.
  */
 
-// LINUX (software in the loop) simulator
+// LINUX process
 
 #pragma once
 
@@ -27,11 +27,10 @@
 
 #include "common/utils.h"
 
-#define TARGET_BOARD_IDENTIFIER "LINUX"
+#define TARGET_BOARD_IDENTIFIER "SITL"
 
 #define SIMULATOR_MULTITHREAD
 
-// use simulatior's attitude directly
 // disable this if wants to test AHRS algorithm
 // #undef USE_IMU_CALC
 
