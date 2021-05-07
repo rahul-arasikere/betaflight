@@ -5,6 +5,7 @@ INCLUDE_DIRS    := $(INCLUDE_DIRS) \
 MCU_COMMON_SRC  := $(ROOT)/lib/main/dyad/dyad.c
 
 #Flags
+
 ARCH_FLAGS      =
 DEVICE_FLAGS    =
 LD_SCRIPT       = src/main/target/SITL/pg.ld
