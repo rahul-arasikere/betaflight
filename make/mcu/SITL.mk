@@ -61,6 +61,11 @@ LD_FLAGS     += \
               -static-libgcc
 endif
 
+ifeq ($(TARGET),LINUX)
+LD_FLAGS     += \
+              -liio 
+endif
+
 ifneq ($(DEBUG),GDB)
 OPTIMISE_DEFAULT    := -Ofast
 OPTIMISE_SPEED      := -Ofast

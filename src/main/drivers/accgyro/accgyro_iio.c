@@ -30,7 +30,7 @@
 #include <pthread.h>
 #endif
 
-#if defined(USE_IIO_GYRO) && defined(USE_IIO_ACC)
+#if defined(USE_IIO_GYRO) || defined(USE_IIO_ACC)
 #include <iio.h>
 
 static struct iio_context *ctx = NULL;
@@ -189,7 +189,6 @@ static void iioGyroInit(gyroDev_t *gyro)
 
 bool iioGyroDetect(gyroDev_t *gyro)
 {
-    mpuGyroInit(gyro);
     gyro->initFn = iioGyroInit;
     gyro->readFn = iioGyroRead;
     gyro->scale = GYRO_SCALE_2000DPS;
