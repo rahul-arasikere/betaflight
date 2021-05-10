@@ -37,6 +37,7 @@
 #include "config/feature.h"
 
 #include "drivers/accgyro/accgyro.h"
+#include "drivers/accgyro/accgyro_iio.h"
 #include "drivers/accgyro/accgyro_fake.h"
 #include "drivers/accgyro/accgyro_mpu.h"
 #include "drivers/accgyro/accgyro_mpu3050.h"
@@ -304,10 +305,20 @@ retry:
         FALLTHROUGH;
 #endif
 
+
 #ifdef USE_FAKE_ACC
     case ACC_FAKE:
         if (fakeAccDetect(dev)) {
             accHardware = ACC_FAKE;
+            break;
+        }
+        FALLTHROUGH;
+#endif
+
+#ifdef USE_IIO_ACC
+    case ACC_IIO:
+        if (fakeAccDetect(dev)) {
+            accHardware = ACC_IIO;
             break;
         }
         FALLTHROUGH;
