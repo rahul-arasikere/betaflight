@@ -29,14 +29,15 @@
 
 #define TARGET_BOARD_IDENTIFIER "LINUX"
 
-#define SIMULATOR_BUILD
 #define SIMULATOR_MULTITHREAD
 
 // disable this if wants to test AHRS algorithm
-// #undef USE_IMU_CALC
+#undef USE_IMU_CALC
 
-//#define SIMULATOR_ACC_SYNC
-//#define SIMULATOR_GYRO_SYNC
+#define SIMULATOR_ACC_SYNC
+#define SIMULATOR_GYRO_SYNC
+#define SIMULATOR_IMU_SYNC
+#define SIMULATOR_GYROPID_SYNC
 
 // file name to save config
 #define EEPROM_FILENAME "eeprom.bin"
