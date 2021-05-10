@@ -27,8 +27,9 @@
 
 #include "common/utils.h"
 
-#define TARGET_BOARD_IDENTIFIER "SITL"
+#define TARGET_BOARD_IDENTIFIER "LINUX"
 
+#define SIMULATOR_BUILD
 #define SIMULATOR_MULTITHREAD
 
 // disable this if wants to test AHRS algorithm
