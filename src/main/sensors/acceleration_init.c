@@ -317,7 +317,7 @@ retry:
 
 #ifdef USE_IIO_ACC
     case ACC_IIO:
-        if (fakeAccDetect(dev)) {
+        if (iioAccDetect(dev)) {
             accHardware = ACC_IIO;
             break;
         }
