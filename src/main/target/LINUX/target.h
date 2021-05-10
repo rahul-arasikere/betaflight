@@ -247,6 +247,7 @@ uint64_t millis64_real(void);
 void delayMicroseconds_real(uint32_t us);
 uint64_t micros64(void);
 uint64_t millis64(void);
+uint32_t micros(void);
 
 int lockMainPID(void);
 
