@@ -28,6 +28,8 @@
 #include <errno.h>
 #include <time.h>
 
+#include "cli/cli_debug_print.h"
+
 #include "common/maths.h"
 
 #include "drivers/io.h"
