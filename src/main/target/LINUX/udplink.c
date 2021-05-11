@@ -16,11 +16,12 @@ int udpInit(udpLink_t *link, const char *addr, int port, bool isServer)
 {
     int one = 1;
 
-    if ((link->fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
+    if ((link->fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+    {
         return -2;
     }
 
-    setsockopt(link->fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)); // can multi-bind
+    setsockopt(link->fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));  // can multi-bind
     fcntl(link->fd, F_SETFL, fcntl(link->fd, F_GETFL, 0) | O_NONBLOCK); // nonblock
 
     link->isServer = isServer;
@@ -29,14 +30,19 @@ int udpInit(udpLink_t *link, const char *addr, int port, bool isServer)
     link->si.sin_port = htons(port);
     link->port = port;
 
-    if (addr == NULL) {
+    if (addr == NULL)
+    {
         link->si.sin_addr.s_addr = htonl(INADDR_ANY);
-    } else {
+    }
+    else
+    {
         link->si.sin_addr.s_addr = inet_addr(addr);
     }
 
-    if (isServer) {
-        if (bind(link->fd, (const struct sockaddr *)&link->si, sizeof(link->si)) == -1) {
+    if (isServer)
+    {
+        if (bind(link->fd, (const struct sockaddr *)&link->si, sizeof(link->si)) == -1)
+        {
             return -1;
         }
     }
@@ -45,6 +51,7 @@ int udpInit(udpLink_t *link, const char *addr, int port, bool isServer)
 
 int udpSend(udpLink_t *link, const void *data, size_t size)
 {
+    printf("sending: %s\n", data);
     return sendto(link->fd, data, size, 0, (struct sockaddr *)&link->si, sizeof(link->si));
 }
 
@@ -59,12 +66,14 @@ int udpRecv(udpLink_t *link, void *data, size_t size, uint32_t timeout_ms)
     tv.tv_sec = timeout_ms / 1000;
     tv.tv_usec = (timeout_ms % 1000) * 1000UL;
 
-    if (select(link->fd + 1, &fds, NULL, NULL, &tv) != 1) {
+    if (select(link->fd + 1, &fds, NULL, NULL, &tv) != 1)
+    {
         return -1;
     }
 
     socklen_t len;
     int ret;
     ret = recvfrom(link->fd, data, size, 0, (struct sockaddr *)&link->recv, &len);
+    printf("recieved: %s\n", ret);
     return ret;
 }
