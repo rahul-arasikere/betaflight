@@ -61,7 +61,7 @@ LD_FLAGS     += \
               -static-libgcc
 endif
 
-ifeq ($(TARGET),LINUX)
+ifeq ($(TARGET),SITL)
 LD_FLAGS     += \
               -liio 
 endif

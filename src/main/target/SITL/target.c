@@ -42,7 +42,6 @@
 #include "drivers/timer_def.h"
 const timerHardware_t timerHardware[1]; // unused
 
-#include "drivers/accgyro/accgyro_fake.h"
 #include "flight/imu.h"
 
 #include "config/feature.h"
@@ -110,13 +109,13 @@ void updateState(const fdm_packet *pkt)
     x = constrain(-pkt->imu_linear_acceleration_xyz[0] * ACC_SCALE, -32767, 32767);
     y = constrain(-pkt->imu_linear_acceleration_xyz[1] * ACC_SCALE, -32767, 32767);
     z = constrain(-pkt->imu_linear_acceleration_xyz[2] * ACC_SCALE, -32767, 32767);
-    fakeAccSet(fakeAccDev, x, y, z);
+    // fakeAccSet(fakeAccDev, x, y, z);
 //    printf("[acc]%lf,%lf,%lf\n", pkt->imu_linear_acceleration_xyz[0], pkt->imu_linear_acceleration_xyz[1], pkt->imu_linear_acceleration_xyz[2]);
 
     x = constrain(pkt->imu_angular_velocity_rpy[0] * GYRO_SCALE * RAD2DEG, -32767, 32767);
     y = constrain(-pkt->imu_angular_velocity_rpy[1] * GYRO_SCALE * RAD2DEG, -32767, 32767);
     z = constrain(-pkt->imu_angular_velocity_rpy[2] * GYRO_SCALE * RAD2DEG, -32767, 32767);
-    fakeGyroSet(fakeGyroDev, x, y, z);
+    // fakeGyroSet(fakeGyroDev, x, y, z);
 //    printf("[gyr]%lf,%lf,%lf\n", pkt->imu_angular_velocity_rpy[0], pkt->imu_angular_velocity_rpy[1], pkt->imu_angular_velocity_rpy[2]);
 
 #if !defined(USE_IMU_CALC)
