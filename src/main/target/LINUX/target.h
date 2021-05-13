@@ -29,8 +29,10 @@
 
 #define TARGET_BOARD_IDENTIFIER "LINUX"
 
-// #define SIMULATOR_MULTITHREAD
+#define SIMULATOR_MULTITHREAD
 
+
+#define SCHEDULER_DEBUG
 #define USE_CLI_DEBUG_PRINT
 
 // disable this if wants to test AHRS algorithm
