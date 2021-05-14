@@ -30,7 +30,6 @@
 
 #include "common/axis.h"
 #include "common/filter.h"
-#include "common/maths.h"
 
 #include "config/config_reset.h"
 #include "config/simplified_tuning.h"
@@ -128,100 +127,101 @@ PG_REGISTER_ARRAY_WITH_RESET_FN(pidProfile_t, PID_PROFILE_COUNT, pidProfiles, PG
 void resetPidProfile(pidProfile_t *pidProfile)
 {
     RESET_CONFIG(pidProfile_t, pidProfile,
-    .pid = {
-        [PID_ROLL] =  PID_ROLL_DEFAULT,
-        [PID_PITCH] = PID_PITCH_DEFAULT,
-        [PID_YAW] =   PID_YAW_DEFAULT,
-        [PID_LEVEL] = { 50, 50, 75, 0 },
-        [PID_MAG] =   { 40, 0, 0, 0 },
-    },
-    .pidSumLimit = PIDSUM_LIMIT,
-    .pidSumLimitYaw = PIDSUM_LIMIT_YAW,
-    .yaw_lowpass_hz = 0,
-    .dterm_notch_hz = 0,
-    .dterm_notch_cutoff = 0,
-    .itermWindupPointPercent = 100,
-    .pidAtMinThrottle = PID_STABILISATION_ON,
-    .levelAngleLimit = 55,
-    .feedForwardTransition = 0,
-    .yawRateAccelLimit = 0,
-    .rateAccelLimit = 0,
-    .itermThrottleThreshold = 250,
-    .itermAcceleratorGain = 3500,
-    .crash_time = 500,          // ms
-    .crash_delay = 0,           // ms
-    .crash_recovery_angle = 10, // degrees
-    .crash_recovery_rate = 100, // degrees/second
-    .crash_dthreshold = 50,     // degrees/second/second
-    .crash_gthreshold = 400,    // degrees/second
-    .crash_setpoint_threshold = 350, // degrees/second
-    .crash_recovery = PID_CRASH_RECOVERY_OFF, // off by default
-    .horizon_tilt_effect = 75,
-    .horizon_tilt_expert_mode = false,
-    .crash_limit_yaw = 200,
-    .itermLimit = 400,
-    .throttle_boost = 5,
-    .throttle_boost_cutoff = 15,
-    .iterm_rotation = false,
-    .iterm_relax = ITERM_RELAX_RP,
-    .iterm_relax_cutoff = ITERM_RELAX_CUTOFF_DEFAULT,
-    .iterm_relax_type = ITERM_RELAX_SETPOINT,
-    .acro_trainer_angle_limit = 20,
-    .acro_trainer_lookahead_ms = 50,
-    .acro_trainer_debug_axis = FD_ROLL,
-    .acro_trainer_gain = 75,
-    .abs_control_gain = 0,
-    .abs_control_limit = 90,
-    .abs_control_error_limit = 20,
-    .abs_control_cutoff = 11,
-    .antiGravityMode = ANTI_GRAVITY_SMOOTH,
-    .dterm_lowpass_hz = 150,    // NOTE: dynamic lpf is enabled by default so this setting is actually
-    // overridden and the static lowpass 1 is disabled. We can't set this
-    // value to 0 otherwise Configurator versions 10.4 and earlier will also
-    // reset the lowpass filter type to PT1 overriding the desired BIQUAD setting.
-    .dterm_lowpass2_hz = DTERM_LOWPASS_2_HZ_DEFAULT,   // second Dterm LPF ON by default
-    .dterm_filter_type = FILTER_PT1,
-    .dterm_filter2_type = FILTER_PT1,
-    .dyn_lpf_dterm_min_hz = DYN_LPF_DTERM_MIN_HZ_DEFAULT,
-    .dyn_lpf_dterm_max_hz = DYN_LPF_DTERM_MAX_HZ_DEFAULT,
-    .launchControlMode = LAUNCH_CONTROL_MODE_NORMAL,
-    .launchControlThrottlePercent = 20,
-    .launchControlAngleLimit = 0,
-    .launchControlGain = 40,
-    .launchControlAllowTriggerReset = true,
-    .use_integrated_yaw = false,
-    .integrated_yaw_relax = 200,
-    .thrustLinearization = 0,
-    .d_min = D_MIN_DEFAULT,
-    .d_min_gain = 37,
-    .d_min_advance = 20,
-    .motor_output_limit = 100,
-    .auto_profile_cell_count = AUTO_PROFILE_CELL_COUNT_STAY,
-    .transient_throttle_limit = 0,
-    .profileName = { 0 },
-    .dyn_idle_min_rpm = 0,
-    .dyn_idle_p_gain = 50,
-    .dyn_idle_i_gain = 50,
-    .dyn_idle_d_gain = 50,
-    .dyn_idle_max_increase = 150,
-    .ff_interpolate_sp = FF_INTERPOLATE_ON,
-    .ff_max_rate_limit = 100,
-    .ff_smooth_factor = 37,
-    .ff_boost = 15,
-    .dyn_lpf_curve_expo = 5,
-    .level_race_mode = false,
-    .vbat_sag_compensation = 0,
-    .simplified_pids_mode = PID_SIMPLIFIED_TUNING_OFF,
-    .simplified_master_multiplier = SIMPLIFIED_TUNING_DEFAULT,
-    .simplified_roll_pitch_ratio = SIMPLIFIED_TUNING_DEFAULT,
-    .simplified_i_gain = SIMPLIFIED_TUNING_DEFAULT,
-    .simplified_pd_ratio = SIMPLIFIED_TUNING_DEFAULT,
-    .simplified_pd_gain = SIMPLIFIED_TUNING_DEFAULT,
-    .simplified_dmin_ratio = SIMPLIFIED_TUNING_DEFAULT,
-    .simplified_ff_gain = SIMPLIFIED_TUNING_DEFAULT,
-    .simplified_dterm_filter = false,
-    .simplified_dterm_filter_multiplier = SIMPLIFIED_TUNING_DEFAULT,
-                );
+        .pid = {
+            [PID_ROLL] =  PID_ROLL_DEFAULT,
+            [PID_PITCH] = PID_PITCH_DEFAULT,
+            [PID_YAW] =   PID_YAW_DEFAULT,
+            [PID_LEVEL] = { 50, 50, 75, 0 },
+            [PID_MAG] =   { 40, 0, 0, 0 },
+        },
+        .pidSumLimit = PIDSUM_LIMIT,
+        .pidSumLimitYaw = PIDSUM_LIMIT_YAW,
+        .yaw_lowpass_hz = 0,
+        .dterm_notch_hz = 0,
+        .dterm_notch_cutoff = 0,
+        .itermWindupPointPercent = 100,
+        .pidAtMinThrottle = PID_STABILISATION_ON,
+        .levelAngleLimit = 55,
+        .feedForwardTransition = 0,
+        .yawRateAccelLimit = 0,
+        .rateAccelLimit = 0,
+        .itermThrottleThreshold = 250,
+        .itermAcceleratorGain = 3500,
+        .crash_time = 500,          // ms
+        .crash_delay = 0,           // ms
+        .crash_recovery_angle = 10, // degrees
+        .crash_recovery_rate = 100, // degrees/second
+        .crash_dthreshold = 50,     // degrees/second/second
+        .crash_gthreshold = 400,    // degrees/second
+        .crash_setpoint_threshold = 350, // degrees/second
+        .crash_recovery = PID_CRASH_RECOVERY_OFF, // off by default
+        .horizon_tilt_effect = 75,
+        .horizon_tilt_expert_mode = false,
+        .crash_limit_yaw = 200,
+        .itermLimit = 400,
+        .throttle_boost = 5,
+        .throttle_boost_cutoff = 15,
+        .iterm_rotation = false,
+        .iterm_relax = ITERM_RELAX_RP,
+        .iterm_relax_cutoff = ITERM_RELAX_CUTOFF_DEFAULT,
+        .iterm_relax_type = ITERM_RELAX_SETPOINT,
+        .acro_trainer_angle_limit = 20,
+        .acro_trainer_lookahead_ms = 50,
+        .acro_trainer_debug_axis = FD_ROLL,
+        .acro_trainer_gain = 75,
+        .abs_control_gain = 0,
+        .abs_control_limit = 90,
+        .abs_control_error_limit = 20,
+        .abs_control_cutoff = 11,
+        .antiGravityMode = ANTI_GRAVITY_SMOOTH,
+        .dterm_lowpass_hz = 150,    // NOTE: dynamic lpf is enabled by default so this setting is actually
+                                    // overridden and the static lowpass 1 is disabled. We can't set this
+                                    // value to 0 otherwise Configurator versions 10.4 and earlier will also
+                                    // reset the lowpass filter type to PT1 overriding the desired BIQUAD setting.
+        .dterm_lowpass2_hz = DTERM_LOWPASS_2_HZ_DEFAULT,   // second Dterm LPF ON by default
+        .dterm_filter_type = FILTER_PT1,
+        .dterm_filter2_type = FILTER_PT1,
+        .dyn_lpf_dterm_min_hz = DYN_LPF_DTERM_MIN_HZ_DEFAULT,
+        .dyn_lpf_dterm_max_hz = DYN_LPF_DTERM_MAX_HZ_DEFAULT,
+        .launchControlMode = LAUNCH_CONTROL_MODE_NORMAL,
+        .launchControlThrottlePercent = 20,
+        .launchControlAngleLimit = 0,
+        .launchControlGain = 40,
+        .launchControlAllowTriggerReset = true,
+        .use_integrated_yaw = false,
+        .integrated_yaw_relax = 200,
+        .thrustLinearization = 0,
+        .d_min = D_MIN_DEFAULT,
+        .d_min_gain = 37,
+        .d_min_advance = 20,
+        .motor_output_limit = 100,
+        .auto_profile_cell_count = AUTO_PROFILE_CELL_COUNT_STAY,
+        .transient_throttle_limit = 0,
+        .profileName = { 0 },
+        .dyn_idle_min_rpm = 0,
+        .dyn_idle_p_gain = 50,
+        .dyn_idle_i_gain = 50,
+        .dyn_idle_d_gain = 50,
+        .dyn_idle_max_increase = 150,
+        .ff_interpolate_sp = FF_INTERPOLATE_ON,
+        .ff_max_rate_limit = 100,
+        .ff_smooth_factor = 37,
+        .ff_jitter_factor = 7,
+        .ff_boost = 15,
+        .dyn_lpf_curve_expo = 5,
+        .level_race_mode = false,
+        .vbat_sag_compensation = 0,
+        .simplified_pids_mode = PID_SIMPLIFIED_TUNING_OFF,
+        .simplified_master_multiplier = SIMPLIFIED_TUNING_DEFAULT,
+        .simplified_roll_pitch_ratio = SIMPLIFIED_TUNING_DEFAULT,
+        .simplified_i_gain = SIMPLIFIED_TUNING_DEFAULT,
+        .simplified_pd_ratio = SIMPLIFIED_TUNING_DEFAULT,
+        .simplified_pd_gain = SIMPLIFIED_TUNING_DEFAULT,
+        .simplified_dmin_ratio = SIMPLIFIED_TUNING_DEFAULT,
+        .simplified_ff_gain = SIMPLIFIED_TUNING_DEFAULT,
+        .simplified_dterm_filter = false,
+        .simplified_dterm_filter_multiplier = SIMPLIFIED_TUNING_DEFAULT,
+    );
 #ifndef USE_D_MIN
     pidProfile->pid[PID_ROLL].D = 30;
     pidProfile->pid[PID_PITCH].D = 32;
@@ -266,6 +266,11 @@ float pidGetFfBoostFactor()
 float pidGetFfSmoothFactor()
 {
     return pidRuntime.ffSmoothFactor;
+}
+
+float pidGetFfJitterFactor()
+{
+    return pidRuntime.ffJitterFactor;
 }
 #endif
 
@@ -316,7 +321,7 @@ float pidCompensateThrustLinearization(float throttle)
     if (pidRuntime.thrustLinearization != 0.0f) {
         // for whoops where a lot of TL is needed, allow more throttle boost
         const float throttleReversed = (1.0f - throttle);
-        throttle /= 1.0f + pidRuntime.throttleCompensateAmount * powerf(throttleReversed, 2);
+        throttle /= 1.0f + pidRuntime.throttleCompensateAmount * powf(throttleReversed, 2);
     }
     return throttle;
 }
@@ -326,7 +331,7 @@ float pidApplyThrustLinearization(float motorOutput)
     if (pidRuntime.thrustLinearization != 0.0f) {
         if (motorOutput > 0.0f) {
             const float motorOutputReversed = (1.0f - motorOutput);
-            motorOutput *= 1.0f + powerf(motorOutputReversed, 2) * pidRuntime.thrustLinearization;
+            motorOutput *= 1.0f + powf(motorOutputReversed, 2) * pidRuntime.thrustLinearization;
         }
     }
     return motorOutput;
@@ -651,14 +656,7 @@ float FAST_CODE applyRcSmoothingDerivativeFilter(int axis, float pidSetpointDelt
         DEBUG_SET(DEBUG_RC_SMOOTHING, 1, lrintf(pidSetpointDelta * 100.0f));
     }
     if (pidRuntime.setpointDerivativeLpfInitialized) {
-        switch (pidRuntime.rcSmoothingFilterType) {
-        case RC_SMOOTHING_DERIVATIVE_PT1:
-            ret = pt1FilterApply(&pidRuntime.setpointDerivativePt1[axis], pidSetpointDelta);
-            break;
-        case RC_SMOOTHING_DERIVATIVE_BIQUAD:
-            ret = biquadFilterApplyDF1(&pidRuntime.setpointDerivativeBiquad[axis], pidSetpointDelta);
-            break;
-        }
+        ret = pt3FilterApply(&pidRuntime.setpointDerivativePt3[axis], pidSetpointDelta);
         if (axis == pidRuntime.rcSmoothingDebugAxis) {
             DEBUG_SET(DEBUG_RC_SMOOTHING, 2, lrintf(ret * 100.0f));
         }

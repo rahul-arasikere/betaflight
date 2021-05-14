@@ -198,7 +198,7 @@ static uint8_t ibusFrameStatus(rxRuntimeState_t *rxRuntimeState)
 }
 
 
-static uint16_t ibusReadRawRC(const rxRuntimeState_t *rxRuntimeState, uint8_t chan)
+static float ibusReadRawRC(const rxRuntimeState_t *rxRuntimeState, uint8_t chan)
 {
     UNUSED(rxRuntimeState);
     return ibusChannelData[chan];

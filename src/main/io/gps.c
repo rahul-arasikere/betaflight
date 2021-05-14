@@ -943,6 +943,7 @@ static bool gpsNewFrameNMEA(char c)
             switch (param) {
             //          case 1:             // Time information
             //              break;
+<<<<<<< HEAD
             case 2:
                 gps_Msg.latitude = GPS_coord_to_degrees(string);
                 break;
@@ -1008,6 +1009,94 @@ static bool gpsNewFrameNMEA(char c)
             }
             if (param < 4)
                 break;
+=======
+                        case 2:
+                            gps_Msg.latitude = GPS_coord_to_degrees(string);
+                            break;
+                        case 3:
+                            if (string[0] == 'S')
+                                gps_Msg.latitude *= -1;
+                            break;
+                        case 4:
+                            gps_Msg.longitude = GPS_coord_to_degrees(string);
+                            break;
+                        case 5:
+                            if (string[0] == 'W')
+                                gps_Msg.longitude *= -1;
+                            break;
+                        case 6:
+                            gpsSetFixState(string[0] > '0');
+                            break;
+                        case 7:
+                            gps_Msg.numSat = grab_fields(string, 0);
+                            break;
+                        case 8:
+                            gps_Msg.hdop = grab_fields(string, 1) * 100;          // hdop
+                            break;
+                        case 9:
+                            gps_Msg.altitudeCm = grab_fields(string, 1) * 10;     // altitude in centimeters. Note: NMEA delivers altitude with 1 or 3 decimals. It's safer to cut at 0.1m and multiply by 10
+                            break;
+                    }
+                    break;
+                case FRAME_RMC:        //************* GPRMC FRAME parsing
+                    switch (param) {
+                        case 1:
+                            gps_Msg.time = grab_fields(string, 2); // UTC time hhmmss.ss
+                            break;
+                        case 7:
+                            gps_Msg.speed = ((grab_fields(string, 1) * 5144L) / 1000L);    // speed in cm/s added by Mis
+                            break;
+                        case 8:
+                            gps_Msg.ground_course = (grab_fields(string, 1));      // ground course deg * 10
+                            break;
+                        case 9:
+                            gps_Msg.date = grab_fields(string, 0); // date dd/mm/yy
+                            break;
+                    }
+                    break;
+                case FRAME_GSV:
+                    switch (param) {
+                      /*case 1:
+                            // Total number of messages of this type in this cycle
+                            break; */
+                        case 2:
+                            // Message number
+                            svMessageNum = grab_fields(string, 0);
+                            break;
+                        case 3:
+                            // Total number of SVs visible
+                            GPS_numCh = grab_fields(string, 0);
+                            break;
+                    }
+                    if (param < 4)
+                        break;
+
+                    svPacketIdx = (param - 4) / 4 + 1; // satellite number in packet, 1-4
+                    svSatNum    = svPacketIdx + (4 * (svMessageNum - 1)); // global satellite number
+                    svSatParam  = param - 3 - (4 * (svPacketIdx - 1)); // parameter number for satellite
+
+                    if (svSatNum > GPS_SV_MAXSATS)
+                        break;
+
+                    switch (svSatParam) {
+                        case 1:
+                            // SV PRN number
+                            GPS_svinfo_chn[svSatNum - 1]  = svSatNum;
+                            GPS_svinfo_svid[svSatNum - 1] = grab_fields(string, 0);
+                            break;
+                      /*case 2:
+                            // Elevation, in degrees, 90 maximum
+                            break;
+                        case 3:
+                            // Azimuth, degrees from True North, 000 through 359
+                            break; */
+                        case 4:
+                            // SNR, 00 through 99 dB (null when not tracking)
+                            GPS_svinfo_cno[svSatNum - 1] = grab_fields(string, 0);
+                            GPS_svinfo_quality[svSatNum - 1] = 0; // only used by ublox
+                            break;
+                    }
+>>>>>>> master
 
             svPacketIdx = (param - 4) / 4 + 1; // satellite number in packet, 1-4
             svSatNum    = svPacketIdx + (4 * (svMessageNum - 1)); // global satellite number
@@ -1287,11 +1376,7 @@ static bool UBLOX_parse_gps(void)
         gpsSol.llh.lon = _buffer.posllh.longitude;
         gpsSol.llh.lat = _buffer.posllh.latitude;
         gpsSol.llh.altCm = _buffer.posllh.altitudeMslMm / 10;  //alt in cm
-        if (next_fix) {
-            ENABLE_STATE(GPS_FIX);
-        } else {
-            DISABLE_STATE(GPS_FIX);
-        }
+        gpsSetFixState(next_fix);
         _new_position = true;
         break;
     case MSG_STATUS:
@@ -1512,7 +1597,7 @@ static void GPS_calculateDistanceFlownVerticalSpeed(bool initialize)
             if (speed > GPS_DISTANCE_FLOWN_MIN_SPEED_THRESHOLD_CM_S) {
                 uint32_t dist;
                 int32_t dir;
-                GPS_distance_cm_bearing(&gpsSol.llh.lat, &gpsSol.llh.lon, &lastCoord[LAT], &lastCoord[LON], &dist, &dir);
+                GPS_distance_cm_bearing(&gpsSol.llh.lat, &gpsSol.llh.lon, &lastCoord[GPS_LATITUDE], &lastCoord[GPS_LONGITUDE], &dist, &dir);
                 if (gpsConfig()->gps_use_3d_speed) {
                     dist = sqrtf(powf(gpsSol.llh.altCm - lastAlt, 2.0f) + powf(dist, 2.0f));
                 }
@@ -1522,8 +1607,8 @@ static void GPS_calculateDistanceFlownVerticalSpeed(bool initialize)
         GPS_verticalSpeedInCmS = (gpsSol.llh.altCm - lastAlt) * 1000 / (currentMillis - lastMillis);
         GPS_verticalSpeedInCmS = constrain(GPS_verticalSpeedInCmS, -1500, 1500);
     }
-    lastCoord[LON] = gpsSol.llh.lon;
-    lastCoord[LAT] = gpsSol.llh.lat;
+    lastCoord[GPS_LONGITUDE] = gpsSol.llh.lon;
+    lastCoord[GPS_LATITUDE] = gpsSol.llh.lat;
     lastAlt = gpsSol.llh.altCm;
     lastMillis = currentMillis;
 }
@@ -1532,8 +1617,8 @@ void GPS_reset_home_position(void)
 {
     if (!STATE(GPS_FIX_HOME) || !gpsConfig()->gps_set_home_point_once) {
         if (STATE(GPS_FIX) && gpsSol.numSat >= 5) {
-            GPS_home[LAT] = gpsSol.llh.lat;
-            GPS_home[LON] = gpsSol.llh.lon;
+            GPS_home[GPS_LATITUDE] = gpsSol.llh.lat;
+            GPS_home[GPS_LONGITUDE] = gpsSol.llh.lon;
             GPS_calc_longitude_scaling(gpsSol.llh.lat); // need an initial value for distance and bearing calc
             // Set ground altitude
             ENABLE_STATE(GPS_FIX_HOME);
@@ -1564,7 +1649,7 @@ void GPS_calculateDistanceAndDirectionToHome(void)
     if (STATE(GPS_FIX_HOME)) {      // If we don't have home set, do not display anything
         uint32_t dist;
         int32_t dir;
-        GPS_distance_cm_bearing(&gpsSol.llh.lat, &gpsSol.llh.lon, &GPS_home[LAT], &GPS_home[LON], &dist, &dir);
+        GPS_distance_cm_bearing(&gpsSol.llh.lat, &gpsSol.llh.lon, &GPS_home[GPS_LATITUDE], &GPS_home[GPS_LONGITUDE], &dist, &dir);
         GPS_distanceToHome = dist / 100;
         GPS_directionToHome = dir / 100;
     } else {
@@ -1599,4 +1684,13 @@ void onGpsNewData(void)
 #endif
 }
 
+void gpsSetFixState(bool state)
+{
+    if (state) {
+        ENABLE_STATE(GPS_FIX);
+        ENABLE_STATE(GPS_FIX_EVER);
+    } else {
+        DISABLE_STATE(GPS_FIX);
+    }
+}
 #endif

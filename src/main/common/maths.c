@@ -116,6 +116,7 @@ int gcd(int num, int denom)
     return gcd(denom, num % denom);
 }
 
+<<<<<<< HEAD
 float powerf(float base, int exp)
 {
     float result = base;
@@ -124,6 +125,8 @@ float powerf(float base, int exp)
     return result;
 }
 
+=======
+>>>>>>> master
 int32_t applyDeadband(const int32_t value, const int32_t deadband)
 {
     if (ABS(value) < deadband) {
