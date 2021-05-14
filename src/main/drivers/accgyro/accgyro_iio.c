@@ -40,6 +40,9 @@
 #include "common/axis.h"
 #include "common/utils.h"
 
+static struct iio_device *accgyro_device;
+static struct iio_buffer *accgyro_buffer;
+
 #endif
 
 #ifdef USE_IIO_GYRO
@@ -48,22 +51,20 @@
 #define ANGLVEL_Y "anglvel_y"
 #define ANGLVEL_Z "anglvel_z"
 
-static struct iio_device *gyro_device;
-static struct iio_buffer *gyro_buffer;
 static struct iio_channel *gyro_anglvel_x;
 static struct iio_channel *gyro_anglvel_y;
 static struct iio_channel *gyro_anglvel_z;
 
 bool iioGyroRead(gyroDev_t *gyro)
 {
-    if (iio_buffer_refill(gyro_buffer) < 0)
+    if (iio_buffer_refill(accgyro_buffer) < 0)
     {
         gyro->dataReady = false;
         return false; // no data ready yet
     }
-    iio_channel_read_raw(gyro_anglvel_x, gyro_buffer, &(gyro->gyroADCRaw[X]), sizeof(int16_t));
-    iio_channel_read_raw(gyro_anglvel_y, gyro_buffer, &(gyro->gyroADCRaw[Y]), sizeof(int16_t));
-    iio_channel_read_raw(gyro_anglvel_z, gyro_buffer, &(gyro->gyroADCRaw[Z]), sizeof(int16_t));
+    iio_channel_read_raw(gyro_anglvel_x, accgyro_buffer, &(gyro->gyroADCRaw[X]), sizeof(int16_t));
+    iio_channel_read_raw(gyro_anglvel_y, accgyro_buffer, &(gyro->gyroADCRaw[Y]), sizeof(int16_t));
+    iio_channel_read_raw(gyro_anglvel_z, accgyro_buffer, &(gyro->gyroADCRaw[Z]), sizeof(int16_t));
     gyro->dataReady = true;
     return true;
 }
@@ -75,7 +76,7 @@ static void iioGyroInit(gyroDev_t *gyro)
     {
         printf("Create gyro lock error!\n");
     }
-    iio_buffer_set_blocking_mode(gyro_buffer, true);
+    iio_buffer_set_blocking_mode(accgyro_buffer, true);
 
 #endif
 }
@@ -88,27 +89,26 @@ bool iioGyroDetect(gyroDev_t *gyro)
         perror("Failed to acquire default context!\n");
         return false;
     }
-    gyro_device = iio_context_find_device(ctx, IIO_GYRO_NAME);
-    iio_context_destroy(ctx);
-    if (gyro_device == NULL)
+    accgyro_device = iio_context_find_device(ctx, IIO_GYRO_NAME);
+    if (accgyro_device == NULL)
     {
         perror("Failed find gyro device!\n");
         return false;
     }
-    gyro_anglvel_x = iio_device_find_channel(gyro_device, ANGLVEL_X, false);
-    gyro_anglvel_y = iio_device_find_channel(gyro_device, ANGLVEL_Y, false);
-    gyro_anglvel_z = iio_device_find_channel(gyro_device, ANGLVEL_Z, false);
+    gyro_anglvel_x = iio_device_find_channel(accgyro_device, ANGLVEL_X, false);
+    gyro_anglvel_y = iio_device_find_channel(accgyro_device, ANGLVEL_Y, false);
+    gyro_anglvel_z = iio_device_find_channel(accgyro_device, ANGLVEL_Z, false);
 
     if (gyro_anglvel_x == NULL || gyro_anglvel_y == NULL || gyro_anglvel_z == NULL)
     {
-        perror("Failed to get a channel!\n");
+        perror("Failed to get a gyro channel!\n");
         return false;
     }
     iio_channel_enable(gyro_anglvel_x);
     iio_channel_enable(gyro_anglvel_y);
     iio_channel_enable(gyro_anglvel_z);
-    gyro_buffer = iio_device_create_buffer(gyro_device, 1, false);
-    if (gyro_buffer == NULL)
+    accgyro_buffer = iio_device_create_buffer(accgyro_device, 1, false);
+    if (accgyro_buffer == NULL)
     {
         perror("Failed to create gyro buffer!\n");
         return false;
@@ -128,22 +128,20 @@ bool iioGyroDetect(gyroDev_t *gyro)
 #define ACCEL_Y "accel_y"
 #define ACCEL_Z "accel_z"
 
-static struct iio_device *accel_device;
-static struct iio_buffer *accel_buffer;
 static struct iio_channel *accel_x;
 static struct iio_channel *accel_y;
 static struct iio_channel *accel_z;
 
 bool iioAccRead(accDev_t *acc)
 {
-    if (iio_buffer_refill(accel_buffer) < 0)
+    if (iio_buffer_refill(accgyro_buffer) < 0)
     {
         acc->dataReady = false;
         return false; // no data ready yet
     }
-    iio_channel_read_raw(accel_x, accel_buffer, &(acc->ADCRaw[X]), sizeof(int16_t));
-    iio_channel_read_raw(accel_y, accel_buffer, &(acc->ADCRaw[Y]), sizeof(int16_t));
-    iio_channel_read_raw(accel_z, accel_buffer, &(acc->ADCRaw[Z]), sizeof(int16_t));
+    iio_channel_read_raw(accel_x, accgyro_buffer, &(acc->ADCRaw[X]), sizeof(int16_t));
+    iio_channel_read_raw(accel_y, accgyro_buffer, &(acc->ADCRaw[Y]), sizeof(int16_t));
+    iio_channel_read_raw(accel_z, accgyro_buffer, &(acc->ADCRaw[Z]), sizeof(int16_t));
     acc->dataReady = true;
     return true;
 }
@@ -156,7 +154,7 @@ static void iioAccInit(accDev_t *acc)
         printf("Create acc lock error!\n");
     }
 #endif
-    iio_buffer_set_blocking_mode(accel_buffer, true);
+    iio_buffer_set_blocking_mode(accgyro_buffer, true);
 }
 
 bool iioAccDetect(accDev_t *acc)
@@ -167,29 +165,34 @@ bool iioAccDetect(accDev_t *acc)
         perror("Failed to acquire default context!\n");
         return false;
     }
-    accel_device = iio_context_find_device(ctx, IIO_ACC_NAME);
-    iio_context_destroy(ctx);
-    if (accel_device == NULL)
+    if (accgyro_device == NULL)
     {
-        perror("Failed find accel device!\n");
-        return false;
+        accgyro_device = iio_context_find_device(ctx, IIO_GYRO_NAME);
+        if (accgyro_device == NULL)
+        {
+            perror("Failed find gyro device!\n");
+            return false;
+        }
     }
-    accel_x = iio_device_find_channel(accel_device, ACCEL_X, false);
-    accel_y = iio_device_find_channel(accel_device, ACCEL_Y, false);
-    accel_z = iio_device_find_channel(accel_device, ACCEL_Z, false);
+    accel_x = iio_device_find_channel(accgyro_device, ACCEL_X, false);
+    accel_y = iio_device_find_channel(accgyro_device, ACCEL_Y, false);
+    accel_z = iio_device_find_channel(accgyro_device, ACCEL_Z, false);
     if (accel_x == NULL || accel_y == NULL || accel_z == NULL)
     {
-        perror("Failed to get a channel!\n");
+        perror("Failed to get a accel channel!\n");
         return false;
     }
     iio_channel_enable(accel_x);
     iio_channel_enable(accel_y);
     iio_channel_enable(accel_z);
-    accel_buffer = iio_device_create_buffer(accel_device, 1, false);
-    if (accel_buffer == NULL)
+    if (accgyro_buffer == NULL)
     {
-        perror("Failed to create accel buffer!\n");
-        return false;
+        accgyro_buffer = iio_device_create_buffer(accgyro_device, 1, false);
+        if (accgyro_buffer == NULL)
+        {
+            perror("Failed to create accel buffer!\n");
+            return false;
+        }
     }
 
     acc->initFn = iioAccInit;
