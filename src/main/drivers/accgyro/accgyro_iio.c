@@ -108,7 +108,7 @@ bool iioGyroDetect(gyroDev_t *gyro)
     iio_channel_enable(gyro_anglvel_y);
     iio_channel_enable(gyro_anglvel_z);
     gyro_buffer = iio_device_create_buffer(gyro_device, 1, false);
-    if (gyro_buffer = NULL)
+    if (gyro_buffer == NULL)
     {
         perror("Failed to create gyro buffer!\n");
         return false;
@@ -186,7 +186,7 @@ bool iioAccDetect(accDev_t *acc)
     iio_channel_enable(accel_y);
     iio_channel_enable(accel_z);
     accel_buffer = iio_device_create_buffer(accel_device, 1, false);
-    if (accel_buffer = NULL)
+    if (accel_buffer == NULL)
     {
         perror("Failed to create accel buffer!\n");
         return false;
