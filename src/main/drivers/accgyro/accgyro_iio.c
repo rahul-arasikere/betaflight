@@ -113,7 +113,7 @@ bool iioGyroDetect(gyroDev_t *gyro)
     accel_z = iio_device_find_channel(accgyro_device, ACCEL_Z, false);
     if (gyro_anglvel_x == NULL || gyro_anglvel_y == NULL || gyro_anglvel_z == NULL || accel_x == NULL || accel_y == NULL || accel_z == NULL)
     {
-        perror("Failed to get a channel!\n");
+        perror("Failed to get a gyro channel!\n");
         return false;
     }
     iio_channel_enable(accel_x);
@@ -123,7 +123,6 @@ bool iioGyroDetect(gyroDev_t *gyro)
     iio_channel_enable(gyro_anglvel_x);
     iio_channel_enable(gyro_anglvel_y);
     iio_channel_enable(gyro_anglvel_z);
-
     accgyro_buffer = iio_device_create_buffer(accgyro_device, 1, false);
     if (accgyro_buffer == NULL)
     {

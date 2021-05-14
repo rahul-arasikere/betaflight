@@ -58,10 +58,12 @@
 #define USE_FAKE_LED
 
 #define USE_ACC
-#define USE_FAKE_ACC
+#define USE_IIO_ACC
 
 #define USE_GYRO
-#define USE_FAKE_GYRO
+#define USE_IIO_GYRO
+
+#define IIO_ACCGYRO_NAME "mpu6050"
 
 #define USE_MAG
 #define USE_FAKE_MAG
