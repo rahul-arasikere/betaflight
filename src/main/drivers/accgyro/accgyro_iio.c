@@ -82,7 +82,7 @@ static void iioGyroInit(gyroDev_t *gyro)
 
 bool iioGyroDetect(gyroDev_t *gyro)
 {
-    struct iio_context *ctx = iio_create_local_context();
+    struct iio_context *ctx = iio_create_default_context();
     if (ctx == NULL)
     {
         perror("Failed to acquire default context!\n");
@@ -161,7 +161,7 @@ static void iioAccInit(accDev_t *acc)
 
 bool iioAccDetect(accDev_t *acc)
 {
-    struct iio_context *ctx = iio_create_local_context();
+    struct iio_context *ctx = iio_create_default_context();
     if (ctx == NULL)
     {
         perror("Failed to acquire default context!\n");
