@@ -943,73 +943,6 @@ static bool gpsNewFrameNMEA(char c)
             switch (param) {
             //          case 1:             // Time information
             //              break;
-<<<<<<< HEAD
-            case 2:
-                gps_Msg.latitude = GPS_coord_to_degrees(string);
-                break;
-            case 3:
-                if (string[0] == 'S')
-                    gps_Msg.latitude *= -1;
-                break;
-            case 4:
-                gps_Msg.longitude = GPS_coord_to_degrees(string);
-                break;
-            case 5:
-                if (string[0] == 'W')
-                    gps_Msg.longitude *= -1;
-                break;
-            case 6:
-                if (string[0] > '0') {
-                    ENABLE_STATE(GPS_FIX);
-                } else {
-                    DISABLE_STATE(GPS_FIX);
-                }
-                break;
-            case 7:
-                gps_Msg.numSat = grab_fields(string, 0);
-                break;
-            case 8:
-                gps_Msg.hdop = grab_fields(string, 1) * 100;          // hdop
-                break;
-            case 9:
-                gps_Msg.altitudeCm = grab_fields(string,
-                                                 1) * 10;     // altitude in centimeters. Note: NMEA delivers altitude with 1 or 3 decimals. It's safer to cut at 0.1m and multiply by 10
-                break;
-            }
-            break;
-        case FRAME_RMC:        //************* GPRMC FRAME parsing
-            switch (param) {
-            case 1:
-                gps_Msg.time = grab_fields(string, 2); // UTC time hhmmss.ss
-                break;
-            case 7:
-                gps_Msg.speed = ((grab_fields(string, 1) * 5144L) / 1000L);    // speed in cm/s added by Mis
-                break;
-            case 8:
-                gps_Msg.ground_course = (grab_fields(string, 1));      // ground course deg * 10
-                break;
-            case 9:
-                gps_Msg.date = grab_fields(string, 0); // date dd/mm/yy
-                break;
-            }
-            break;
-        case FRAME_GSV:
-            switch (param) {
-            /*case 1:
-                  // Total number of messages of this type in this cycle
-                  break; */
-            case 2:
-                // Message number
-                svMessageNum = grab_fields(string, 0);
-                break;
-            case 3:
-                // Total number of SVs visible
-                GPS_numCh = grab_fields(string, 0);
-                break;
-            }
-            if (param < 4)
-                break;
-=======
                         case 2:
                             gps_Msg.latitude = GPS_coord_to_degrees(string);
                             break;
@@ -1096,7 +1029,6 @@ static bool gpsNewFrameNMEA(char c)
                             GPS_svinfo_quality[svSatNum - 1] = 0; // only used by ublox
                             break;
                     }
->>>>>>> master
 
             svPacketIdx = (param - 4) / 4 + 1; // satellite number in packet, 1-4
             svSatNum    = svPacketIdx + (4 * (svMessageNum - 1)); // global satellite number

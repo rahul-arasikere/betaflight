@@ -124,12 +124,7 @@ typedef struct rxChannelRangeConfig_s {
 PG_DECLARE_ARRAY(rxChannelRangeConfig_t, NON_AUX_CHANNEL_COUNT, rxChannelRangeConfigs);
 
 struct rxRuntimeState_s;
-<<<<<<< HEAD
-typedef uint16_t (*rcReadRawDataFnPtr)(const struct rxRuntimeState_s *rxRuntimeState,
-                                       uint8_t chan); // used by receiver driver to return channel data
-=======
 typedef float (*rcReadRawDataFnPtr)(const struct rxRuntimeState_s *rxRuntimeState, uint8_t chan); // used by receiver driver to return channel data
->>>>>>> master
 typedef uint8_t (*rcFrameStatusFnPtr)(struct rxRuntimeState_s *rxRuntimeState);
 typedef bool (*rcProcessFrameFnPtr)(const struct rxRuntimeState_s *rxRuntimeState);
 typedef timeUs_t rcGetFrameTimeUsFn(

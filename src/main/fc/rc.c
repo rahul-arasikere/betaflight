@@ -436,46 +436,17 @@ FAST_CODE_NOINLINE void rcSmoothingSetFilterCutoffs(rcSmoothingFilter_t *smoothi
     uint16_t oldCutoff = smoothingData->inputCutoffFrequency;
 
     if (smoothingData->inputCutoffSetting == 0) {
-<<<<<<< HEAD
-        smoothingData->inputCutoffFrequency = calcRcSmoothingCutoff(smoothingData->averageFrameTimeUs,
-                                                                    (smoothingData->inputFilterType == RC_SMOOTHING_INPUT_PT1), smoothingData->autoSmoothnessFactor);
-=======
         smoothingData->inputCutoffFrequency = calcRcSmoothingCutoff(smoothingData->averageFrameTimeUs, smoothingData->autoSmoothnessFactor);
->>>>>>> master
     }
 
     // initialize or update the input filter
     if ((smoothingData->inputCutoffFrequency != oldCutoff) || !smoothingData->filterInitialized) {
         for (int i = 0; i < PRIMARY_CHANNEL_COUNT; i++) {
             if ((1 << i) & interpolationChannels) {  // only update channels specified by rc_interp_ch
-<<<<<<< HEAD
-                switch (smoothingData->inputFilterType) {
-
-                case RC_SMOOTHING_INPUT_PT1:
-                    if (!smoothingData->filterInitialized) {
-                        pt1FilterInit((pt1Filter_t *) &smoothingData->filter[i], pt1FilterGain(smoothingData->inputCutoffFrequency, dT));
-                    } else {
-                        pt1FilterUpdateCutoff((pt1Filter_t *) &smoothingData->filter[i], pt1FilterGain(smoothingData->inputCutoffFrequency,
-                                                                                                       dT));
-                    }
-                    break;
-
-                case RC_SMOOTHING_INPUT_BIQUAD:
-                default:
-                    if (!smoothingData->filterInitialized) {
-                        biquadFilterInitLPF((biquadFilter_t *) &smoothingData->filter[i], smoothingData->inputCutoffFrequency,
-                                            targetPidLooptime);
-                    } else {
-                        biquadFilterUpdateLPF((biquadFilter_t *) &smoothingData->filter[i], smoothingData->inputCutoffFrequency,
-                                              targetPidLooptime);
-                    }
-                    break;
-=======
                 if (!smoothingData->filterInitialized) {
                     pt3FilterInit((pt3Filter_t*) &smoothingData->filter[i], pt3FilterGain(smoothingData->inputCutoffFrequency, dT));
                 } else {
                     pt3FilterUpdateCutoff((pt3Filter_t*) &smoothingData->filter[i], pt3FilterGain(smoothingData->inputCutoffFrequency, dT));
->>>>>>> master
                 }
             }
         }
@@ -483,26 +454,12 @@ FAST_CODE_NOINLINE void rcSmoothingSetFilterCutoffs(rcSmoothingFilter_t *smoothi
 
     // update or initialize the derivative filter
     oldCutoff = smoothingData->derivativeCutoffFrequency;
-<<<<<<< HEAD
-    if ((rcSmoothingData.derivativeFilterType != RC_SMOOTHING_DERIVATIVE_OFF)
-        && (currentPidProfile->ff_interpolate_sp == FF_INTERPOLATE_OFF)
-        && (rcSmoothingData.derivativeCutoffSetting == 0)) {
-
-        smoothingData->derivativeCutoffFrequency = calcRcSmoothingCutoff(smoothingData->averageFrameTimeUs,
-                                                                         (smoothingData->derivativeFilterType == RC_SMOOTHING_DERIVATIVE_PT1), smoothingData->autoSmoothnessFactor);
-    }
-
-    if (!smoothingData->filterInitialized) {
-        pidInitSetpointDerivativeLpf(smoothingData->derivativeCutoffFrequency, smoothingData->debugAxis,
-                                     smoothingData->derivativeFilterType);
-=======
     if ((currentPidProfile->ff_interpolate_sp != FF_INTERPOLATE_OFF) && (rcSmoothingData.derivativeCutoffSetting == 0)) {
         smoothingData->derivativeCutoffFrequency = calcRcSmoothingCutoff(smoothingData->averageFrameTimeUs, smoothingData->autoSmoothnessFactor);
     }
 
     if (!smoothingData->filterInitialized) {
         pidInitSetpointDerivativeLpf(smoothingData->derivativeCutoffFrequency, smoothingData->debugAxis);
->>>>>>> master
     } else if (smoothingData->derivativeCutoffFrequency != oldCutoff) {
         pidUpdateSetpointDerivativeLpf(smoothingData->derivativeCutoffFrequency);
     }
@@ -570,22 +527,6 @@ static FAST_CODE uint8_t processRcSmoothingFilter(void)
 
         rcSmoothingData.inputCutoffFrequency = rcSmoothingData.inputCutoffSetting;
 
-<<<<<<< HEAD
-        if (rcSmoothingData.derivativeFilterType != RC_SMOOTHING_DERIVATIVE_OFF) {
-            if ((currentPidProfile->ff_interpolate_sp != FF_INTERPOLATE_OFF) && (rcSmoothingData.derivativeCutoffSetting == 0)) {
-                // calculate the fixed derivative cutoff used for interpolated feedforward
-                const float cutoffFactor = (100 - rcSmoothingData.autoSmoothnessFactor) / 100.0f;
-                float derivativeCutoff = RC_SMOOTHING_INTERPOLATED_FEEDFORWARD_DERIVATIVE_PT1_HZ *
-                                         cutoffFactor;  // PT1 cutoff frequency
-                if (rcSmoothingData.derivativeFilterType == RC_SMOOTHING_DERIVATIVE_BIQUAD) {
-                    // convert to an equivalent BIQUAD cutoff
-                    derivativeCutoff = sqrt(derivativeCutoff * RC_SMOOTHING_IDENTITY_FREQUENCY);
-                }
-                rcSmoothingData.derivativeCutoffFrequency = lrintf(derivativeCutoff);
-            } else {
-                rcSmoothingData.derivativeCutoffFrequency = rcSmoothingData.derivativeCutoffSetting;
-            }
-=======
         if ((currentPidProfile->ff_interpolate_sp != FF_INTERPOLATE_OFF) && (rcSmoothingData.derivativeCutoffSetting == 0)) {
             // calculate the initial derivative cutoff used for interpolated feedforward until RC interval is known
             const float cutoffFactor = 1.5f / (1.0f + (rcSmoothingData.autoSmoothnessFactor / 10.0f));
@@ -593,7 +534,6 @@ static FAST_CODE uint8_t processRcSmoothingFilter(void)
             rcSmoothingData.derivativeCutoffFrequency = lrintf(derivativeCutoff);
         } else {
             rcSmoothingData.derivativeCutoffFrequency = rcSmoothingData.derivativeCutoffSetting;
->>>>>>> master
         }
 
         calculateCutoffs = rcSmoothingAutoCalculate();
@@ -689,22 +629,7 @@ static FAST_CODE uint8_t processRcSmoothingFilter(void)
     for (updatedChannel = 0; updatedChannel < PRIMARY_CHANNEL_COUNT; updatedChannel++) {
         if ((1 << updatedChannel) & interpolationChannels) {  // only smooth selected channels base on the rc_interp_ch value
             if (rcSmoothingData.filterInitialized) {
-<<<<<<< HEAD
-                switch (rcSmoothingData.inputFilterType) {
-                case RC_SMOOTHING_INPUT_PT1:
-                    rcCommand[updatedChannel] = pt1FilterApply((pt1Filter_t *) &rcSmoothingData.filter[updatedChannel],
-                                                               lastRxData[updatedChannel]);
-                    break;
-
-                case RC_SMOOTHING_INPUT_BIQUAD:
-                default:
-                    rcCommand[updatedChannel] = biquadFilterApplyDF1((biquadFilter_t *) &rcSmoothingData.filter[updatedChannel],
-                                                                     lastRxData[updatedChannel]);
-                    break;
-                }
-=======
                 rcCommand[updatedChannel] = pt3FilterApply((pt3Filter_t*) &rcSmoothingData.filter[updatedChannel], lastRxData[updatedChannel]);
->>>>>>> master
             } else {
                 // If filter isn't initialized yet then use the actual unsmoothed rx channel data
                 rcCommand[updatedChannel] = lastRxData[updatedChannel];
