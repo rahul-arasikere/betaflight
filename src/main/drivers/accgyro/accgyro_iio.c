@@ -33,105 +33,37 @@
 #if defined(USE_IIO_GYRO) || defined(USE_IIO_ACC)
 #include <iio.h>
 
-static struct iio_context *ctx = NULL;
-static struct iio_buffer *imubuf = NULL;
-static struct iio_device *imu = NULL;
-
-static bool enable_failed;
-
-#define GRAVITY 9.805f
-#define SCALE 10.0f
-
-static bool get_imu_dev(struct iio_context *ctx, struct iio_device **dev)
-{
-    *dev = iio_context_find_device(ctx, IIO_ACCGYRO_NAME);
-    if (!*dev)
-    {
-        printf("Could not find MPU6050\n");
-        return false;
-    }
-
-    return true;
-}
-
-static void enable_dev_channel(struct iio_device *dev, char *name)
-{
-    struct iio_channel *ch;
-
-    if (enable_failed)
-        return;
-
-    ch = iio_device_find_channel(dev, name, false);
-    if (ch == NULL)
-    {
-        enable_failed = true;
-        printf("Enabling channel %s failed!\n", name);
-        return;
-    }
-    printf("Enabling channel %s\n", name);
-    iio_channel_enable(ch);
-}
-
-static void disable_imu_channel(struct iio_context *ctx, char *channel)
-{
-    struct iio_device *dev = NULL;
-    struct iio_channel *ch = NULL;
-
-    get_imu_dev(ctx, &dev);
-
-    if (!dev || !channel)
-    {
-        printf("Disabling IMU channel failed\n");
-        return;
-    }
-
-    ch = iio_device_find_channel(dev, channel, false);
-    if (!ch)
-    {
-        printf("Disabling IMU channel, could not find channel\n");
-        return;
-    }
-    iio_channel_disable(ch);
-}
-
-#endif
-
-#ifdef USE_IIO_GYRO
-
+#include "drivers/accgyro/accgyro.h"
+#include "drivers/accgyro/accgyro_iio.h"
 #include "build/build_config.h"
 
 #include "common/axis.h"
 #include "common/utils.h"
 
-#include "drivers/accgyro/accgyro.h"
-#include "drivers/accgyro/accgyro_iio.h"
+#endif
 
-#define ANGVL_X "anglvel_x"
-#define ANGVL_Y "anglvel_y"
-#define ANGVL_Z "anglvel_z"
+#ifdef USE_IIO_GYRO
+
+#define ANGLVEL_X "anglvel_x"
+#define ANGLVEL_Y "anglvel_y"
+#define ANGLVEL_Z "anglvel_z"
+
+static struct iio_device *gyro_device;
+static struct iio_buffer *gyro_buffer;
+static struct iio_channel *gyro_anglvel_x;
+static struct iio_channel *gyro_anglvel_y;
+static struct iio_channel *gyro_anglvel_z;
 
 bool iioGyroRead(gyroDev_t *gyro)
 {
-    ssize_t rxn;
-    char *data;
-    struct iio_channel *ch;
-    ptrdiff_t inc;
-
-    assert(imubuf != NULL);
-    rxn = iio_buffer_refill(imubuf);
-    if (rxn < 0)
+    if (iio_buffer_refill(gyro_buffer) < 0)
     {
-        printf("Error filling up IMU buffer\n");
-        return false;
+        gyro->dataReady = false;
+        return false; // no data ready yet
     }
-    ch = iio_device_find_channel(imu, ANGVL_X, false);
-    data = iio_buffer_first(imubuf, ch);
-    inc = iio_buffer_step(imubuf);
-    gyro->gyroADCRaw[X] = ((int16_t *)data)[0];
-    data += inc;
-    gyro->gyroADCRaw[Y] = ((int16_t *)data)[1];
-    data += inc;
-    gyro->gyroADCRaw[Z] = ((int16_t *)data)[2];
+    iio_channel_read_raw(gyro_anglvel_x, gyro_buffer, &(gyro->gyroADCRaw[X]), sizeof(int16_t));
+    iio_channel_read_raw(gyro_anglvel_y, gyro_buffer, &(gyro->gyroADCRaw[Y]), sizeof(int16_t));
+    iio_channel_read_raw(gyro_anglvel_z, gyro_buffer, &(gyro->gyroADCRaw[Z]), sizeof(int16_t));
     gyro->dataReady = true;
     return true;
 }
@@ -143,52 +75,45 @@ static void iioGyroInit(gyroDev_t *gyro)
     {
         printf("Create gyro lock error!\n");
     }
+    iio_buffer_set_blocking_mode(gyro_buffer, true);
+
 #endif
-
-    if (ctx == NULL)
-    {
-        ctx = iio_create_default_context();
-    }
-
-    if (ctx == NULL)
-    {
-        printf("failed to acquire default iio context!\n");
-    }
-
-    if (!iio_context_get_devices_count(ctx))
-    {
-        printf("No IIO devices found!\n");
-    }
-
-    if (imu == NULL)
-    {
-        if (!get_imu_dev(ctx, &imu))
-        {
-            printf("Could not find IMU device!\n");
-        }
-    }
-
-    enable_dev_channel(imu, ANGVL_X);
-    enable_dev_channel(imu, ANGVL_Y);
-    enable_dev_channel(imu, ANGVL_Z);
-
-    if (enable_failed)
-    {
-        printf("Exiting since enabling one of the IMU channels failed\n");
-    }
-
-    if (imubuf == NULL)
-    {
-        imubuf = iio_device_create_buffer(imu, 16, false);
-        if (!imubuf)
-        {
-            printf("Enabling IMU buffers failed!\n");
-        }
-    }
 }
 
 bool iioGyroDetect(gyroDev_t *gyro)
 {
+    struct iio_context *ctx = iio_create_default_context();
+    if (ctx == NULL)
+    {
+        perror("Failed to acquire default context!\n");
+        return false;
+    }
+    gyro_device = iio_context_find_device(ctx, IIO_GYRO_NAME);
+    iio_context_destroy(ctx);
+    if (gyro_device == NULL)
+    {
+        perror("Failed find gyro device!\n");
+        return false;
+    }
+    gyro_anglvel_x = iio_device_find_channel(gyro_device, ANGLVEL_X, false);
+    gyro_anglvel_y = iio_device_find_channel(gyro_device, ANGLVEL_Y, false);
+    gyro_anglvel_z = iio_device_find_channel(gyro_device, ANGLVEL_Z, false);
+
+    if (gyro_anglvel_x == NULL || gyro_anglvel_y == NULL || gyro_anglvel_z == NULL)
+    {
+        perror("Failed to get a channel!\n");
+        return false;
+    }
+    iio_channel_enable(gyro_anglvel_x);
+    iio_channel_enable(gyro_anglvel_y);
+    iio_channel_enable(gyro_anglvel_z);
+    gyro_buffer = iio_device_create_buffer(gyro_device, 1, false);
+    if (gyro_buffer = NULL)
+    {
+        perror("Failed to create gyro buffer!\n");
+        return false;
+    }
+
     gyro->initFn = iioGyroInit;
     gyro->readFn = iioGyroRead;
     gyro->scale = GYRO_SCALE_2000DPS;
@@ -203,28 +128,23 @@ bool iioGyroDetect(gyroDev_t *gyro)
 #define ACCEL_Y "accel_y"
 #define ACCEL_Z "accel_z"
 
+static struct iio_device *accel_device;
+static struct iio_buffer *accel_buffer;
+static struct iio_channel *accel_x;
+static struct iio_channel *accel_y;
+static struct iio_channel *accel_z;
+
 bool iioAccRead(accDev_t *acc)
 {
-    ssize_t rxn;
-    char *data;
-    struct iio_channel *ch;
-    ptrdiff_t inc;
-
-    assert(imubuf != NULL);
-    rxn = iio_buffer_refill(imubuf);
-    if (rxn < 0)
+    if (iio_buffer_refill(accel_buffer) < 0)
     {
-        printf("Error filling up IMU buffer\n");
-        return false;
+        acc->dataReady = false;
+        return false; // no data ready yet
     }
-    ch = iio_device_find_channel(imu, ACCEL_X, false);
-    data = iio_buffer_first(imubuf, ch);
-    inc = iio_buffer_step(imubuf);
-    acc->ADCRaw[X] = ((int16_t *)data)[0];
-    data += inc;
-    acc->ADCRaw[Y] = ((int16_t *)data)[1];
-    data += inc;
-    acc->ADCRaw[Z] = ((int16_t *)data)[2];
+    iio_channel_read_raw(accel_x, accel_buffer, &(acc->ADCRaw[X]), sizeof(int16_t));
+    iio_channel_read_raw(accel_y, accel_buffer, &(acc->ADCRaw[Y]), sizeof(int16_t));
+    iio_channel_read_raw(accel_z, accel_buffer, &(acc->ADCRaw[Z]), sizeof(int16_t));
+    acc->dataReady = true;
     return true;
 }
 
@@ -236,44 +156,42 @@ static void iioAccInit(accDev_t *acc)
         printf("Create acc lock error!\n");
     }
 #endif
-
-    if (ctx == NULL)
-    {
-        ctx = iio_create_default_context();
-    }
-
-    if (ctx == NULL)
-    {
-        printf("failed to acquire default iio context!\n");
-    }
-    if (imu == NULL)
-    {
-        if (!get_imu_dev(ctx, &imu))
-        {
-            printf("Could not find IMU device!\n");
-        }
-    }
-    enable_dev_channel(imu, ACCEL_X);
-    enable_dev_channel(imu, ACCEL_Y);
-    enable_dev_channel(imu, ACCEL_Z);
-
-    if (imubuf == NULL)
-    {
-        imubuf = iio_device_create_buffer(imu, 16, false);
-        if (!imubuf)
-        {
-            printf("Enabling IMU buffers failed!\n");
-        }
-    }
-
-    if (enable_failed)
-    {
-        printf("Exiting since enabling one of the IMU channels failed\n");
-    }
+    iio_buffer_set_blocking_mode(accel_buffer, true);
 }
 
 bool iioAccDetect(accDev_t *acc)
 {
+    struct iio_context *ctx = iio_create_default_context();
+    if (ctx == NULL)
+    {
+        perror("Failed to acquire default context!\n");
+        return false;
+    }
+    accel_device = iio_context_find_device(ctx, IIO_ACC_NAME);
+    iio_context_destroy(ctx);
+    if (accel_device == NULL)
+    {
+        perror("Failed find accel device!\n");
+        return false;
+    }
+    accel_x = iio_device_find_channel(accel_device, ACCEL_X, false);
+    accel_y = iio_device_find_channel(accel_device, ACCEL_Y, false);
+    accel_z = iio_device_find_channel(accel_device, ACCEL_Z, false);
+    if (accel_x == NULL || accel_y == NULL || accel_z == NULL)
+    {
+        perror("Failed to get a channel!\n");
+        return false;
+    }
+    iio_channel_enable(accel_x);
+    iio_channel_enable(accel_y);
+    iio_channel_enable(accel_z);
+    accel_buffer = iio_device_create_buffer(accel_device, 1, false);
+    if (accel_buffer = NULL)
+    {
+        perror("Failed to create accel buffer!\n");
+        return false;
+    }
+
     acc->initFn = iioAccInit;
     acc->readFn = iioAccRead;
     acc->revisionCode = 0;
