@@ -98,7 +98,6 @@ bool iioGyroDetect(gyroDev_t *gyro)
         return false;
     }
     accgyro_device = iio_context_find_device(ctx, IIO_GYRO_NAME);
-    iio_context_destroy(ctx);
     if (accgyro_device == NULL)
     {
         perror("Failed find gyro device!\n");
@@ -176,7 +175,6 @@ bool iioAccDetect(accDev_t *acc)
             return false;
         }
         accgyro_device = iio_context_find_device(ctx, IIO_ACC_NAME);
-        iio_context_destroy(ctx);
         if (accgyro_device == NULL)
         {
             perror("Failed find accel device!\n");
@@ -193,7 +191,7 @@ bool iioAccDetect(accDev_t *acc)
         iio_channel_enable(accel_x);
         iio_channel_enable(accel_y);
         iio_channel_enable(accel_z);
-        accgyro_buffer = iio_device_create_buffer(accel_device, 1, false);
+        accgyro_buffer = iio_device_create_buffer(accgyro_device, 1, false);
         if (accgyro_buffer == NULL)
         {
             perror("Failed to create accel buffer!\n");
