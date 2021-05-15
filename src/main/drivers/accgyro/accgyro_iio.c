@@ -147,15 +147,15 @@ bool iioGyroRead(gyroDev_t *gyro)
     {
         return false; // no data ready yet
     }
-    if (iio_channel_read_raw(gyro_anglvel_x, accgyro_buffer, &(gyro->gyroADCRaw[X]), sizeof(int16_t)) < 0)
+    if (iio_channel_read_raw(gyro_anglvel_x, accgyro_buffer, &(gyro->gyroADCRaw[X]), sizeof(int16_t)) == 0)
     {
         return false;
     }
-    if (iio_channel_read_raw(gyro_anglvel_y, accgyro_buffer, &(gyro->gyroADCRaw[Y]), sizeof(int16_t)) < 0)
+    if (iio_channel_read_raw(gyro_anglvel_y, accgyro_buffer, &(gyro->gyroADCRaw[Y]), sizeof(int16_t)) == 0)
     {
         return false;
     }
-    if (iio_channel_read_raw(gyro_anglvel_z, accgyro_buffer, &(gyro->gyroADCRaw[Z]), sizeof(int16_t)) < 0)
+    if (iio_channel_read_raw(gyro_anglvel_z, accgyro_buffer, &(gyro->gyroADCRaw[Z]), sizeof(int16_t)) == 0)
     {
         return false;
     }
@@ -177,6 +177,7 @@ static void iioGyroInit(gyroDev_t *gyro)
 
 bool iioGyroDetect(gyroDev_t *gyro)
 {
+#if defined(USE_IIO_GYRO)
     if (setup_iio_structures())
     {
         gyro->initFn = iioGyroInit;
@@ -184,6 +185,7 @@ bool iioGyroDetect(gyroDev_t *gyro)
         gyro->scale = GYRO_SCALE_2000DPS;
         return true;
     }
+#endif
     return false;
 }
 
@@ -198,17 +200,17 @@ bool iioAccRead(accDev_t *acc)
     {
         return false; // no data ready yet
     }
-    if (iio_channel_read_raw(accel_x, accgyro_buffer, &(acc->ADCRaw[X]), sizeof(int16_t)) < 0)
+    if (iio_channel_read_raw(accel_x, accgyro_buffer, &(acc->ADCRaw[X]), sizeof(int16_t)) == 0)
     {
         return false;
     }
-    if (iio_channel_read_raw(accel_y, accgyro_buffer, &(acc->ADCRaw[Y]), sizeof(int16_t)) < 0)
+    if (iio_channel_read_raw(accel_y, accgyro_buffer, &(acc->ADCRaw[Y]), sizeof(int16_t)) == 0)
     {
-        return false
+        return false;
     }
-    if (iio_channel_read_raw(accel_z, accgyro_buffer, &(acc->ADCRaw[Z]), sizeof(int16_t)) < 0)
+    if (iio_channel_read_raw(accel_z, accgyro_buffer, &(acc->ADCRaw[Z]), sizeof(int16_t)) == 0)
     {
-        return false
+        return false;
     }
     acc->dataReady = true;
     return true;
@@ -227,45 +229,15 @@ static void iioAccInit(accDev_t *acc)
 
 bool iioAccDetect(accDev_t *acc)
 {
+#if defined(USE_IIO_ACC)
     if (setup_iio_structures())
     {
-<<<<<<< HEAD
         acc->initFn = iioAccInit;
         acc->readFn = iioAccRead;
         acc->revisionCode = 0;
         return true;
-=======
-        struct iio_context *ctx = iio_create_default_context();
-        if (ctx == NULL)
-        {
-            perror("Failed to acquire default context!\n");
-            return false;
-        }
-        accgyro_device = iio_context_find_device(ctx, IIO_ACC_NAME);
-        if (accgyro_device == NULL)
-        {
-            perror("Failed find accel device!\n");
-            return false;
-        }
-        accel_x = iio_device_find_channel(accgyro_device, ACCEL_X, false);
-        accel_y = iio_device_find_channel(accgyro_device, ACCEL_Y, false);
-        accel_z = iio_device_find_channel(accgyro_device, ACCEL_Z, false);
-        if (accel_x == NULL || accel_y == NULL || accel_z == NULL)
-        {
-            perror("Failed to get a channel!\n");
-            return false;
-        }
-        iio_channel_enable(accel_x);
-        iio_channel_enable(accel_y);
-        iio_channel_enable(accel_z);
-        accgyro_buffer = iio_device_create_buffer(accgyro_device, 1, false);
-        if (accgyro_buffer == NULL)
-        {
-            perror("Failed to create accel buffer!\n");
-            return false;
-        }
->>>>>>> 013e3e6587a9d92ec3bfbbd8c3e1945f53f13238
     }
+#endif
     return false;
 }
 

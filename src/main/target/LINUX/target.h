@@ -32,8 +32,8 @@
 #define SIMULATOR_MULTITHREAD
 
 
-#define SCHEDULER_DEBUG
-#define USE_CLI_DEBUG_PRINT
+// #define SCHEDULER_DEBUG
+// #define USE_CLI_DEBUG_PRINT
 
 // disable this if wants to test AHRS algorithm
 #undef USE_IMU_CALC
