@@ -40,26 +40,26 @@
 #include "common/axis.h"
 #include "common/utils.h"
 
-#define ANGLVEL_X "anglvel_x"
-#define ANGLVEL_Y "anglvel_y"
-#define ANGLVEL_Z "anglvel_z"
+#define ACC_ANGLVEL_X "anglvel_x"
+#define ACC_ANGLVEL_Y "anglvel_y"
+#define ACC_ANGLVEL_Z "anglvel_z"
 
-#define ACCEL_X "accel_x"
-#define ACCEL_Y "accel_y"
-#define ACCEL_Z "accel_z"
+#define GYRO_ACCEL_X "accel_x"
+#define GYRO_ACCEL_Y "accel_y"
+#define GYRO_ACCEL_Z "accel_z"
 
 static struct iio_context *context;
 
 static struct iio_device *accgyro_device;
 static struct iio_buffer *accgyro_buffer;
 
-static struct iio_channel *gyro_anglvel_x;
-static struct iio_channel *gyro_anglvel_y;
-static struct iio_channel *gyro_anglvel_z;
+static struct iio_channel *gyro_accel_x;
+static struct iio_channel *gyro_accel_y;
+static struct iio_channel *gyro_accel_z;
 
-static struct iio_channel *accel_x;
-static struct iio_channel *accel_y;
-static struct iio_channel *accel_z;
+static struct iio_channel *acc_anglvel_x;
+static struct iio_channel *acc_anglvel_y;
+static struct iio_channel *acc_anglvel_z;
 
 bool setup_iio_structures()
 {
@@ -79,51 +79,51 @@ bool setup_iio_structures()
         }
 
 #if defined(USE_IIO_GYRO)
-        gyro_anglvel_x = iio_device_find_channel(accgyro_device, ANGLVEL_X, false);
-        if (gyro_anglvel_x == NULL)
-        {
-            perror("Failed to get anglvel_x channel...\n");
-            return false;
-        }
-        gyro_anglvel_y = iio_device_find_channel(accgyro_device, ANGLVEL_Y, false);
-        if (gyro_anglvel_y == NULL)
-        {
-            perror("Failed to get anglvel_y channel...\n");
-            return false;
-        }
-        gyro_anglvel_z = iio_device_find_channel(accgyro_device, ANGLVEL_Z, false);
-        if (gyro_anglvel_z == NULL)
-        {
-            perror("Failed to get anglvel_z channel...\n");
-            return false;
-        }
-        iio_channel_enable(gyro_anglvel_x);
-        iio_channel_enable(gyro_anglvel_y);
-        iio_channel_enable(gyro_anglvel_z);
-#endif
-
-#if defined(USE_IIO_ACC)
-        accel_x = iio_device_find_channel(accgyro_device, ACCEL_X, false);
-        if (accel_x == NULL)
+        gyro_accel_x = iio_device_find_channel(accgyro_device, GYRO_ACCEL_X, false);
+        if (gyro_accel_x == NULL)
         {
             perror("Failed to get accel_x channel...\n");
             return false;
         }
-        accel_y = iio_device_find_channel(accgyro_device, ACCEL_Y, false);
-        if (accel_x == NULL)
+        gyro_accel_y = iio_device_find_channel(accgyro_device, GYRO_ACCEL_Y, false);
+        if (gyro_accel_y == NULL)
         {
             perror("Failed to get accel_y channel...\n");
             return false;
         }
-        accel_z = iio_device_find_channel(accgyro_device, ACCEL_Z, false);
-        if (accel_x == NULL)
+        gyro_accel_z = iio_device_find_channel(accgyro_device, GYRO_ACCEL_Z, false);
+        if (gyro_accel_z == NULL)
         {
             perror("Failed to get accel_z channel...\n");
             return false;
         }
-        iio_channel_enable(accel_x);
-        iio_channel_enable(accel_y);
-        iio_channel_enable(accel_z);
+        iio_channel_enable(gyro_accel_x);
+        iio_channel_enable(gyro_accel_y);
+        iio_channel_enable(gyro_accel_z);
+#endif
+
+#if defined(USE_IIO_ACC)
+        acc_anglvel_x = iio_device_find_channel(accgyro_device, ACC_ANGLVEL_X, false);
+        if (acc_anglvel_x == NULL)
+        {
+            perror("Failed to get anglvel_x channel...\n");
+            return false;
+        }
+        acc_anglvel_y = iio_device_find_channel(accgyro_device, ACC_ANGLVEL_Y, false);
+        if (acc_anglvel_y == NULL)
+        {
+            perror("Failed to get anglvel_y channel...\n");
+            return false;
+        }
+        acc_anglvel_z = iio_device_find_channel(accgyro_device, ACC_ANGLVEL_Z, false);
+        if (acc_anglvel_z == NULL)
+        {
+            perror("Failed to get anglvel_z channel...\n");
+            return false;
+        }
+        iio_channel_enable(acc_anglvel_x);
+        iio_channel_enable(acc_anglvel_y);
+        iio_channel_enable(acc_anglvel_z);
 #endif
 
         accgyro_buffer = iio_device_create_buffer(accgyro_device, 1, false);
@@ -132,6 +132,7 @@ bool setup_iio_structures()
             perror("Failed to create gyro buffer!\n");
             return false;
         }
+        iio_buffer_set_blocking_mode(accgyro_buffer, false);
     }
     return true;
 }
@@ -147,15 +148,15 @@ bool iioGyroRead(gyroDev_t *gyro)
     {
         return false; // no data ready yet
     }
-    if (iio_channel_read_raw(gyro_anglvel_x, accgyro_buffer, &(gyro->gyroADCRaw[X]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(gyro_accel_x, accgyro_buffer, &(gyro->gyroADCRaw[X]), sizeof(int16_t)) == 0)
     {
         return false;
     }
-    if (iio_channel_read_raw(gyro_anglvel_y, accgyro_buffer, &(gyro->gyroADCRaw[Y]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(gyro_accel_y, accgyro_buffer, &(gyro->gyroADCRaw[Y]), sizeof(int16_t)) == 0)
     {
         return false;
     }
-    if (iio_channel_read_raw(gyro_anglvel_z, accgyro_buffer, &(gyro->gyroADCRaw[Z]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(gyro_accel_z, accgyro_buffer, &(gyro->gyroADCRaw[Z]), sizeof(int16_t)) == 0)
     {
         return false;
     }
@@ -172,7 +173,6 @@ static void iioGyroInit(gyroDev_t *gyro)
     }
 
 #endif
-    iio_buffer_set_blocking_mode(accgyro_buffer, true);
 }
 
 bool iioGyroDetect(gyroDev_t *gyro)
@@ -200,15 +200,15 @@ bool iioAccRead(accDev_t *acc)
     {
         return false; // no data ready yet
     }
-    if (iio_channel_read_raw(accel_x, accgyro_buffer, &(acc->ADCRaw[X]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(acc_anglvel_x, accgyro_buffer, &(acc->ADCRaw[X]), sizeof(int16_t)) == 0)
     {
         return false;
     }
-    if (iio_channel_read_raw(accel_y, accgyro_buffer, &(acc->ADCRaw[Y]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(acc_anglvel_y, accgyro_buffer, &(acc->ADCRaw[Y]), sizeof(int16_t)) == 0)
     {
         return false;
     }
-    if (iio_channel_read_raw(accel_z, accgyro_buffer, &(acc->ADCRaw[Z]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(acc_anglvel_z, accgyro_buffer, &(acc->ADCRaw[Z]), sizeof(int16_t)) == 0)
     {
         return false;
     }
@@ -224,7 +224,6 @@ static void iioAccInit(accDev_t *acc)
         printf("Create acc lock error!\n");
     }
 #endif
-    iio_buffer_set_blocking_mode(accgyro_buffer, true);
 }
 
 bool iioAccDetect(accDev_t *acc)
