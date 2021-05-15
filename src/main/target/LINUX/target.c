@@ -43,8 +43,6 @@
 #include "drivers/timer_def.h"
 const timerHardware_t timerHardware[1]; // unused
 
-#include "flight/imu.h"
-
 #include "config/feature.h"
 #include "config/config.h"
 #include "scheduler/scheduler.h"
@@ -77,13 +75,11 @@ int lockMainPID(void)
     return pthread_mutex_trylock(&mainLoopLock);
 }
 
-#define RAD2DEG (180.0 / M_PI)
-#define ACC_SCALE (256 / 9.80665)
-#define GYRO_SCALE (16.4)
 void sendMotorUpdate()
 {
     udpSend(&pwmLink, &pwmPkt, sizeof(servo_packet));
 }
+
 void updateState(const fdm_packet *pkt)
 {
     static double last_timestamp = 0;  // in seconds
@@ -107,64 +103,6 @@ void updateState(const fdm_packet *pkt)
     { // don't use old packet
         return;
     }
-
-#if !defined(USE_IMU_CALC)
-#if defined(SET_IMU_FROM_EULER)
-    // set from Euler
-    double qw = pkt->imu_orientation_quat[0];
-    double qx = pkt->imu_orientation_quat[1];
-    double qy = pkt->imu_orientation_quat[2];
-    double qz = pkt->imu_orientation_quat[3];
-    double ysqr = qy * qy;
-    double xf, yf, zf;
-
-    // roll (x-axis rotation)
-    double t0 = +2.0 * (qw * qx + qy * qz);
-    double t1 = +1.0 - 2.0 * (qx * qx + ysqr);
-    xf = atan2(t0, t1) * RAD2DEG;
-
-    // pitch (y-axis rotation)
-    double t2 = +2.0 * (qw * qy - qz * qx);
-    t2 = t2 > 1.0 ? 1.0 : t2;
-    t2 = t2 < -1.0 ? -1.0 : t2;
-    yf = asin(t2) * RAD2DEG; // from wiki
-
-    // yaw (z-axis rotation)
-    double t3 = +2.0 * (qw * qz + qx * qy);
-    double t4 = +1.0 - 2.0 * (ysqr + qz * qz);
-    zf = atan2(t3, t4) * RAD2DEG;
-    imuSetAttitudeRPY(xf, -yf, zf); // yes! pitch was inverted!!
-#else
-    imuSetAttitudeQuat(pkt->imu_orientation_quat[0], pkt->imu_orientation_quat[1], pkt->imu_orientation_quat[2],
-                       pkt->imu_orientation_quat[3]);
-#endif
-#endif
-
-#if defined(SIMULATOR_IMU_SYNC)
-    imuSetHasNewData(deltaSim * 1e6);
-    imuUpdateAttitude(micros());
-#endif
-
-    if (deltaSim < 0.02 && deltaSim > 0)
-    {   // simulator should run faster than 50Hz
-        //        simRate = simRate * 0.5 + (1e6 * deltaSim / (realtime_now - last_realtime)) * 0.5;
-        struct timespec out_ts;
-        timeval_sub(&out_ts, &now_ts, &last_ts);
-        simRate = deltaSim / (out_ts.tv_sec + 1e-9 * out_ts.tv_nsec);
-    }
-    //    printf("simRate = %lf, millis64 = %lu, millis64_real = %lu, deltaSim = %lf\n", simRate, millis64(), millis64_real(), deltaSim*1e6);
-
-    last_timestamp = pkt->timestamp;
-    last_realtime = micros64_real();
-
-    last_ts.tv_sec = now_ts.tv_sec;
-    last_ts.tv_nsec = now_ts.tv_nsec;
-
-    pthread_mutex_unlock(&updateLock); // can send PWM output now
-
-#if defined(SIMULATOR_GYROPID_SYNC)
-    pthread_mutex_unlock(&mainLoopLock); // can run main loop
-#endif
 }
 
 static void *udpThread(void *data)

@@ -147,15 +147,15 @@ bool iioGyroRead(gyroDev_t *gyro)
     {
         return false; // no data ready yet
     }
-    if (iio_channel_read_raw(gyro_anglvel_x, accgyro_buffer, &(gyro->gyroADCRaw[X]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(gyro_anglvel_x, accgyro_buffer, &(gyro->gyroADCRaw[X]), sizeof(int16_t)) != sizeof(int16_t))
     {
         return false;
     }
-    if (iio_channel_read_raw(gyro_anglvel_y, accgyro_buffer, &(gyro->gyroADCRaw[Y]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(gyro_anglvel_y, accgyro_buffer, &(gyro->gyroADCRaw[Y]), sizeof(int16_t)) != sizeof(int16_t))
     {
         return false;
     }
-    if (iio_channel_read_raw(gyro_anglvel_z, accgyro_buffer, &(gyro->gyroADCRaw[Z]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(gyro_anglvel_z, accgyro_buffer, &(gyro->gyroADCRaw[Z]), sizeof(int16_t)) != sizeof(int16_t))
     {
         return false;
     }
@@ -200,15 +200,15 @@ bool iioAccRead(accDev_t *acc)
     {
         return false; // no data ready yet
     }
-    if (iio_channel_read_raw(accel_x, accgyro_buffer, &(acc->ADCRaw[X]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(accel_x, accgyro_buffer, &(acc->ADCRaw[X]), sizeof(int16_t)) != sizeof(int16_t))
     {
         return false;
     }
-    if (iio_channel_read_raw(accel_y, accgyro_buffer, &(acc->ADCRaw[Y]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(accel_y, accgyro_buffer, &(acc->ADCRaw[Y]), sizeof(int16_t)) != sizeof(int16_t))
     {
         return false;
     }
-    if (iio_channel_read_raw(accel_z, accgyro_buffer, &(acc->ADCRaw[Z]), sizeof(int16_t)) == 0)
+    if (iio_channel_read_raw(accel_z, accgyro_buffer, &(acc->ADCRaw[Z]), sizeof(int16_t)) != sizeof(int16_t))
     {
         return false;
     }
