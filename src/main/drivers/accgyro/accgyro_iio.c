@@ -229,10 +229,42 @@ bool iioAccDetect(accDev_t *acc)
 {
     if (setup_iio_structures())
     {
+<<<<<<< HEAD
         acc->initFn = iioAccInit;
         acc->readFn = iioAccRead;
         acc->revisionCode = 0;
         return true;
+=======
+        struct iio_context *ctx = iio_create_default_context();
+        if (ctx == NULL)
+        {
+            perror("Failed to acquire default context!\n");
+            return false;
+        }
+        accgyro_device = iio_context_find_device(ctx, IIO_ACC_NAME);
+        if (accgyro_device == NULL)
+        {
+            perror("Failed find accel device!\n");
+            return false;
+        }
+        accel_x = iio_device_find_channel(accgyro_device, ACCEL_X, false);
+        accel_y = iio_device_find_channel(accgyro_device, ACCEL_Y, false);
+        accel_z = iio_device_find_channel(accgyro_device, ACCEL_Z, false);
+        if (accel_x == NULL || accel_y == NULL || accel_z == NULL)
+        {
+            perror("Failed to get a channel!\n");
+            return false;
+        }
+        iio_channel_enable(accel_x);
+        iio_channel_enable(accel_y);
+        iio_channel_enable(accel_z);
+        accgyro_buffer = iio_device_create_buffer(accgyro_device, 1, false);
+        if (accgyro_buffer == NULL)
+        {
+            perror("Failed to create accel buffer!\n");
+            return false;
+        }
+>>>>>>> 013e3e6587a9d92ec3bfbbd8c3e1945f53f13238
     }
     return false;
 }
