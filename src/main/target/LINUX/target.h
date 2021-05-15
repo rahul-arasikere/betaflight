@@ -35,14 +35,6 @@
 // #define SCHEDULER_DEBUG
 // #define USE_CLI_DEBUG_PRINT
 
-// disable this if wants to test AHRS algorithm
-#undef USE_IMU_CALC
-
-#define SIMULATOR_ACC_SYNC
-#define SIMULATOR_GYRO_SYNC
-#define SIMULATOR_IMU_SYNC
-#define SIMULATOR_GYROPID_SYNC
-
 // file name to save config
 #define EEPROM_FILENAME "eeprom.bin"
 #define CONFIG_IN_FILE
