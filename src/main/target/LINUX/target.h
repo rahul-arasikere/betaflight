@@ -54,12 +54,11 @@
 
 #define USE_ACC
 #define USE_IIO_ACC
-#define IIO_ACC_NAME "mpu6050"
 
 #define USE_GYRO
 #define USE_IIO_GYRO
-#define IIO_GYRO_NAME "mpu6050"
 
+#define IIO_ACCGYRO_NAME "mpu6050"
 
 #define USE_MAG
 #define USE_FAKE_MAG

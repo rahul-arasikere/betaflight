@@ -53,6 +53,8 @@ static struct iio_context *context;
 static struct iio_device *accgyro_device;
 static struct iio_buffer *accgyro_buffer;
 
+// static int pollable_accgyro_buffer_fd;
+
 static struct iio_channel *gyro_accel_x;
 static struct iio_channel *gyro_accel_y;
 static struct iio_channel *gyro_accel_z;
@@ -71,7 +73,7 @@ bool setup_iio_structures()
             perror("Failed to acquire default context!\n");
             return false;
         }
-        accgyro_device = iio_context_find_device(context, IIO_GYRO_NAME);
+        accgyro_device = iio_context_find_device(context, IIO_ACCGYRO_NAME);
         if (accgyro_device == NULL)
         {
             perror("Failed find gyro device!\n");
@@ -133,10 +135,10 @@ bool setup_iio_structures()
             return false;
         }
         iio_buffer_set_blocking_mode(accgyro_buffer, false);
+        // pollable_accgyro_buffer_fd = iio_buffer_get_poll_fd(accgyro_buffer);
     }
     return true;
 }
-
 #endif
 
 #ifdef USE_IIO_GYRO
@@ -144,10 +146,7 @@ bool setup_iio_structures()
 bool iioGyroRead(gyroDev_t *gyro)
 {
     gyro->dataReady = false;
-    if (iio_buffer_refill(accgyro_buffer) < 0)
-    {
-        return false; // no data ready yet
-    }
+    iio_buffer_refill(accgyro_buffer);
     if (iio_channel_read_raw(gyro_accel_x, accgyro_buffer, &(gyro->gyroADCRaw[X]), sizeof(int16_t)) == 0)
     {
         return false;
@@ -173,6 +172,9 @@ static void iioGyroInit(gyroDev_t *gyro)
     }
 
 #endif
+    iio_channel_attr_write_longlong(gyro_accel_x, "scale", 3);
+    iio_channel_attr_write_longlong(gyro_accel_y, "scale", 3);
+    iio_channel_attr_write_longlong(gyro_accel_z, "scale", 3);
 }
 
 bool iioGyroDetect(gyroDev_t *gyro)
@@ -196,10 +198,7 @@ bool iioGyroDetect(gyroDev_t *gyro)
 bool iioAccRead(accDev_t *acc)
 {
     acc->dataReady = false;
-    if (iio_buffer_refill(accgyro_buffer) < 0)
-    {
-        return false; // no data ready yet
-    }
+    iio_buffer_refill(accgyro_buffer);
     if (iio_channel_read_raw(acc_anglvel_x, accgyro_buffer, &(acc->ADCRaw[X]), sizeof(int16_t)) == 0)
     {
         return false;
@@ -224,6 +223,9 @@ static void iioAccInit(accDev_t *acc)
         printf("Create acc lock error!\n");
     }
 #endif
+    iio_channel_attr_write_longlong(acc_anglvel_x, "scale", 3);
+    iio_channel_attr_write_longlong(acc_anglvel_y, "scale", 3);
+    iio_channel_attr_write_longlong(acc_anglvel_z, "scale", 3);
 }
 
 bool iioAccDetect(accDev_t *acc)
