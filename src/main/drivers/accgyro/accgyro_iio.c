@@ -48,6 +48,8 @@
 #define GYRO_ACCEL_Y "accel_y"
 #define GYRO_ACCEL_Z "accel_z"
 
+#define TEMPERATURE "temp"
+
 static struct iio_context *context;
 
 static struct iio_device *accgyro_device;
@@ -62,6 +64,8 @@ static struct iio_channel *gyro_accel_z;
 static struct iio_channel *acc_anglvel_x;
 static struct iio_channel *acc_anglvel_y;
 static struct iio_channel *acc_anglvel_z;
+
+static struct iio_channel *temperature;
 
 bool setup_iio_structures()
 {
@@ -99,9 +103,16 @@ bool setup_iio_structures()
             perror("Failed to get accel_z channel...\n");
             return false;
         }
+        temperature = iio_device_find_channel(accgyro_device, TEMPERATURE, false);
+        if (temperature == NULL)
+        {
+            perror("Failed to get temp channel...\n");
+            return false;
+        }
         iio_channel_enable(gyro_accel_x);
         iio_channel_enable(gyro_accel_y);
         iio_channel_enable(gyro_accel_z);
+        iio_channel_enable(temperature);
 #endif
 
 #if defined(USE_IIO_ACC)
@@ -159,6 +170,7 @@ bool iioGyroRead(gyroDev_t *gyro)
     {
         return false;
     }
+    iio_channel_read_raw(temperature, accgyro_buffer, &(gyro->temperature), sizeof(int16_t));
     gyro->dataReady = true;
     return true;
 }
