@@ -24,9 +24,45 @@
 extern int16_t debug[DEBUG16_VALUE_COUNT];
 extern uint8_t debugMode;
 
-#define DEBUG_SET(mode, index, value) do { if (debugMode == (mode)) { debug[(index)] = (value); } } while (0)
+#define DEBUG_SET(mode, index, value) \
+    do                                \
+    {                                 \
+        if (debugMode == (mode))      \
+        {                             \
+            debug[(index)] = (value); \
+        }                             \
+    } while (0)
 
-typedef enum {
+#define DEBUG_SECTION_TIMES
+
+#ifdef DEBUG_SECTION_TIMES
+extern uint32_t sectionTimes[2][4];
+
+#define TIME_SECTION_BEGIN(index)           \
+    {                                       \
+        extern uint32_t sectionTimes[2][4]; \
+        sectionTimes[0][index] = micros();  \
+    }
+
+#define TIME_SECTION_END(index)                                         \
+    {                                                                   \
+        extern uint32_t sectionTimes[2][4];                             \
+        sectionTimes[1][index] = micros();                              \
+        debug[index] = sectionTimes[1][index] - sectionTimes[0][index]; \
+    }
+#else
+
+#define TIME_SECTION_BEGIN(index) \
+    {                             \
+    }
+#define TIME_SECTION_END(index) \
+    {                           \
+    }
+
+#endif
+
+typedef enum
+{
     DEBUG_NONE,
     DEBUG_CYCLETIME,
     DEBUG_BATTERY,
@@ -98,7 +134,15 @@ typedef enum {
     DEBUG_RX_EXPRESSLRS_SPI,
     DEBUG_RX_EXPRESSLRS_PHASELOCK,
     DEBUG_RX_STATE_TIME,
+    DEBUG_NN_OUT,
+    DEBUG_NN_SPDELTA,
+    DEBUG_NN_SP,
+    DEBUG_NN_GYDELTA,
+    DEBUG_NN_GYRATE,
+    DEBUG_NN_ERR_RATE,
+    DEBUG_NN_ACT_IN,
+    DEBUG_NN_DT,
     DEBUG_COUNT
 } debugType_e;
 
-extern const char * const debugModeNames[DEBUG_COUNT];
+extern const char *const debugModeNames[DEBUG_COUNT];

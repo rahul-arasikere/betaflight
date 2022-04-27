@@ -1,9 +1,10 @@
-#include "trajectory_buffer.h"
 #include <stdint.h>
-#include "io/serial.h"
-#include "io/uart4Serial.h"
-#include "crc.h"
-#include "byte_utils.h"
+
+#include "common/printf_serial.h"
+
+#include "neuroflight/byte_utils.h"
+#include "neuroflight/crc.h"
+#include "neuroflight/trajectory_buffer.h"
 
 void add_to_traj(observation_t obs);
 observation_t consume_from_traj();
@@ -65,7 +66,7 @@ void traj_transmission_handler(observation_t curr_state) {
                 static uint32_t last_send_time = 0;
                 uint32_t current_time = micros();
                 if((current_time - last_send_time) > US_PER_TRANS) {
-                    serialWrite(getUART4(), START_BYTE);
+                    tfp_printf("%02x", START_BYTE);
                     write_little_endian(with_crc(consume_from_traj()));
                     last_send_time = current_time;
                 }
