@@ -200,6 +200,12 @@ COMMON_SRC = \
             io/vtx_smartaudio.c \
             io/vtx_tramp.c \
             io/vtx_control.c \
+            neuroflight/crc.c \
+            neuroflight/graph_interface.cc \
+            neuroflight/inference.cc \
+            neuroflight/neuro.c \
+            neuroflight/tflite_model.c \
+            neuroflight/trajectory_buffer.c \
 
 COMMON_DEVICE_SRC = \
             $(CMSIS_SRC) \

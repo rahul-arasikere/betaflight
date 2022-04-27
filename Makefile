@@ -272,6 +272,29 @@ CFLAGS     += $(ARCH_FLAGS) \
               -MMD -MP \
               $(EXTRA_FLAGS)
 
+CXXFLAGS     += $(ARCH_FLAGS) \
+              $(addprefix -D,$(OPTIONS)) \
+              $(addprefix -I,$(INCLUDE_DIRS)) \
+              $(DEBUG_FLAGS) \
+              -std=gnu11 \
+              -Wall -Wextra -Wunsafe-loop-optimizations -Wdouble-promotion \
+              -ffunction-sections \
+              -fdata-sections \
+              -fno-common \
+              -pedantic \
+              $(TEMPORARY_FLAGS) \
+              $(DEVICE_FLAGS) \
+              -D_GNU_SOURCE \
+              -DUSE_STDPERIPH_DRIVER \
+              -D$(TARGET) \
+              $(TARGET_FLAGS) \
+              -D'__FORKNAME__="$(FORKNAME)"' \
+              -D'__TARGET__="$(TARGET)"' \
+              -D'__REVISION__="$(REVISION)"' \
+              -save-temps=obj \
+              -MMD -MP \
+              $(EXTRA_FLAGS)
+
 ASFLAGS     = $(ARCH_FLAGS) \
               $(DEBUG_FLAGS) \
               -x assembler-with-cpp \
@@ -420,6 +443,12 @@ define compile_file
 	$(CROSS_CC) -c -o $@ $(CFLAGS) $(2) $<
 endef
 
+define compile_cc_file
+	echo "%% ($(1)) $<" "$(STDOUT)" && \
+	$(CROSS_CXX) -c -o $@ $(CXXFLAGS) $(2) $<
+endef
+
+
 ifeq ($(DEBUG),GDB)
 $(OBJECT_DIR)/$(TARGET)/%.o: %.c
 	$(V1) mkdir -p $(dir $@)
@@ -441,6 +470,32 @@ $(OBJECT_DIR)/$(TARGET)/%.o: %.c
 				$(call compile_file,size optimised,$(CC_SIZE_OPTIMISATION)) \
 			, \
 				$(call compile_file,optimised,$(CC_DEFAULT_OPTIMISATION)) \
+			) \
+		) \
+	)
+endif
+
+ifeq ($(DEBUG),GDB)
+$(OBJECT_DIR)/$(TARGET)/%.o: %.cc
+	$(V1) mkdir -p $(dir $@)
+	$(V1) $(if $(findstring $<,$(NOT_OPTIMISED_SRC)), \
+		$(call compile_cc_file,not optimised, $(CC_NO_OPTIMISATION)) \
+	, \
+		$(call compile_cc)file,debug,$(CC_DEBUG_OPTIMISATION)) \
+	)
+else
+$(OBJECT_DIR)/$(TARGET)/%.o: %.cc
+	$(V1) mkdir -p $(dir $@)
+	$(V1) $(if $(findstring $<,$(NOT_OPTIMISED_SRC)), \
+		$(call compile_file,not optimised,$(CC_NO_OPTIMISATION)) \
+	, \
+		$(if $(findstring $(subst ./src/main/,,$<),$(SPEED_OPTIMISED_SRC)), \
+			$(call compile_cc_file,speed optimised,$(CC_SPEED_OPTIMISATION)) \
+		, \
+			$(if $(findstring $(subst ./src/main/,,$<),$(SIZE_OPTIMISED_SRC)), \
+				$(call compile_cc_file,size optimised,$(CC_SIZE_OPTIMISATION)) \
+			, \
+				$(call compile_cc_file,optimised,$(CC_DEFAULT_OPTIMISATION)) \
 			) \
 		) \
 	)
