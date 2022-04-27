@@ -1,0 +1,12 @@
+[submodule "third_party/tflite_micro"]
+	path = third_party/tflite_micro
+	url = https://github.com/tensorflow/tflite-micro.git
+[submodule "third_party/flatbuffers"]
+	path = third_party/flatbuffers
+	url = https://github.com/google/flatbuffers.git
+[submodule "third_party/gemmlowp"]
+	path = third_party/gemmlowp
+	url = https://github.com/google/gemmlowp.git
+[submodule "third_party/ruy"]
+	path = third_party/ruy
+	url = https://github.com/google/ruy.git
