@@ -9,8 +9,6 @@
 
 extern uint32_t micros(void);
 
-uint32_t infer_time = 0;
-
 void infer(float *input, int input_size, float *output, const uint8_t *model_data, int output_size)
 {
 	// failureMode(0);

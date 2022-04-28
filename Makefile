@@ -279,7 +279,7 @@ CFLAGS     += $(ARCH_FLAGS) \
               $(EXTRA_FLAGS)
 
 CXXFLAGS     += $(ARCH_FLAGS) \
-			  $(TENSORFLOW_ROOT)/tensorflow/lite/micro/tools/make/gen/cortex_m_generic_$(TARGET_ARCH)_default/lib/libtensorflow-microlite.a \
+			  $(TENSORFLOW_ROOT)/tensorflow/lite/micro/tools/make/gen/cortex_m_generic_$(TARGET_ARCH)+fp_default/lib/libtensorflow-microlite.a \
               $(addprefix -D,$(OPTIONS)) \
               $(addprefix -I,$(INCLUDE_DIRS)) \
               $(DEBUG_FLAGS) \
@@ -309,6 +309,7 @@ ASFLAGS     = $(ARCH_FLAGS) \
 
 ifeq ($(LD_FLAGS),)
 LD_FLAGS     = -lm \
+			  $(TENSORFLOW_ROOT)/tensorflow/lite/micro/tools/make/gen/cortex_m_generic_$(TARGET_ARCH)+fp_default/lib/libtensorflow-microlite.a \
               -nostartfiles \
               --specs=nano.specs \
               -lc \
