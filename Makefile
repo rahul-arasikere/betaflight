@@ -342,6 +342,14 @@ else
 TARGET_BASENAME = $(BIN_DIR)/$(FORKNAME)_$(FC_VER)_$(TARGET)_$(REVISION)
 endif
 
+
+# build tflm library seperately
+tflm_library:
+	echo "Building TFLM Library" && \
+	cd $(TENSORFLOW_ROOT) && \
+	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=$(TARGET_ARCH)+fp TARGET_TOOLCHAIN_ROOT=../../../../$(ARM_SDK_DIR)/bin/ OPTIMIZED_KERNEL_DIR=cmsis_nn -j`nproc` && \
+	echo "Done"
+
 #
 # Things we will build
 #
@@ -437,19 +445,12 @@ $(TARGET_HEX): $(TARGET_BIN)
 
 endif
 
-$(TARGET_ELF): $(TARGET_OBJS) $(LD_SCRIPT) $(LD_SCRIPTS)
+$(TARGET_ELF): $(TARGET_OBJS) $(LD_SCRIPT) $(LD_SCRIPTS) tflm_library
 	@echo "Linking $(TARGET)" "$(STDOUT)"
-	$(V1) $(CROSS_CC) -o $@ $(filter-out %.ld,$^) $(LD_FLAGS)
+	$(V1) $(CROSS_CC) -o $@ $(filter-out %.ld tflm_library,$^) $(LD_FLAGS)
 	$(V1) $(SIZE) $(TARGET_ELF)
 
 # Compile
-
-# build tflm library seperately
-tflm_library:
-	echo "Building TFLM Library" && \
-	cd $(TENSORFLOW_ROOT) && \
-	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=$(TARGET_ARCH)+fp TARGET_TOOLCHAIN_ROOT=../../../../$(ARM_SDK_DIR)/bin/ OPTIMIZED_KERNEL_DIR=cmsis_nn && \
-	echo "Done"
 
 ## compile_file takes two arguments: (1) optimisation description string and (2) optimisation compiler flag
 define compile_file
@@ -490,7 +491,7 @@ $(OBJECT_DIR)/$(TARGET)/%.o: %.c
 endif
 
 ifeq ($(DEBUG),GDB)
-$(OBJECT_DIR)/$(TARGET)/%.o: %.cc tflm_library
+$(OBJECT_DIR)/$(TARGET)/%.o: %.cc
 	$(V1) mkdir -p $(dir $@)
 	$(V1) $(if $(findstring $<,$(NOT_OPTIMISED_SRC)), \
 		$(call compile_cc_file,not optimised, $(CC_NO_OPTIMISATION)) \
@@ -498,7 +499,7 @@ $(OBJECT_DIR)/$(TARGET)/%.o: %.cc tflm_library
 		$(call compile_cc)file,debug,$(CC_DEBUG_OPTIMISATION)) \
 	)
 else
-$(OBJECT_DIR)/$(TARGET)/%.o: %.cc tflm_library
+$(OBJECT_DIR)/$(TARGET)/%.o: %.cc
 	$(V1) mkdir -p $(dir $@)
 	$(V1) $(if $(findstring $<,$(NOT_OPTIMISED_SRC)), \
 		$(call compile_file,not optimised,$(CC_NO_OPTIMISATION)) \
@@ -559,7 +560,6 @@ targets-group-rest: $(GROUP_OTHER_TARGETS)
 
 $(VALID_TARGETS):
 	$(V0) @echo "Building $@" && \
-	echo "Building TFLM library" && \
 	$(MAKE) hex TARGET=$@ && \
 	echo "Building $@ succeeded."
 
@@ -588,11 +588,12 @@ test_clean:
 $(TARGETS_CLEAN):
 	$(V0) $(MAKE) -j TARGET=$(subst _clean,,$@) clean
 
+
 ## clean_all         : clean all valid targets
 clean_all: 
 	$(TARGETS_CLEAN) test_clean && \
 	cd $(TENSORFLOW_ROOT) && \
-	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile clean_downloads
+	make -f tensorflow/lite/micro/tools/make/Makefile clean_downloads clean
 
 TARGETS_FLASH = $(addsuffix _flash,$(VALID_TARGETS))
 
