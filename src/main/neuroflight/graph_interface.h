@@ -2,6 +2,9 @@
 #define GRAPH_INTERFACE_H
 #ifdef __cplusplus
 #define EXTERNC extern "C"
+
+EXTERNC uint32_t micros(void);
+
 #else
 #define EXTERNC
 #endif
