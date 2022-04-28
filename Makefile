@@ -279,6 +279,7 @@ CFLAGS     += $(ARCH_FLAGS) \
               $(EXTRA_FLAGS)
 
 CXXFLAGS     += $(ARCH_FLAGS) \
+			  $(TENSORFLOW_ROOT)/tensorflow/lite/micro/tools/make/gen/cortex_m_generic_$(TARGET_ARCH)_default/lib/libtensorflow-microlite.a \
               $(addprefix -D,$(OPTIONS)) \
               $(addprefix -I,$(INCLUDE_DIRS)) \
               $(DEBUG_FLAGS) \
@@ -315,8 +316,6 @@ LD_FLAGS     = -lm \
               $(ARCH_FLAGS) \
               $(LTO_FLAGS) \
               $(DEBUG_FLAGS) \
-			  -L$(TENSORFLOW_ROOT)\tensorflow\lite\micro\tools\make\gen\cortex_m_generic_$(TARGET_ARCH)_default\lib \
-			  -ltensorflow-micro \
               -static \
               -Wl,-gc-sections,-Map,$(TARGET_MAP) \
               -Wl,-L$(LINKER_DIR) \
