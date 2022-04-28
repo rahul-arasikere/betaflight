@@ -125,3 +125,6 @@ bool isFixedWing(void);
 
 float getMotorOutputLow(void);
 float getMotorOutputHigh(void);
+
+// neuroflight
+void mixGraphOutput(timeUs_t currentTimeUs, float *graph_output);

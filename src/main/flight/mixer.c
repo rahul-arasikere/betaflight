@@ -625,3 +625,41 @@ float mixerGetThrottle(void)
 {
     return mixerThrottle;
 }
+
+void mixGraphOutput(timeUs_t currentTimeUs, float *graph_output)
+{
+    calculateThrottleAndCurrentMotorEndpoints(currentTimeUs);
+
+	//Get min and max from the output
+	float outputMax = 0, outputMin = 1.0f;
+	for (int i = 0; i < mixerRuntime.motorCount; i++) {
+		float output = graph_output[i]; 
+		if (output > outputMax) {
+			outputMax = output;
+		}
+        if (output < outputMin) {
+			outputMin = output;
+		}
+	}
+
+    for (int i = 0; i < mixerRuntime.motorCount; i++) {
+        graph_output[i] -= outputMin;
+    }
+
+
+    motorMixRange = outputMax - outputMin;
+
+	float throttle_output = throttle * (1.0f - motorMixRange);
+
+    for (uint32_t i = 0; i < mixerRuntime.motorCount; i++) {
+        //float motorOutput = motorOutputMin + (motorOutputRange * (motorOutputMixSign * graph_output[i] + throttle_output * currentMixer[i].throttle));
+        float motorOutput = (motorOutputRange * (motorOutputMixSign * graph_output[i] + throttle_output * mixerRuntime.currentMixer[i].throttle));
+		motor[i] =  motorOutput;
+    }
+    // Disarmed mode
+    if (!ARMING_FLAG(ARMED)) {
+        for (int i = 0; i < mixerRuntime.motorCount; i++) {
+            motor[i] = motor_disarmed[i];
+        }
+    }
+}

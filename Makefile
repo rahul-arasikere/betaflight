@@ -279,7 +279,6 @@ CFLAGS     += $(ARCH_FLAGS) \
               $(EXTRA_FLAGS)
 
 CXXFLAGS     += $(ARCH_FLAGS) \
-			  $(TENSORFLOW_ROOT)/tensorflow/lite/micro/tools/make/gen/cortex_m_generic_$(TARGET_ARCH)+fp_default/lib/libtensorflow-microlite.a \
               $(addprefix -D,$(OPTIONS)) \
               $(addprefix -I,$(INCLUDE_DIRS)) \
               $(DEBUG_FLAGS) \
@@ -313,6 +312,7 @@ LD_FLAGS     = -lm \
               -nostartfiles \
               --specs=nano.specs \
               -lc \
+			  -lstdc++ \
               -lnosys \
               $(ARCH_FLAGS) \
               $(LTO_FLAGS) \
@@ -444,6 +444,13 @@ $(TARGET_ELF): $(TARGET_OBJS) $(LD_SCRIPT) $(LD_SCRIPTS)
 
 # Compile
 
+# build tflm library seperately
+tflm_library:
+	echo "Building TFLM Library" && \
+	cd $(TENSORFLOW_ROOT) && \
+	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=$(TARGET_ARCH)+fp TARGET_TOOLCHAIN_ROOT=../../../../$(ARM_SDK_DIR)/bin/ OPTIMIZED_KERNEL_DIR=cmsis_nn && \
+	echo "Done"
+
 ## compile_file takes two arguments: (1) optimisation description string and (2) optimisation compiler flag
 define compile_file
 	echo "%% ($(1)) $<" "$(STDOUT)" && \
@@ -483,7 +490,7 @@ $(OBJECT_DIR)/$(TARGET)/%.o: %.c
 endif
 
 ifeq ($(DEBUG),GDB)
-$(OBJECT_DIR)/$(TARGET)/%.o: %.cc
+$(OBJECT_DIR)/$(TARGET)/%.o: %.cc tflm_library
 	$(V1) mkdir -p $(dir $@)
 	$(V1) $(if $(findstring $<,$(NOT_OPTIMISED_SRC)), \
 		$(call compile_cc_file,not optimised, $(CC_NO_OPTIMISATION)) \
@@ -491,7 +498,7 @@ $(OBJECT_DIR)/$(TARGET)/%.o: %.cc
 		$(call compile_cc)file,debug,$(CC_DEBUG_OPTIMISATION)) \
 	)
 else
-$(OBJECT_DIR)/$(TARGET)/%.o: %.cc
+$(OBJECT_DIR)/$(TARGET)/%.o: %.cc tflm_library
 	$(V1) mkdir -p $(dir $@)
 	$(V1) $(if $(findstring $<,$(NOT_OPTIMISED_SRC)), \
 		$(call compile_file,not optimised,$(CC_NO_OPTIMISATION)) \
@@ -566,6 +573,8 @@ clean:
 	@echo "Cleaning $(TARGET)"
 	$(V0) rm -f $(CLEAN_ARTIFACTS)
 	$(V0) rm -rf $(OBJECT_DIR)/$(TARGET)
+	cd $(TENSORFLOW_ROOT) && \
+	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile clean
 	@echo "Cleaning $(TARGET) succeeded."
 
 ## test_clean        : clean up temporary / machine-generated files (tests)
@@ -580,7 +589,10 @@ $(TARGETS_CLEAN):
 	$(V0) $(MAKE) -j TARGET=$(subst _clean,,$@) clean
 
 ## clean_all         : clean all valid targets
-clean_all: $(TARGETS_CLEAN) test_clean
+clean_all: 
+	$(TARGETS_CLEAN) test_clean && \
+	cd $(TENSORFLOW_ROOT) && \
+	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile clean_downloads
 
 TARGETS_FLASH = $(addsuffix _flash,$(VALID_TARGETS))
 
