@@ -207,10 +207,11 @@ endif
 
 INCLUDE_DIRS    := $(INCLUDE_DIRS) \
                    $(ROOT)/lib/main/MAVLink \
-                   $(ROOT)/lib/main/google/flatbuffers/include \
-                   $(ROOT)/lib/main/google/gemmlowp \
-                   $(ROOT)/lib/main/google/ruy \
-                   $(ROOT)/lib/main/google/tflite_micro
+                   $(ROOT)/lib/main/google/tflite_micro/ \
+                   $(ROOT)/lib/main/google/tflite_micro/tensorflow/lite/micro/tools/make/downloads/flatbuffers/include \
+                   $(ROOT)/lib/main/google/tflite_micro/tensorflow/lite/micro/tools/make/downloads/gemmlowp \
+                   $(ROOT)/lib/main/google/tflite_micro/tensorflow/lite/micro/tools/make/downloads/ruy \
+                   $(ROOT)/lib/main/google/tflite_micro/tensorflow/lite/micro/tools/make/downloads/kissfft \
 
 INCLUDE_DIRS    := $(INCLUDE_DIRS) \
                    $(TARGET_DIR)
@@ -314,6 +315,8 @@ LD_FLAGS     = -lm \
               $(ARCH_FLAGS) \
               $(LTO_FLAGS) \
               $(DEBUG_FLAGS) \
+			  -L$(TENSORFLOW_ROOT)\tensorflow\lite\micro\tools\make\gen\cortex_m_generic_$(TARGET_ARCH)_default\lib \
+			  -ltensorflow-micro \
               -static \
               -Wl,-gc-sections,-Map,$(TARGET_MAP) \
               -Wl,-L$(LINKER_DIR) \
