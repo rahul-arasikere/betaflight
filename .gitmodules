@@ -1,3 +1,3 @@
-[submodule "third_party/tflite_micro"]
-	path = lib/main/tflite_micro
+[submodule "lib/main/google/tflite_micro"]
+	path = lib/main/google/tflite_micro
 	url = https://github.com/tensorflow/tflite-micro.github
