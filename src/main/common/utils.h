@@ -60,8 +60,11 @@
 
 #define DISCARD(x) (void)(x) // To explicitly ignore result of x (usually an I/O register access).
 
+#ifndef __cplusplus
 #define STATIC_ASSERT(condition, name) _Static_assert((condition), #name)
-
+#else
+#define STATIC_ASSERT(condition, name) static_assert((condition), #name)
+#endif
 
 #define BIT(x) (1 << (x))
 

@@ -1,154 +1,157 @@
-![Betaflight](docs/assets/images/bf_logo.png)
+![Neuroflight](https://github.com/wil3/neuroflight/raw/v3.3.x-neuroflight/logo.png)
 
-[![Latest version](https://img.shields.io/github/v/release/betaflight/betaflight)](https://github.com/betaflight/betaflight/releases) [![Build Status](https://dev.azure.com/Betaflight/Betaflight%20Nightlies/_apis/build/status/betaflight.betaflight?branchName=master)](https://dev.azure.com/Betaflight/Betaflight%20Nightlies/_build/latest?definitionId=8&branchName=master) [![Build Status](https://dev.azure.com/Betaflight/Betaflight%20Nightlies/_apis/build/status/betaflight.betaflight?branchName=4.2-maintenance)](https://dev.azure.com/Betaflight/Betaflight%20Nightlies/_build/latest?definitionId=8&branchName=4.2-maintenance) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+## WARNING 
+This is experimental firmware, use at your own risk! This repo is intended for academic
+and research
+purposes. 
 
-Betaflight is flight controller software (firmware) used to fly multi-rotor craft and fixed wing craft.
+There is still a significant amount of research required to validate the
+behavior of neuro-flight controllers. If the neural network is not trained properly, instabilities and unpredictable behaviors will occur.  
 
-This fork differs from Baseflight and Cleanflight in that it focuses on flight performance, leading-edge feature additions, and wide target support.
+## Neuroflight: Next Generation Flight Control Firmware
 
-## Events
+Neuroflight is the first open source neuro-flight controller software (firmware) for remotely piloting multi-rotors and fixed wing aircraft. Neuroflight's primary focus is to provide optimal flight performance.  
 
-| Date  | Event |
-| - | - |
-
+Neuroflight aims to address limitations in PID control used in Betaflight
+through the use of neural network flight control (neuro-flight control). Neuro-flight control has been actively researched for more than a decade. In contrast to traditional control algorithms, neuro-flight control has the ability to *adapt*, *plan*, and *learn*. To account for dynamic changes Betaflight has introduced gain scheduling to increase the I gain when certain conditions are met, for example low voltages or high throttle (anti-gravity). On the other hand, neuro-flight control learns the true underlying dynamics of the aircraft allowing for optimal control depending on the current aircraft state. For example neuro-flight control has the potential to learn the batteries discharge rates to dynamically adjust control signal outputs accordingly.  The goal of this work is to provide the community with a
+stable platform to innovate and advance development of neuro-flight control design for drones, and to take a step towards
+making neuro-flight controllers mainstream. For further details refer to our
+[preprint](https://wfk.io/docs/neuroflight.pdf) and please use the following BibTex
+entry to cite our work,
+```
+@article{koch2019neuroflight,
+  title={Neuroflight: Next Generation Flight Control Firmware},
+  author={Koch, William and Mancuso, Renato and Bestavros, Azer},
+  journal={arXiv preprint arXiv:1901.06553},
+  year={2019}
+}
+```
 
 ## News
 
-### Requirements for the submission of new and updated targets
-
-The following new requirements for pull requests adding new targets or modifying existing targets are put in place from now on:
-
-1. No new F3 based targets will be accepted;
-
-2. For any new target that is to be added, only a Unified Target config into https://github.com/betaflight/unified-targets/tree/master/configs/default needs to be submitted. See the [instructions](https://github.com/betaflight/betaflight/blob/master/docs/TargetMaintenance/CreatingAUnifiedTarget.md) for how to create a Unified Target configuration. If there is no Unified Target for the MCU type of the new target (see instructions above), then a 'legacy' format target definition into `src/main/target/` has to be submitted as well;
-
-3. For changes to existing targets, the change needs to be applied to the Unified Target config in https://github.com/betaflight/unified-targets/tree/master/configs/default. If no Unified Target configuration for the target exists, a new Unified Target configuration will have to be created and submitted. If there is no Unified Target for the MCU type of the new target (see instructions above), then an update to the 'legacy' format target definition in `src/main/target/` has to be submitted alongside the update to the Unified Target configuration.
-
+* 2019-08-09 Thesis defended, [Flight Controller Synthesis via Deep Reinforcement Learning](http://wfk.io/docs/WilliamKochThesisFINAL.pdf)
+* 2019-08-06 Neuroflight reaches new level of performance
+  [https://www.youtube.com/watch?v=MByCyEnsYP0](https://www.youtube.com/watch?v=MByCyEnsYP0).
+* 2018-11-14 Stable flight has been achieved with Neuroflight [https://youtu.be/c3aDDPasjjQ](https://youtu.be/c3aDDPasjjQ)
 
 ## Features
 
-Betaflight has the following features:
+In addition to features provided by Betaflight 3.3.3,
 
-* Multi-color RGB LED strip support (each LED can be a different color using variable length WS2811 Addressable RGB strips - use for Orientation Indicators, Low Battery Warning, Flight Mode Status, Initialization Troubleshooting, etc)
-* DShot (150, 300 and 600), Multishot, Oneshot (125 and 42) and Proshot1000 motor protocol support
-* Blackbox flight recorder logging (to onboard flash or external microSD card where equipped)
-* Support for targets that use the STM32 F4, G4, F7 and H7 processors
-* PWM, PPM, SPI, and Serial (SBus, SumH, SumD, Spektrum 1024/2048, XBus, etc) RX connection with failsafe detection
-* Multiple telemetry protocols (CRSF, FrSky, HoTT smart-port, MSP, etc)
-* RSSI via ADC - Uses ADC to read PWM RSSI signals, tested with FrSky D4R-II, X8R, X4R-SB, & XSR
-* OSD support & configuration without needing third-party OSD software/firmware/comm devices
-* OLED Displays - Display information on: Battery voltage/current/mAh, profile, rate profile, mode, version, sensors, etc
-* In-flight manual PID tuning and rate adjustment
-* PID and filter tuning using sliders
-* Rate profiles and in-flight selection of them
-* Configurable serial ports for Serial RX, Telemetry, ESC telemetry, MSP, GPS, OSD, Sonar, etc - Use most devices on any port, softserial included
-* VTX support for Unify Pro and IRC Tramp
-* and MUCH, MUCH more.
+* Neural network based flight control
+* Mixing replaced by neural network 
 
-## Installation & Documentation
+## Supported Neural Network Interfaces 
+Interfaces are defined for the sensors available on hardware. As models become
+more sophisticated additional sensors will be used (e.g. ESC telemetry, voltage
+sensor, etc.)
 
-See: https://github.com/betaflight/betaflight/wiki
+### Gyro-based Neuro-flight controller 
+Input (x) is of size 6, where x = [roll error, pitch error, yaw error, delta roll error, delta pitch error, delta yaw error]. Inputs are unbounded and in degrees/s. Output (y) of size N corresponding
+    to motor 1 ... motor N. Each output value is in range [-1, 1].
 
-## Support and Developers Channel
+## Compiling
 
-There's a dedicated Slack chat channel here:
+### Pre-requites 
 
-https://slack.betaflight.com/
+1) **Build Model** Use [GymFC](https://github.com/wil3/gymfc) to train and create a neural network in the
+form of a Tensorflow checkpoint.  
 
-We also have a Facebook Group. Join us to get a place to talk about Betaflight, ask configuration questions, or just hang out with fellow pilots.
+Place the generated checkpoint files (four of them: checkpoint, \*.data, \*.meta,
+\*.index-\*) in a directory which can be independently version
+controlled. 
 
-https://www.facebook.com/groups/betaflightgroup/
+Create a file called `tf2xla.config.pbtxt` in the directory and define the
+neural network configuration according to [https://www.tensorflow.org/xla/tfcompile](https://www.tensorflow.org/xla/tfcompile).
+For example if building with OpenAI baselines PPO1 with angular rate error, and
+delta angular rate error as input , 
+```
+feed {
+    id { node_name: "pi/ob" }
+	shape { 
+		dim { size: 1}
+		dim { size: 6}
+	}
+}
+fetch {
+	id { node_name: "pi/pol/final/BiasAdd"}
+}
 
-Etiquette: Don't ask to ask and please wait around long enough for a reply - sometimes people are out flying, asleep or at work and can't answer immediately.
+```
 
-## Configuration Tool
+2) **Install Tensorflow**  Update: A patched version of Tensorflow is now
+available [here](https://github.com/wil3/tensorflow-neuroflight). If you'd like
+to patch your own copy of Tensorflow continue reading, 
 
-To configure Betaflight you should use the Betaflight-configurator GUI tool (Windows/OSX/Linux) which can be found here:
+ Neuroflight was developed using [Tensorflow-1.8.0](https://github.com/tensorflow/tensorflow/releases/tag/v1.8.0). 
+There appears to be a bug/issue in Tensorflow-1.8.0-rc1 preventing the ABI type from being passed to tfcompile used to compile the neural network. A quick hack to force the correct ABIType is to modify compiler/xla/service/llvm_ir/llvm_util.cc. At the end of the
+function SetTargetOptions place,   
+```C++
+target_options->FloatABIType = llvm::FloatABI::Hard;
+```
+Need to investigate whether these bugs have been fixed in newer versions or
+come up with a better method to handle this. Install [Bazel](https://bazel.build/) and then build Tensorflow.
 
-https://github.com/betaflight/betaflight-configurator/releases/latest
+There appears to be a second bug in which `tensorflow/compiler/aot/runtime.cc` does not import `malloc.h`.
 
-## Contributing
+3) **Install Python Dependencies**
 
-Contributions are welcome and encouraged. You can contribute in many ways:
+Use a virtual environment to isolate Python packages. In this directory,
 
-* implement a new feature in the firmware or in configurator (see [below](#Developers));
-* documentation updates and corrections;
-* How-To guides - received help? Help others!
-* bug reporting & fixes;
-* new feature ideas & suggestions;
-* provide a new translation for configurator, or help us maintain the existing ones (see [below](#Translators)).
+```
+python3 -m venv env
+source env/bin/activate
+pip3 install -r requirements.txt
+```
 
-The best place to start is the Betaflight Slack (registration [here](https://slack.betaflight.com/)). Next place is the github issue tracker:
+### Neuroflight compilation
+1) In `make/local.mk` define `TENSORFLOW_DIR` to the location where you have
+installed Tensorflow or alternately export this as an environment variable. 
 
-https://github.com/betaflight/betaflight/issues
-https://github.com/betaflight/betaflight-configurator/issues
+2) In `make/local.mk` define  `FC_MODEL_DIR` as the directory containing
+your neural network checkpoint.
 
-Before creating new issues please check to see if there is an existing one, search first otherwise you waste people's time when they could be coding instead!
+3) Refer to [Betaflight](https://github.com/betaflight/betaflight) or
+src/main/target for list of supported FCs.
 
-If you want to contribute to our efforts financially, please consider making a donation to us through [PayPal](https://paypal.me/betaflight).
+#### Current Tested Flight Controller Hardware
+Any F7 should be fine. Flash memory is sufficient for F4's however it is unknown how the decreased processor speed will affect
+execution of the neural network. Flight controllers known to work, 
 
-If you want to contribute financially on an ongoing basis, you should consider becoming a patron for us on [Patreon](https://www.patreon.com/betaflight).
+* Matek F722-STD
 
-## Developers
+To build firmware,
+```
+make TARGET=MATEKF722
+```
+Flash FC with `obj/neuroflight_3.3.3_MATEKF722.hex`
 
-Contribution of bugfixes and new features is encouraged. Please be aware that we have a thorough review process for pull requests, and be prepared to explain what you want to achieve with your pull request.
-Before starting to write code, please read our [development guidelines](docs/development/Development.md ) and [coding style definition](docs/development/CodingStyle.md).
+## Configuration
 
-Azure Pipelines are used to run automatic builds
+Neuroflight is compatible with the [Betaflight
+Configurator](https://chrome.google.com/webstore/detail/betaflight-configurator/kdaghagfopacdngbohiknlhcocjccjao)
+however any modifications to the PID controller and mixer will not do anything
+as they are not used by Neuroflight.
 
-https://dev.azure.com/Betaflight/Betaflight%20Nightlies/_build
+## Development
+In order to reduce maintenance, avoid merge conflicts and keep as in sync with
+upstream Betaflight, Neuroflight's architecture will maintain a minimal footprint and
+isolate its code from Betaflight as much as possible. The following table
+describes the  files modified (M), and added (A) for Neuroflight,
 
-## Translators
+| Delta | File | Description |
+| --- | --- | --- |
+| M     | Makefile                      | Include TARGET_ARCH definition for tflm library |
+| A     | lib/google/tflite_micro       | Tools for compiling the neural network graph |
+| M     | src/main/fc/fc_core.c         | Replace PID with neuro-flight controller|
+| A     | src/main/graph/&ast;          | Source directory supporting interface and execution of the neuro-flight controller |
+| M     | src/main/flight/mixer.&ast;   | Inclusion of throttle mixing | 
+| A     | gen/&ast;                     | Auto-generated files to support neural network integration |
+| M     | src/main/platform.h           | Remove poisoning of sprintf functions which is used deep in Tensorflow until we can find a better work around. | 
 
-We want to make Betaflight accessible for pilots who are not fluent in English, and for this reason we are currently maintaining translations into 18 languages for Betaflight Configurator: Català, Deutsch, Español, Euskera, Français, Galego, Hrvatski, Bahasa Indonesia, Italiano, 日本語, 한국어, Latviešu, Português, Português Brasileiro, polski, Русский язык, Svenska, 简体中文.
-We have got a team of volunteer translators who do this work, but additional translators are always welcome to share the workload, and we are keen to add additional languages. If you would like to help us with translations, you have got the following options:
-- if you help by suggesting some updates or improvements to translations in a language you are familiar with, head to [crowdin](https://crowdin.com/project/betaflight-configurator) and add your suggested translations there;
-- if you would like to start working on the translation for a new language, or take on responsibility for proof-reading the translation for a language you are very familiar with, please head to the Betaflight Slack (registration [here](https://slack.betaflight.com/)), and join the '#team\_translation' channel - the people in there can help you to get a new language added, or set you up as a proof reader.
 
-## Hardware Issues
-
-Betaflight does not manufacture or distribute their own hardware. While we are collaborating with and supported by a number of manufacturers, we do not do any kind of hardware support.
-If you encounter any hardware issues with your flight controller or another component, please contact the manufacturer or supplier of your hardware, or check RCGroups https://rcgroups.com/forums/showthread.php?t=2464844 to see if others with the same problem have found a solution.
-
-## Betaflight Releases
-
-https://github.com/betaflight/betaflight/releases
-
-## Open Source / Contributors
-
-Betaflight is software that is **open source** and is available free of charge without warranty to all users.
-
-Betaflight is forked from Cleanflight, so thanks goes to all those whom have contributed to Cleanflight and its origins.
-
-Origins for this fork (Thanks!):
-* **Alexinparis** (for MultiWii),
-* **timecop** (for Baseflight),
-* **Dominic Clifton** (for Cleanflight),
-* **borisbstyle** (for Betaflight), and
-* **Sambas** (for the original STM32F4 port).
-
-The Betaflight Configurator is forked from Cleanflight Configurator and its origins.
-
-Origins for Betaflight Configurator:
-* **Dominic Clifton** (for Cleanflight configurator), and
-* **ctn** (for the original Configurator).
-
-Big thanks to current and past contributors:
-* Budden, Martin (martinbudden)
-* Bardwell, Joshua (joshuabardwell)
-* Blackman, Jason (blckmn)
-* ctzsnooze
-* Höglund, Anders (andershoglund)
-* Ledvina, Petr (ledvinap) - **IO code awesomeness!**
-* kc10kevin
-* Keeble, Gary (MadmanK)
-* Keller, Michael (mikeller) - **Configurator brilliance**
-* Kravcov, Albert (skaman82) - **Configurator brilliance**
-* MJ666
-* Nathan (nathantsoi)
-* ravnav
-* sambas - **bringing us the F4**
-* savaga
-* Stålheim, Anton (KiteAnton)
-
-And many many others who haven't been mentioned....
+At the time of
+development Neuroflight was forked from Betaflight 3.3.3. Since then, newer versions
+of Betaflight have increased in size as more features are packed in. Further
+testing is needed to identify if the neural network will fit in newer versions
+of the firmware. 

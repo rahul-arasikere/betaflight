@@ -1,4 +1,6 @@
+#include "common/utils.h"
 #include <platform.h>
+
 #include "common/maths.h"
 #include "common/printf_serial.h"
 
@@ -26,7 +28,7 @@ void infer(float *input, int input_size, float *output, const uint8_t *model_dat
 	resolver.AddAdd();
 	resolver.AddTanh();
 	static constexpr int tensor_arena_size = 80 * 1024; // limit of 100kb
-	static uint8_t tensor_arena[tensor_arena_size];
+	static uint8_t tensor_arena[tensor_arena_size] = {0};
 	tflite::MicroInterpreter interpreter(
 		model, resolver, tensor_arena, tensor_arena_size, &micro_error_reporter);
 

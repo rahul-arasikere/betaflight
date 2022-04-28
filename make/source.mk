@@ -202,7 +202,6 @@ COMMON_SRC = \
             io/vtx_control.c \
             neuroflight/crc.c \
             neuroflight/graph_interface.cc \
-            neuroflight/inference.cc \
             neuroflight/neuro.c \
             neuroflight/tflite_model.c \
             neuroflight/trajectory_buffer.c \

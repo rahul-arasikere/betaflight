@@ -5,4 +5,5 @@
 #include "tensorflow/lite/micro/micro_utils.h"
 #include "tensorflow/lite/schema/schema_generated.h"
 
-tflite::MicroInterpreter* init_model(const void *buf, bool update);
+// DEPRACTED
+// tflite::MicroInterpreter* init_model(const void *buf, bool update);
