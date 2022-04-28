@@ -461,6 +461,11 @@ VPATH        := $(VPATH):$(STDPERIPH_DIR)/src
 # Search path and source files for the Open Location Code library
 OLC_DIR = $(ROOT)/lib/main/google/olc
 
+TFLITE_DIR = $(ROOT)/lib/main/google/tflite_micro
+FLATBUFFER_DIR = $(ROOT)/lib/main/google/flatbuffers
+GEMMLOWP_DIR = $(ROOT)/lib/main/google/gemmlowp
+RUY_DIR = $(ROOT)/lib/main/google/ruy
+
 ifneq ($(OLC_DIR),)
 INCLUDE_DIRS += $(OLC_DIR)
 SRC += $(OLC_DIR)/olc.c

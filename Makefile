@@ -68,6 +68,7 @@ INCLUDE_DIRS    := $(SRC_DIR) \
                    $(ROOT)/src/main/target \
                    $(ROOT)/src/main/startup
 LINKER_DIR      := $(ROOT)/src/link
+TENSORFLOW_ROOT := $(ROOT)/lib/main/google/tflite_micro
 
 ## V                 : Set verbosity level based on the V= parameter
 ##                     V=0 Low
@@ -205,7 +206,11 @@ EXTRA_LD_FLAGS += -Wl,--defsym=USE_CUSTOM_DEFAULTS_EXTENDED=1
 endif
 
 INCLUDE_DIRS    := $(INCLUDE_DIRS) \
-                   $(ROOT)/lib/main/MAVLink
+                   $(ROOT)/lib/main/MAVLink \
+                   $(ROOT)/lib/main/google/flatbuffers/include \
+                   $(ROOT)/lib/main/google/gemmlowp \
+                   $(ROOT)/lib/main/google/ruy \
+                   $(ROOT)/lib/main/google/tflite_micro
 
 INCLUDE_DIRS    := $(INCLUDE_DIRS) \
                    $(TARGET_DIR)
@@ -276,12 +281,11 @@ CXXFLAGS     += $(ARCH_FLAGS) \
               $(addprefix -D,$(OPTIONS)) \
               $(addprefix -I,$(INCLUDE_DIRS)) \
               $(DEBUG_FLAGS) \
-              -std=gnu11 \
+              -std=gnu++11 \
               -Wall -Wextra -Wunsafe-loop-optimizations -Wdouble-promotion \
               -ffunction-sections \
               -fdata-sections \
               -fno-common \
-              -pedantic \
               $(TEMPORARY_FLAGS) \
               $(DEVICE_FLAGS) \
               -D_GNU_SOURCE \
@@ -512,7 +516,6 @@ $(OBJECT_DIR)/$(TARGET)/%.o: %.S
 	@echo "%% $(notdir $<)" "$(STDOUT)"
 	$(V1) $(CROSS_CC) -c -o $@ $(ASFLAGS) $<
 
-
 ## all               : Build all currently built targets
 all: $(CI_TARGETS)
 
@@ -546,6 +549,7 @@ targets-group-rest: $(GROUP_OTHER_TARGETS)
 
 $(VALID_TARGETS):
 	$(V0) @echo "Building $@" && \
+	echo "Building TFLM library" && \
 	$(MAKE) hex TARGET=$@ && \
 	echo "Building $@ succeeded."
 

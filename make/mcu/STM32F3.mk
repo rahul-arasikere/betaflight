@@ -61,6 +61,7 @@ ifeq ($(LD_SCRIPT),)
 LD_SCRIPT       = $(LINKER_DIR)/stm32_flash_f303_$(TARGET_FLASH_SIZE)k.ld
 endif
 
+TARGET_ARCH     = cortex-m4
 ARCH_FLAGS      = -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fsingle-precision-constant -Wdouble-promotion
 DEVICE_FLAGS    = -DSTM32F303xC -DSTM32F303
 

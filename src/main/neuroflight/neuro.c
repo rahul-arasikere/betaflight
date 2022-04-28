@@ -32,14 +32,13 @@
 
 #include "drivers/time.h"
 
-
 #define MAX_BUFFER_SIZE 30000
 
 typedef uint16_t buffer_size_t;
 #define NUM_SIZE_BYTES (sizeof(buffer_size_t))
 #define NUM_META_BYTES (NUM_SIZE_BYTES + NUM_CRC_BYTES)
 
-uint8_t block_at(int index);
+uint8_t block_at(unsigned int index);
 uint8_t *block_ptr();
 buffer_size_t expected_block_size();
 crc_t expected_crc();
@@ -70,7 +69,7 @@ static TRANSMISSION_STATE_t trans_state = SENDING_OBS;
 
 void neuroInit(const pidProfile_t *pidProfile)
 {
-	for (int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
+	for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 	{
 		previousOutput[i] = 0.0;
 	}
@@ -152,20 +151,20 @@ void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
 		previousState[axis] = state;
 	}
 
-	for (int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
+	for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 	{
 		graphInput[i + 9] = previousOutput[i];
 	}
 
 	// if (debugMode == DEBUG_NN_OUT) {
-	//     for (int i = 0; i<GRAPH_INPUT_SIZE; i++){
+	//     for (unsigned int i = 0; i<GRAPH_INPUT_SIZE; i++){
 	//         debug[i] = (int16_t)(graphInput[i] * 1000.0);
 	//     }
 	// }
 
 	if (debugMode == DEBUG_NN_ACT_IN)
 	{
-		for (int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
+		for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 		{
 			debug[i] = (int16_t)(previousOutput[i] * 1000.0);
 		}
@@ -174,7 +173,7 @@ void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
 	// Evaluate the neural network graph and convert to range [-1,1]->[0,1]
 	infer(graphInput, GRAPH_INPUT_SIZE, graphOutput, memory_trick(), GRAPH_OUTPUT_SIZE);
 
-	for (int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
+	for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 	{
 		float new_output = graphOutput[i];
 		new_output = constrainf(new_output, -1.0f, 1.0f);
@@ -184,7 +183,7 @@ void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
 
 	if (debugMode == DEBUG_NN_OUT)
 	{
-		for (int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
+		for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 		{
 			debug[i] = (int16_t)(previousOutput[i] * 1000.0);
 		}
@@ -200,7 +199,7 @@ buffer_size_t expected_block_size()
 	if (buffer_size < NUM_SIZE_BYTES)
 		return 0;
 	buffer_size_t num_bytes = 0;
-	for (int i = 0; i < NUM_SIZE_BYTES; i++)
+	for (unsigned int i = 0; i < NUM_SIZE_BYTES; i++)
 		num_bytes += ((buffer_size_t)block_at(i)) << (i * 8);
 	return num_bytes;
 }
@@ -224,7 +223,7 @@ inline void add_to_buffer(uint8_t add_me)
 	buffer_size++;
 }
 
-inline uint8_t block_at(int index)
+inline uint8_t block_at(unsigned int index)
 {
 	return buffer[index + NUM_META_BYTES];
 }
@@ -236,7 +235,7 @@ inline uint8_t *block_ptr()
 
 void print_block()
 {
-	for (int i = 0; i < block_size(); i++)
+	for (unsigned int i = 0; i < block_size(); i++)
 	{
 		tfp_printf("%02x", block_at(i));
 	}
@@ -245,7 +244,7 @@ void print_block()
 
 void update_nn()
 {
-	for (int i = 0; i < block_size(); i++)
+	for (unsigned int i = 0; i < block_size(); i++)
 	{
 		memory_trick()[i] = block_at(i);
 	}

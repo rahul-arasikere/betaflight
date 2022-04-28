@@ -149,6 +149,7 @@ VPATH           := $(VPATH):$(FATFS_DIR)
 endif
 
 #Flags
+TARGET_ARCH     = cortex-m4
 ARCH_FLAGS      = -mthumb -mcpu=cortex-m4 -march=armv7e-m -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fsingle-precision-constant -Wdouble-promotion
 
 ifeq ($(TARGET),$(filter $(TARGET),$(F411_TARGETS)))

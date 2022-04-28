@@ -123,6 +123,7 @@ VPATH           := $(VPATH):$(FATFS_DIR)
 endif
 
 #Flags
+TARGET_ARCH     = cortex-m7
 ARCH_FLAGS      = -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-sp-d16 -fsingle-precision-constant -Wdouble-promotion
 
 # Flags that are used in the STM32 libraries

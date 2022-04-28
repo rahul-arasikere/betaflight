@@ -5,7 +5,7 @@
 #include "neuroflight/graph_interface.h"
 #include "neuroflight/inference.h"
 
-#include "drivers/system.h"
+extern uint32_t micros(void);
 
 uint32_t infer_time = 0;
 

@@ -42,6 +42,7 @@ ifeq ($(LD_SCRIPT),)
 LD_SCRIPT       = $(LINKER_DIR)/stm32_flash_f103_$(TARGET_FLASH_SIZE)k.ld
 endif
 
+TARGET_ARCH     = cortex-m3
 ARCH_FLAGS      = -mthumb -mcpu=cortex-m3
 
 ifeq ($(DEVICE_FLAGS),)
