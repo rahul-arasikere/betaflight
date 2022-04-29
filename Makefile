@@ -56,7 +56,7 @@ RELEASE ?= no
 # Things that need to be maintained as the source changes
 #
 
-FORKNAME      = betaflight
+FORKNAME      = neuroflight
 
 # Working directories
 ROOT            := $(patsubst %/,%,$(dir $(lastword $(MAKEFILE_LIST))))
@@ -568,13 +568,15 @@ $(NOBUILD_TARGETS):
 
 TARGETS_CLEAN = $(addsuffix _clean,$(VALID_TARGETS))
 
+tfliteclean:
+	cd $(TENSORFLOW_ROOT) && \
+	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile clean
+
 ## clean             : clean up temporary / machine-generated files
 clean:
 	@echo "Cleaning $(TARGET)"
 	$(V0) rm -f $(CLEAN_ARTIFACTS)
 	$(V0) rm -rf $(OBJECT_DIR)/$(TARGET)
-	cd $(TENSORFLOW_ROOT) && \
-	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile clean
 	@echo "Cleaning $(TARGET) succeeded."
 
 ## test_clean        : clean up temporary / machine-generated files (tests)
@@ -590,10 +592,7 @@ $(TARGETS_CLEAN):
 
 
 ## clean_all         : clean all valid targets
-clean_all: 
-	$(TARGETS_CLEAN) test_clean && \
-	cd $(TENSORFLOW_ROOT) && \
-	make -f tensorflow/lite/micro/tools/make/Makefile clean_downloads clean
+clean_all: $(TARGETS_CLEAN) test_clean tfliteclean
 
 TARGETS_FLASH = $(addsuffix _flash,$(VALID_TARGETS))
 
