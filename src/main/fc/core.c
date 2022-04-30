@@ -1272,7 +1272,7 @@ void processRxModes(timeUs_t currentTimeUs)
     pidSetAntiGravityState(IS_RC_MODE_ACTIVE(BOXANTIGRAVITY) || featureIsEnabled(FEATURE_ANTI_GRAVITY));
 }
 
-static FAST_CODE void subTaskPidController(timeUs_t currentTimeUs)
+static FAST_CODE __attribute__((__unused__)) void subTaskPidController(timeUs_t currentTimeUs)
 {
     uint32_t startTime = 0;
     if (debugMode == DEBUG_PIDLOOP)
@@ -1475,7 +1475,6 @@ FAST_CODE void taskFiltering(timeUs_t currentTimeUs)
 // Function for loop trigger
 FAST_CODE void taskMainPidLoop(timeUs_t currentTimeUs)
 {
-    static uint8_t nextPidUpdateInterval = 0;
 #if defined(SIMULATOR_BUILD) && defined(SIMULATOR_GYROPID_SYNC)
     if (lockMainPID() != 0)
         return;
@@ -1487,20 +1486,10 @@ FAST_CODE void taskMainPidLoop(timeUs_t currentTimeUs)
     // 2 - subTaskMotorUpdate()
     // 3 - subTaskPidSubprocesses()
     DEBUG_SET(DEBUG_PIDLOOP, 0, micros() - currentTimeUs);
-
-    if (nextPidUpdateInterval)
-    {
-        nextPidUpdateInterval--;
-    }
-    else
-    {
-        nextPidUpdateInterval = pidConfig()->pid_process_denom - 1;
-        neuroController(currentTimeUs, currentPidProfile);
-    }
-
     subTaskRcCommand(currentTimeUs);
     // We replace the PID controller with neuroflight
     // subTaskPidController(currentTimeUs);
+    neuroController(currentTimeUs);
     subTaskMotorUpdate(currentTimeUs);
     subTaskPidSubprocesses(currentTimeUs);
 

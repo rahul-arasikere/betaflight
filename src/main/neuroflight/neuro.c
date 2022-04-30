@@ -67,7 +67,7 @@ typedef enum TRANSMISSION_STATE_t
 static bool initFlag = true;
 static TRANSMISSION_STATE_t trans_state = SENDING_OBS;
 
-void neuroInit(const pidProfile_t *pidProfile)
+void neuroInit()
 {
 	for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 	{
@@ -257,12 +257,12 @@ inline crc_t block_crc()
 
 bool was_armed = true;
 
-void neuroController(timeUs_t currentTimeUs, const pidProfile_t *pidProfile)
+void neuroController(timeUs_t currentTimeUs)
 {
 	static uint32_t time_since_last_byte = 0;
 	if (initFlag)
 	{
-		neuroInit(pidProfile);
+		neuroInit();
 		initFlag = false;
 	}
 	else
