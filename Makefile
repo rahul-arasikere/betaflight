@@ -445,7 +445,7 @@ $(TARGET_HEX): $(TARGET_BIN)
 
 endif
 
-$(TARGET_ELF): $(TARGET_OBJS) $(LD_SCRIPT) $(LD_SCRIPTS) tflm_library
+$(TARGET_ELF): tflm_library $(TARGET_OBJS) $(LD_SCRIPT) $(LD_SCRIPTS)
 	@echo "Linking $(TARGET)" "$(STDOUT)"
 	$(V1) $(CROSS_CC) -o $@ $(filter-out %.ld tflm_library,$^) $(LD_FLAGS)
 	$(V1) $(SIZE) $(TARGET_ELF)

@@ -20,6 +20,8 @@
 #include "flight/imu.h"
 #include "flight/mixer.h"
 
+#include "io/serial.h"
+
 #include "sensors/gyro.h"
 
 #include "neuroflight/neuro.h"
@@ -30,9 +32,16 @@
 #include "neuroflight/tflite_model.h"
 #include "neuroflight/trajectory_buffer.h"
 
+#include "drivers/serial.h"
 #include "drivers/time.h"
 
+#ifndef NEURO_SERIAL_PORT
+#error "NEURO_SERIAL_PORT is r	equired to be defined"
+#endif
+
 #define MAX_BUFFER_SIZE 30000
+static timeUs_t time_since_last_byte = 0;
+static serialPort_t *transPort = NULL;
 
 typedef uint16_t buffer_size_t;
 #define NUM_SIZE_BYTES (sizeof(buffer_size_t))
@@ -69,10 +78,14 @@ static TRANSMISSION_STATE_t trans_state = SENDING_OBS;
 
 void neuroInit()
 {
+	transPort = findSerialPortUsageByIdentifier(NEURO_SERIAL_PORT)->serialPort;
 	for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 	{
 		previousOutput[i] = 0.0;
 	}
+	tfp_printf("aaa");
+	time_since_last_byte = micros();
+	delay(500);
 }
 
 void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
@@ -259,14 +272,54 @@ bool was_armed = true;
 
 void neuroController(timeUs_t currentTimeUs)
 {
-	static uint32_t time_since_last_byte = 0;
-	if (initFlag)
+	bool is_armed = ARMING_FLAG(ARMED);
+	if (!was_armed && is_armed)
+		reset_trajectory();
+
+	was_armed = is_armed;
+	if ((trans_state == WAIT_FOR_COMMAND || trans_state == RECEIVING_NN) && ((micros() - time_since_last_byte) > 500000))
 	{
-		neuroInit();
-		initFlag = false;
+		tfp_printf("%04x", 0xddeeaadd);
+		trans_state = DEAD;
+		time_since_last_byte = micros();
+		buffer_size = 0;
 	}
-	else
+
+	uint32_t bytesWaiting;
+	while ((bytesWaiting = serialRxBytesWaiting(transPort)))
 	{
+		time_since_last_byte = micros();
+		uint8_t read_byte = serialRead(transPort);
+		if (trans_state == WAIT_FOR_COMMAND || trans_state == DEAD)
+		{
+			if ((int)'b' == read_byte)
+			{
+				buffer_size_t block_size_buffer = block_size();
+				tfp_printf("%02x%02x ", block_size_buffer & 0xff, (block_size_buffer >> 8) & 0xff); // endian reversed
+				crc_t crc_buffer = block_crc();
+				tfp_printf("%02x%02x ", crc_buffer & 0xff, (crc_buffer >> 8) & 0xff); // endian reversed
+			}
+
+			else if ((int)'c' == read_byte)
+			{
+				trans_state = SENDING_OBS;
+				reset_trajectory();
+				buffer_size = 0;
+			}
+
+			continue;
+		}
+
+		trans_state = RECEIVING_NN;
+		add_to_buffer(read_byte);
+		if ((buffer_size >= NUM_META_BYTES) && (block_size() == expected_block_size()))
+		{
+
+			trans_state = WAIT_FOR_COMMAND;
+			if (block_crc() == expected_crc())
+				update_nn();
+		}
+
 		evaluateGraphWithErrorStateDeltaStateAct(currentTimeUs);
 		mixGraphOutput(currentTimeUs, controlOutput);
 	}

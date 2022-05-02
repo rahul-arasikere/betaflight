@@ -2,17 +2,11 @@
 
 #include "common/printf_serial.h"
 
+#include "drivers/time.h"
+
 #include "neuroflight/byte_utils.h"
 #include "neuroflight/crc.h"
 #include "neuroflight/trajectory_buffer.h"
-
-extern uint32_t micros(void);
-
-void add_to_traj(observation_t obs);
-observation_t consume_from_traj();
-void write_float(float x);
-void write_checked_observation(checked_observation_t obs);
-checked_observation_t with_crc(observation_t obs);
 
 #define TRAJ_SIZE 500
 observation_t trajectory[TRAJ_SIZE];
@@ -82,7 +76,7 @@ void traj_transmission_handler(observation_t curr_state)
             const unsigned char *bytes = little_endian(data);
             for (uint16_t i = 0; i < sizeof(observation_t); i++)
             {
-                tfp_printf("%02x%02x ", bytes[i] & 255, (bytes[i] / 256) & 255); // endian reversed
+                tfp_printf("%02x%02x ", bytes[i] & 0xff, (bytes[i] >> 8) & 0xff); // endian reversed
             }
 
             last_send_time = current_time;
