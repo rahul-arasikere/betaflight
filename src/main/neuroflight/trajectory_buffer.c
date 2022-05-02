@@ -6,6 +6,8 @@
 #include "neuroflight/crc.h"
 #include "neuroflight/trajectory_buffer.h"
 
+#define little_endian(x) ((unsigned char *)&x) // little endian
+
 extern uint32_t micros(void);
 
 void add_to_traj(observation_t obs);
@@ -78,7 +80,13 @@ void traj_transmission_handler(observation_t curr_state)
         if ((current_time - last_send_time) > US_PER_TRANS)
         {
             tfp_printf("%02x", START_BYTE);
-            write_little_endian(with_crc(consume_from_traj()));
+            checked_observation_t data = with_crc(consume_from_traj());
+            const unsigned char *bytes = little_endian(data);
+            for (uint16_t i = 0; i < sizeof(observation_t); i++)
+            {
+                tfp_printf("%02x%02x ", bytes[i] & 255, (bytes[i] / 256) & 255); // endian reversed
+            }
+
             last_send_time = current_time;
         }
     }
