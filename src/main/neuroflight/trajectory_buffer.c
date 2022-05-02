@@ -6,8 +6,6 @@
 #include "neuroflight/crc.h"
 #include "neuroflight/trajectory_buffer.h"
 
-#define little_endian(x) ((unsigned char *)&x) // little endian
-
 extern uint32_t micros(void);
 
 void add_to_traj(observation_t obs);
