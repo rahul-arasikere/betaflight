@@ -1,4 +1,4 @@
-#include "flight/pid.h"
+#pragma once
 
 void neuroInit();
 void neuroController(timeUs_t currentTimeUs);

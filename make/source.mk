@@ -200,6 +200,7 @@ COMMON_SRC = \
             io/vtx_smartaudio.c \
             io/vtx_tramp.c \
             io/vtx_control.c \
+            io/xbee.c \
             neuroflight/crc.c \
             neuroflight/graph_interface.cc \
             neuroflight/neuro.c \

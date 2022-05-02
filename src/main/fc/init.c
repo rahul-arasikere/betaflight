@@ -120,6 +120,7 @@
 #include "io/vtx_rtc6705.h"
 #include "io/vtx_smartaudio.h"
 #include "io/vtx_tramp.h"
+#include "io/xbee.h"
 
 #include "msc/emfat_file.h"
 #ifdef USE_PERSISTENT_MSC_RTC
@@ -487,6 +488,10 @@ void init(void)
             break;
         }
     }
+#endif
+
+#if defined(XBEE_SUPPORT)
+    xbeeInit();
 #endif
 
 #if defined(STM32F4) || defined(STM32G4)
