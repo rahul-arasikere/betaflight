@@ -169,6 +169,8 @@
 
 #include "telemetry/telemetry.h"
 
+#include "neuroflight/neuro.h"
+
 #ifdef USE_HARDWARE_REVISION_DETECTION
 #include "hardware_revision.h"
 #endif
@@ -277,6 +279,9 @@ void init(void)
     // Call once before the config is loaded for any target specific configuration required to support loading the config
     targetConfiguration();
 #endif
+
+    // initialize the neuroController
+    neuroInit();
 
 #ifdef USE_BRUSHED_ESC_AUTODETECT
     // Opportunistically use the first motor pin of the default configuration for detection.

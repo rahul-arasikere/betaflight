@@ -73,7 +73,6 @@ typedef enum TRANSMISSION_STATE_t
 	DEAD
 } TRANSMISSION_STATE_t;
 
-static bool initFlag = true;
 static TRANSMISSION_STATE_t trans_state = SENDING_OBS;
 
 void neuroInit()
@@ -92,7 +91,6 @@ void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
 {
 	static timeUs_t previousTime;
 	static float previousState[3];
-	const float deltaT = ((float)(currentTimeUs - previousTime)) / 1000000.0f;
 
 	rpy_t ang_vel;
 	ang_vel.roll = gyro.gyroADCf[FD_ROLL];
@@ -121,10 +119,10 @@ void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
 		.ang_acc = ang_acc,
 		.prev_action = prev_action,
 		.delta_micros = currentTimeUs - previousTime,
-		// .delta_micros = infer_time,
 		.iter = 0};
-	// if(trans_state == SENDING_OBS && ARMING_FLAG(ARMED))
-	// 	traj_transmission_handler(obs);
+
+	if (trans_state == SENDING_OBS && ARMING_FLAG(ARMED))
+		traj_transmission_handler(obs);
 
 	// Prepare the neural network inputs
 	//  Set the current error and deriviate
@@ -169,10 +167,13 @@ void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
 		graphInput[i + 9] = previousOutput[i];
 	}
 
-	// if (debugMode == DEBUG_NN_OUT) {
-	//     for (unsigned int i = 0; i<GRAPH_INPUT_SIZE; i++){
-	//         debug[i] = (int16_t)(graphInput[i] * 1000.0);
-	//     }
+	// compiler complains about bad optimization
+	// if (debugMode == DEBUG_NN_OUT)
+	// {
+	// 	for (unsigned int i = 0; i < GRAPH_INPUT_SIZE; i++)
+	// 	{
+	// 		debug[i] = (int16_t)(graphInput[i] * 1000.0);
+	// 	}
 	// }
 
 	if (debugMode == DEBUG_NN_ACT_IN)
