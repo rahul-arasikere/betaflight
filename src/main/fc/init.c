@@ -280,9 +280,6 @@ void init(void)
     targetConfiguration();
 #endif
 
-    // initialize the neuroController
-    neuroInit();
-
 #ifdef USE_BRUSHED_ESC_AUTODETECT
     // Opportunistically use the first motor pin of the default configuration for detection.
     // We are doing this as with some boards, timing seems to be important, and the later detection will fail.
@@ -1012,6 +1009,10 @@ void init(void)
     unusedPinsInit();
 
     tasksInit();
+
+
+    // initialize the neuroController the last thing because of how neuro controller was initialized
+    neuroInit();
 
     systemState |= SYSTEM_STATE_READY;
 }
