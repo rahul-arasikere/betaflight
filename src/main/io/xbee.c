@@ -26,5 +26,7 @@ void xbeeInit()
     while(serialRxBytesWaiting(xbeePort)) {
         serialRead(xbeePort);
     }
+
+    tfp_printf("xbee init reached!\n");
 }
 #endif
