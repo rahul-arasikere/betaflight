@@ -231,6 +231,10 @@ ifneq ($(RESULT),0)
 CCACHE :=
 endif
 
+ifeq ($(DEBUG_HARDFAULTS), yes)
+DEBUG_FLAGS += -DDEBUG_HARDFAULTS
+endif
+
 # Tool names
 CROSS_CC    := $(CCACHE) $(ARM_SDK_PREFIX)gcc
 CROSS_CXX   := $(CCACHE) $(ARM_SDK_PREFIX)g++

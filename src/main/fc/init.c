@@ -492,10 +492,6 @@ void init(void)
     }
 #endif
 
-#if defined(XBEE_SUPPORT)
-    xbeeInit();
-#endif
-
 #if defined(STM32F4) || defined(STM32G4)
     // F4 has non-8MHz boards
     // G4 for Betaflight allow 24 or 27MHz oscillator
@@ -1010,6 +1006,10 @@ void init(void)
 
     tasksInit();
 
+
+#if defined(XBEE_SUPPORT)
+    xbeeInit();
+#endif
 
     // initialize the neuroController the last thing because of how neuro controller was initialized
     neuroInit();
