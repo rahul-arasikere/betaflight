@@ -51,7 +51,6 @@
 .global  g_pfnVectors
 .global  Default_Handler
 
-.global HardFault_Handler
 .extern hard_fault_handler_c
 
 /* start address for the initialization values of the .data section. 
@@ -80,7 +79,7 @@ defined in linker script */
  * @retval : None
 */
 
-    .section  .text.Reset_Handler
+  .section  .text.Reset_Handler
   .weak  Reset_Handler
   .type  Reset_Handler, %function
 Reset_Handler:  
@@ -170,28 +169,16 @@ LoopMarkHeapStack:
 */
     .section  .text.Default_Handler,"ax",%progbits
 Default_Handler:
+tst lr, #4
+  ite eq
+  mrseq r0, msp
+  mrsne r0, psp
+  ldr r1, [r0, #24]
+  bl hard_fault_handler_c
+  b  Infinite_Loop
 Infinite_Loop:
   b  Infinite_Loop
   .size  Default_Handler, .-Default_Handler
-
-.section  .text.Reset_Handler
-.weak  HardFault_Handler
-.type  HardFault_Handler, %function
-HardFault_Handler:
-  movs r0,#4
-  movs r1, lr
-  tst r0, r1
-  beq _MSP
-  mrs r0, psp
-  b _HALT
-_MSP:
-  mrs r0, msp
-_HALT:
-  ldr r1,[r0,#20]
-  b hard_fault_handler_c
-  bkpt #0
-
-.size  HardFault_Handler, .-HardFault_Handler
 
 /******************************************************************************
 *
