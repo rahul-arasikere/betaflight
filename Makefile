@@ -346,12 +346,18 @@ else
 TARGET_BASENAME = $(BIN_DIR)/$(FORKNAME)_$(FC_VER)_$(TARGET)_$(REVISION)
 endif
 
+ifneq ($(ARM_SDK_PREFIX), arm-none-eabi-)
+TFTOOLCHAIN = ../../../../$(ARM_SDK_DIR)/bin/
+else
+TFTOOLCHAIN =
+endif
+
 
 # build tflm library seperately
 tflm_library:
 	echo "Building TFLM Library" && \
 	cd $(TENSORFLOW_ROOT) && \
-	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=$(TARGET_ARCH)+fp TARGET_TOOLCHAIN_ROOT=../../../../$(ARM_SDK_DIR)/bin/ OPTIMIZED_KERNEL_DIR=cmsis_nn -j`nproc` && \
+	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=$(TARGET_ARCH)+fp TARGET_TOOLCHAIN_ROOT=$(TFTOOLCHAIN) OPTIMIZED_KERNEL_DIR=cmsis_nn -j`nproc` && \
 	echo "Done"
 
 #
