@@ -1,6 +1,5 @@
 #pragma once
 
-
 #ifdef XBEE_SUPPORT
 
 #ifndef XBEE_SERIAL_PORT
@@ -8,5 +7,8 @@
 #endif
 
 void xbeeInit();
+void xprintf(const char *str, ...);
+uint8_t xbeeGetByte();
+int xbeeGetBytesWaiting();
 
 #endif

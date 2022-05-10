@@ -10,7 +10,6 @@
 #include "common/axis.h"
 #include "common/filter.h"
 #include "common/maths.h"
-#include "common/printf_serial.h"
 
 #include "fc/core.h"
 #include "fc/rc.h"
@@ -20,7 +19,7 @@
 #include "flight/imu.h"
 #include "flight/mixer.h"
 
-#include "io/serial.h"
+#include "io/xbee.h"
 
 #include "sensors/gyro.h"
 
@@ -35,13 +34,8 @@
 #include "drivers/serial.h"
 #include "drivers/time.h"
 
-#ifndef NEURO_SERIAL_PORT
-#error "NEURO_SERIAL_PORT is r	equired to be defined"
-#endif
-
 #define MAX_BUFFER_SIZE 30000
 static timeUs_t time_since_last_byte = 0;
-static serialPort_t *transPort = NULL;
 
 typedef uint16_t buffer_size_t;
 #define NUM_SIZE_BYTES (sizeof(buffer_size_t))
@@ -77,12 +71,11 @@ static TRANSMISSION_STATE_t trans_state = SENDING_OBS;
 
 void neuroInit()
 {
-	transPort = findSerialPortUsageByIdentifier(NEURO_SERIAL_PORT)->serialPort;
 	for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 	{
 		previousOutput[i] = 0.0;
 	}
-	tfp_printf("aaa");
+	xprintf("aaa");
 	time_since_last_byte = micros();
 	delay(500);
 }
@@ -251,9 +244,9 @@ void print_block()
 {
 	for (unsigned int i = 0; i < block_size(); i++)
 	{
-		tfp_printf("%02x", block_at(i));
+		xprintf("%02x", block_at(i));
 	}
-	tfp_printf("\n");
+	xprintf("\n");
 }
 
 void update_nn()
@@ -280,25 +273,25 @@ void neuroController(timeUs_t currentTimeUs)
 	was_armed = is_armed;
 	if ((trans_state == WAIT_FOR_COMMAND || trans_state == RECEIVING_NN) && ((micros() - time_since_last_byte) > 500000))
 	{
-		tfp_printf("%04x", 0xddeeaadd);
+		xprintf("%04x", 0xddeeaadd);
 		trans_state = DEAD;
 		time_since_last_byte = micros();
 		buffer_size = 0;
 	}
 
 	uint32_t bytesWaiting;
-	while ((bytesWaiting = serialRxBytesWaiting(transPort)))
+	while ((bytesWaiting = xbeeGetBytesWaiting()))
 	{
 		time_since_last_byte = micros();
-		uint8_t read_byte = serialRead(transPort);
+		uint8_t read_byte = xbeeGetByte();
 		if (trans_state == WAIT_FOR_COMMAND || trans_state == DEAD)
 		{
 			if ((int)'b' == read_byte)
 			{
 				buffer_size_t block_size_buffer = block_size();
-				tfp_printf("%02x%02x ", block_size_buffer & 0xff, (block_size_buffer >> 8) & 0xff); // endian reversed
+				xprintf("%02x%02x ", block_size_buffer & 0xff, (block_size_buffer >> 8) & 0xff); // endian reversed
 				crc_t crc_buffer = block_crc();
-				tfp_printf("%02x%02x ", crc_buffer & 0xff, (crc_buffer >> 8) & 0xff); // endian reversed
+				xprintf("%02x%02x ", crc_buffer & 0xff, (crc_buffer >> 8) & 0xff); // endian reversed
 			}
 
 			else if ((int)'c' == read_byte)

@@ -5,7 +5,8 @@
 extern "C"
 {
 	#include "common/maths.h"
-	#include "common/printf_serial.h"
+	
+	#include "io/xbee.h"
 }
 
 #include "neuroflight/graph_interface.h"
@@ -19,7 +20,7 @@ void infer(float *input, int input_size, float *output, const uint8_t *model_dat
 	const tflite::Model *model = ::tflite::GetModel(model_data);
 	if (model->version() != TFLITE_SCHEMA_VERSION)
 	{
-		tfp_printf("Model version does not match Schema!\n");
+		xprintf("Model version does not match Schema!\n");
 		while (1)
 			;
 	}
@@ -38,7 +39,7 @@ void infer(float *input, int input_size, float *output, const uint8_t *model_dat
 	infer_time = micros() - before_reading;
 	if (allocate_status != kTfLiteOk)
 	{
-		tfp_printf("AllocateTensors() failed!\n");
+		xprintf("AllocateTensors() failed!\n");
 		while (1)
 			;
 	}
@@ -48,7 +49,7 @@ void infer(float *input, int input_size, float *output, const uint8_t *model_dat
 	TfLiteStatus invoke_status = interpreter.Invoke();
 	if (invoke_status != kTfLiteOk)
 	{
-		tfp_printf("Invoke failed on input!\n");
+		xprintf("Invoke failed on input!\n");
 		while (1)
 			;
 	}

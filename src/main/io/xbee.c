@@ -1,7 +1,7 @@
 #include <platform.h>
+#include <stdio.h>
 
 #include "common/printf.h"
-#include "common/printf_serial.h"
 
 #include "drivers/serial.h"
 #include "drivers/time.h"
@@ -11,6 +11,23 @@
 
 #ifdef XBEE_SUPPORT
 static serialPort_t *xbeePort = NULL;
+static char xbeeStringBuff[256];
+
+void xprintf(const char *str, ...)
+{
+    size_t len = snprintf(xbeeStringBuff, 256, str);
+    serialWriteBuf(xbeePort, (const uint8_t *)xbeeStringBuff, len);
+}
+
+uint8_t xbeeGetByte()
+{
+    return serialRead(xbeePort);
+}
+
+int xbeeGetBytesWaiting()
+{
+    return serialRxBytesWaiting(xbeePort);
+}
 
 void xbeeInit()
 {
@@ -20,13 +37,13 @@ void xbeeInit()
         /* delay */
         delay(10000 - millis());
     }
-    setPrintfSerialPort(xbeePort);
-    tfp_printf(" b\r");
+    xprintf(" b\r");
     delay(300);
-    while(serialRxBytesWaiting(xbeePort)) {
+    while (serialRxBytesWaiting(xbeePort))
+    {
         serialRead(xbeePort);
     }
 
-    tfp_printf("xbee init reached!\n");
+    xprintf("xbee init reached!\n");
 }
 #endif
