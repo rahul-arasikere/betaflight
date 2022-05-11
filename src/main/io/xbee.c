@@ -1,5 +1,6 @@
 #include <platform.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "common/printf.h"
 
@@ -10,13 +11,21 @@
 #include "io/xbee.h"
 
 #ifdef XBEE_SUPPORT
+
+#define XBEE_STRING_BUFF_LEN 212
+
 static serialPort_t *xbeePort = NULL;
-static char xbeeStringBuff[256];
+static char xbeeStringBuff[XBEE_STRING_BUFF_LEN];
 
 void xprintf(const char *str, ...)
 {
-    size_t len = snprintf(xbeeStringBuff, 256, str);
+    va_list arg;
+    va_start(arg, str);
+    size_t len = vsnprintf(xbeeStringBuff, XBEE_STRING_BUFF_LEN, str, arg);
+    va_end(arg);
     serialWriteBuf(xbeePort, (const uint8_t *)xbeeStringBuff, len);
+    while (!isSerialTransmitBufferEmpty(xbeePort))
+        ;
 }
 
 uint8_t xbeeGetByte()
