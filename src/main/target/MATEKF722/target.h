@@ -108,6 +108,7 @@
 #define USB_DETECT_PIN          PB12
 #define USE_USB_DETECT
 
+#define USE_UART
 #define USE_UART1
 #define UART1_RX_PIN            PA10
 #define UART1_TX_PIN            PA9
