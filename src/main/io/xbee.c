@@ -41,11 +41,6 @@ int xbeeGetBytesWaiting()
 void xbeeInit()
 {
     xbeePort = openSerialPort(XBEE_SERIAL_PORT, FUNCTION_NONE, NULL, NULL, 115200, MODE_RXTX, SERIAL_NOT_INVERTED);
-    if (xbeePort == NULL)
-    {
-        while (1)
-            ;
-    }
     if (millis() < 10000)
     {
         /* delay */
@@ -57,5 +52,6 @@ void xbeeInit()
     {
         serialRead(xbeePort);
     }
+    delay(300);
 }
 #endif

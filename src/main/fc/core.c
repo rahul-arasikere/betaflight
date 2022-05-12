@@ -1488,8 +1488,8 @@ FAST_CODE void taskMainPidLoop(timeUs_t currentTimeUs)
     DEBUG_SET(DEBUG_PIDLOOP, 0, micros() - currentTimeUs);
     subTaskRcCommand(currentTimeUs);
     // We replace the PID controller with neuroflight
-    // subTaskPidController(currentTimeUs);
-    neuroController(currentTimeUs);
+    subTaskPidController(currentTimeUs);
+    // neuroController(currentTimeUs);
     subTaskMotorUpdate(currentTimeUs);
     subTaskPidSubprocesses(currentTimeUs);
 

@@ -127,7 +127,7 @@ void hard_fault_handler_c(unsigned long *hardfault_args)
     char buffer[128];
     size_t len = 0;
 
-    huart.Instance = PRINT_HARDFAULT_SERIAL;
+    huart.Instance = USART3;
     huart.Init.BaudRate = 115200;
     huart.Init.WordLength = UART_WORDLENGTH_8B;
     huart.Init.StopBits = UART_STOPBITS_1;
