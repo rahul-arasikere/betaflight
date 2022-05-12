@@ -23,7 +23,7 @@ void xprintf(const char *str, ...)
     va_start(arg, str);
     size_t len = vsnprintf(xbeeStringBuff, XBEE_STRING_BUFF_LEN, str, arg);
     va_end(arg);
-    serialWriteBuf(xbeePort, (const uint8_t *)xbeeStringBuff, len);
+    serialWriteBuf(xbeePort, (const uint8_t *)xbeeStringBuff, (int)len);
     while (!isSerialTransmitBufferEmpty(xbeePort))
         ;
 }
@@ -40,18 +40,11 @@ int xbeeGetBytesWaiting()
 
 void xbeeInit()
 {
-    xbeePort = openSerialPort(XBEE_SERIAL_PORT, FUNCTION_BLACKBOX, NULL, NULL, BAUD_115200, MODE_RXTX, SERIAL_STOPBITS_1 | SERIAL_NOT_INVERTED);
+    xbeePort = openSerialPort(XBEE_SERIAL_PORT, FUNCTION_NONE, NULL, NULL, 115200, MODE_RXTX, SERIAL_NOT_INVERTED);
     if (xbeePort == NULL)
     {
         while (1)
             ;
-    }
-    else
-    {
-        while (1)
-        {
-            serialWrite(xbeePort, 'a');
-        }
     }
     if (millis() < 10000)
     {
@@ -64,7 +57,5 @@ void xbeeInit()
     {
         serialRead(xbeePort);
     }
-
-    xprintf("xbee init reached!\n");
 }
 #endif

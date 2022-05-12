@@ -124,15 +124,6 @@ void hard_fault_handler_c(unsigned long *hardfault_args)
 
 #ifdef PRINT_HARDFAULT_SERIAL
     UART_HandleTypeDef huart;
-    GPIO_InitTypeDef huart_pin_config;
-
-    huart_pin_config.Pin = GPIO_PIN_0 | GPIO_PIN_1;
-    huart_pin_config.Mode = GPIO_MODE_AF_PP;
-    huart_pin_config.Pull = GPIO_NOPULL;
-    huart_pin_config.Speed = GPIO_SPEED_FREQ_LOW;
-    huart_pin_config.Alternate = GPIO_AF8_UART4;
-    HAL_GPIO_Init(GPIOA, &huart_pin_config);
-
     char buffer[128];
     size_t len = 0;
 

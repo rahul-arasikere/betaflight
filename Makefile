@@ -357,7 +357,7 @@ endif
 tflm_library:
 	echo "Building TFLM Library" && \
 	cd $(TENSORFLOW_ROOT) && \
-	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=$(TARGET_ARCH)+fp TARGET_TOOLCHAIN_ROOT=$(TFTOOLCHAIN) OPTIMIZED_KERNEL_DIR=cmsis_nn -j`nproc` && \
+	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=$(TARGET_ARCH)+fp TARGET_TOOLCHAIN_ROOT=$(TFTOOLCHAIN) OPTIMIZED_KERNEL_DIR=cmsis_nn && \
 	echo "Done"
 
 #
