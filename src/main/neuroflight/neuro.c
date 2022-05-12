@@ -57,7 +57,7 @@ crc_t block_crc();
 static float graphInput[GRAPH_INPUT_SIZE];
 static float graphOutput[GRAPH_OUTPUT_SIZE];
 static float previousOutput[GRAPH_OUTPUT_SIZE];
-static float controlOutput[GRAPH_OUTPUT_SIZE];
+float controlOutput[GRAPH_OUTPUT_SIZE];
 
 typedef enum TRANSMISSION_STATE_t
 {
@@ -279,29 +279,34 @@ void neuroController(timeUs_t currentTimeUs)
 		buffer_size = 0;
 	}
 
-	uint32_t bytesWaiting;
-	while ((bytesWaiting = xbeeGetBytesWaiting()))
+	while (xbeeGetBytesWaiting())
 	{
-		time_since_last_byte = micros();
 		uint8_t read_byte = xbeeGetByte();
+		time_since_last_byte = micros();
 		if (trans_state == WAIT_FOR_COMMAND || trans_state == DEAD)
 		{
-			if ((int)'b' == read_byte)
+			switch (read_byte)
+			{
+			case 'b':
 			{
 				buffer_size_t block_size_buffer = block_size();
 				xprintf("%02x%02x ", block_size_buffer & 0xff, (block_size_buffer >> 8) & 0xff); // endian reversed
 				crc_t crc_buffer = block_crc();
 				xprintf("%02x%02x ", crc_buffer & 0xff, (crc_buffer >> 8) & 0xff); // endian reversed
 			}
+			break;
 
-			else if ((int)'c' == read_byte)
+			case 'c':
 			{
 				trans_state = SENDING_OBS;
 				reset_trajectory();
 				buffer_size = 0;
 			}
+			break;
 
-			continue;
+			default:
+				continue;
+			}
 		}
 
 		trans_state = RECEIVING_NN;
@@ -313,10 +318,8 @@ void neuroController(timeUs_t currentTimeUs)
 			if (block_crc() == expected_crc())
 				update_nn();
 		}
-
-		evaluateGraphWithErrorStateDeltaStateAct(currentTimeUs);
-		mixGraphOutput(currentTimeUs, controlOutput);
 	}
+	evaluateGraphWithErrorStateDeltaStateAct(currentTimeUs);
 }
 
 float transformScale(float value, float oldLow, float oldHigh, float newLow, float newHigh)

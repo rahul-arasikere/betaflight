@@ -108,6 +108,8 @@
 
 #include "core.h"
 
+extern float controlOutput[];
+
 enum
 {
     ALIGN_GYRO = 0,
@@ -1385,7 +1387,7 @@ static FAST_CODE void subTaskMotorUpdate(timeUs_t currentTimeUs)
     {
         startTime = micros();
     }
-
+    mixGraphOutput(currentTimeUs, controlOutput);
 #ifdef USE_SERVOS
     // motor outputs are used as sources for servo mixing, so motors must be calculated using mixTable() before servos.
     if (isMixerUsingServos())
@@ -1486,8 +1488,8 @@ FAST_CODE void taskMainPidLoop(timeUs_t currentTimeUs)
     DEBUG_SET(DEBUG_PIDLOOP, 0, micros() - currentTimeUs);
     subTaskRcCommand(currentTimeUs);
     // We replace the PID controller with neuroflight
-    subTaskPidController(currentTimeUs);
-    // neuroController(currentTimeUs);
+    // subTaskPidController(currentTimeUs);
+    neuroController(currentTimeUs);
     subTaskMotorUpdate(currentTimeUs);
     subTaskPidSubprocesses(currentTimeUs);
 

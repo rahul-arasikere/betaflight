@@ -468,7 +468,7 @@ static void applyMixerAdjustment(float *motorMix, const float motorMixMin, const
 #endif
 }
 
-FAST_CODE_NOINLINE void mixTable(timeUs_t currentTimeUs)
+FAST_CODE_NOINLINE __attribute__((__unused__)) void mixTable(timeUs_t currentTimeUs)
 {
     // Find min and max throttle based on conditions. Throttle has to be known before mixing
     calculateThrottleAndCurrentMotorEndpoints(currentTimeUs);
