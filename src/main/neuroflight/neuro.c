@@ -56,8 +56,8 @@ crc_t block_crc();
  */
 static float graphInput[GRAPH_INPUT_SIZE];
 static float graphOutput[GRAPH_OUTPUT_SIZE];
-static float controlOutput[GRAPH_OUTPUT_SIZE];
 static float previousOutput[GRAPH_OUTPUT_SIZE];
+static float controlOutput[GRAPH_OUTPUT_SIZE];
 
 typedef enum TRANSMISSION_STATE_t
 {
