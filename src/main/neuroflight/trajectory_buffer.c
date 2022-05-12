@@ -1,12 +1,12 @@
 #include <stdint.h>
 
-#include "common/printf_serial.h"
-
 #include "drivers/time.h"
 
 #include "neuroflight/byte_utils.h"
 #include "neuroflight/crc.h"
 #include "neuroflight/trajectory_buffer.h"
+
+#include "io/xbee.h"
 
 #define TRAJ_SIZE 500
 observation_t trajectory[TRAJ_SIZE];
@@ -71,12 +71,12 @@ void traj_transmission_handler(observation_t curr_state)
         uint32_t current_time = micros();
         if ((current_time - last_send_time) > US_PER_TRANS)
         {
-            tfp_printf("%02x", START_BYTE);
+            xprintf("%02x", START_BYTE);
             checked_observation_t data = with_crc(consume_from_traj());
             const unsigned char *bytes = little_endian(data);
             for (uint16_t i = 0; i < sizeof(observation_t); i++)
             {
-                tfp_printf("%02x%02x ", bytes[i] & 0xff, (bytes[i] >> 8) & 0xff); // endian reversed
+                xprintf("%02x%02x ", bytes[i] & 0xff, (bytes[i] >> 8) & 0xff); // endian reversed
             }
 
             last_send_time = current_time;

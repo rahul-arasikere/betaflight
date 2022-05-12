@@ -2,8 +2,6 @@
 
 #define MODEL_LENGTH 4292
 
-const unsigned int model_tflite_len = MODEL_LENGTH;
-
 unsigned char model64x64_1[MODEL_LENGTH];
 
 const unsigned char saved[] = {
@@ -370,7 +368,7 @@ unsigned char *memory_trick()
 {
   if (model64x64_1[0] != 0x1c)
   {
-    for (unsigned int i = 0; i < model_tflite_len; i++)
+    for (unsigned int i = 0; i < MODEL_LENGTH; i++)
       model64x64_1[i] = saved[i];
   }
   return model64x64_1;
