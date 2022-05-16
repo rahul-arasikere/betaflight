@@ -76,6 +76,7 @@ void neuroInit()
 	memset(graphOutput, 0, sizeof(float) * GRAPH_OUTPUT_SIZE);
 	memset(previousOutput, 0, sizeof(float) * GRAPH_OUTPUT_SIZE);
 	memset(controlOutput, 0, sizeof(float) * GRAPH_OUTPUT_SIZE);
+	graphSetup();
 	xprintf("aaa");
 	time_since_last_byte = micros();
 	delay(500);

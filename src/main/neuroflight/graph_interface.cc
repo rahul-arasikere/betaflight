@@ -6,11 +6,18 @@ extern "C"
 #include "common/maths.h"
 
 #include "drivers/time.h"
+
+#include "io/xbee.h"
 }
 
 #include "neuroflight/graph_dim.h"
 #include "neuroflight/graph_interface.h"
 #include "neuroflight/inference.h"
+
+void graphSetup()
+{
+	tflite::InitializeTarget();
+}
 
 void infer(float *input, float *output, const uint8_t *model_data)
 {
@@ -20,7 +27,7 @@ void infer(float *input, float *output, const uint8_t *model_data)
 	tflite::MicroErrorReporter micro_error_reporter;
 	resolver.AddFullyConnected();
 	resolver.AddSub();
-	// resolver.AddMul();
+	resolver.AddMul();
 	resolver.AddAdd();
 	resolver.AddTanh();
 	// Pending model update
@@ -29,8 +36,8 @@ void infer(float *input, float *output, const uint8_t *model_data)
 	TfLiteStatus allocate_status = interpreter.AllocateTensors();
 	if (allocate_status != kTfLiteOk)
 	{
-		while (1)
-			;
+		xprintf("Allocate failed with %d\n", allocate_status);
+		return;
 	}
 	const long before_reading = micros();
 	TfLiteTensor *input_ptr = interpreter.input(0);
@@ -39,8 +46,8 @@ void infer(float *input, float *output, const uint8_t *model_data)
 	TfLiteStatus invoke_status = interpreter.Invoke();
 	if (invoke_status != kTfLiteOk)
 	{
-		while (1)
-			;
+		xprintf("Invoke failed with %d\n", invoke_status);
+		return;
 	}
 	infer_time = micros() - before_reading;
 	// The output of the neural network is in range [-1:1] for each motor output
