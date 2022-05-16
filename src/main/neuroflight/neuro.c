@@ -71,10 +71,11 @@ static TRANSMISSION_STATE_t trans_state = SENDING_OBS;
 
 void neuroInit()
 {
-	for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
-	{
-		previousOutput[i] = 0.0;
-	}
+	// clear buffers
+	memset(graphInput, 0, sizeof(float) * GRAPH_INPUT_SIZE);
+	memset(graphOutput, 0, sizeof(float) * GRAPH_OUTPUT_SIZE);
+	memset(previousOutput, 0, sizeof(float) * GRAPH_OUTPUT_SIZE);
+	memset(controlOutput, 0, sizeof(float) * GRAPH_OUTPUT_SIZE);
 	xprintf("aaa");
 	time_since_last_byte = micros();
 	delay(500);
@@ -178,8 +179,7 @@ void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
 	}
 
 	// Evaluate the neural network graph and convert to range [-1,1]->[0,1]
-	infer(graphInput, GRAPH_INPUT_SIZE, graphOutput, memory_trick(), GRAPH_OUTPUT_SIZE);
-
+	infer(graphInput, graphOutput, memory_trick());
 	for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 	{
 		float new_output = graphOutput[i];
@@ -251,9 +251,10 @@ void print_block()
 
 void update_nn()
 {
+	uint8_t * model_data = memory_trick();
 	for (unsigned int i = 0; i < block_size(); i++)
 	{
-		memory_trick()[i] = block_at(i);
+		model_data[i] = block_at(i);
 	}
 }
 
@@ -266,6 +267,7 @@ bool was_armed = true;
 
 void neuroController(timeUs_t currentTimeUs)
 {
+	UNUSED(currentTimeUs);
 	bool is_armed = ARMING_FLAG(ARMED);
 	if (!was_armed && is_armed)
 		reset_trajectory();

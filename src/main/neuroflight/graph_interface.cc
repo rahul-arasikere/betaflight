@@ -1,59 +1,49 @@
-
-#include "common/utils.h"
-#include <platform.h>
-
 extern "C"
 {
-	#include "common/maths.h"
-	
-	#include "io/xbee.h"
+#include <platform.h>
+
+#include "common/utils.h"
+#include "common/maths.h"
+
+#include "drivers/time.h"
 }
 
+#include "neuroflight/graph_dim.h"
 #include "neuroflight/graph_interface.h"
 #include "neuroflight/inference.h"
 
-void infer(float *input, int input_size, float *output, const uint8_t *model_data, int output_size)
+void infer(float *input, float *output, const uint8_t *model_data)
 {
-	// failureMode(0);
-	const long before_reading = micros();
-	tflite::MicroErrorReporter micro_error_reporter;
-	const tflite::Model *model = ::tflite::GetModel(model_data);
-	if (model->version() != TFLITE_SCHEMA_VERSION)
-	{
-		xprintf("Model version does not match Schema!\n");
-		while (1)
-			;
-	}
+	static constexpr int tensor_arena_size = 30 * 1024; // limit of 80kb
+	static uint8_t tensor_arena[tensor_arena_size] = {0};
 	tflite::MicroMutableOpResolver<5> resolver;
+	tflite::MicroErrorReporter micro_error_reporter;
 	resolver.AddFullyConnected();
 	resolver.AddSub();
 	// resolver.AddMul();
 	resolver.AddAdd();
 	resolver.AddTanh();
-	static constexpr int tensor_arena_size = 30 * 1024; // limit of 80kb
-	static uint8_t tensor_arena[tensor_arena_size] = {0};
-	tflite::MicroInterpreter interpreter(
-		model, resolver, tensor_arena, tensor_arena_size, &micro_error_reporter);
-
+	// Pending model update
+	const tflite::Model *model = tflite::GetModel(model_data);
+	tflite::MicroInterpreter interpreter(model, resolver, tensor_arena, tensor_arena_size, &micro_error_reporter);
 	TfLiteStatus allocate_status = interpreter.AllocateTensors();
-	infer_time = micros() - before_reading;
 	if (allocate_status != kTfLiteOk)
 	{
-		xprintf("AllocateTensors() failed!\n");
 		while (1)
 			;
 	}
+	const long before_reading = micros();
 	TfLiteTensor *input_ptr = interpreter.input(0);
-	// // // //Copy the input into the buffer
-	std::copy(input + 0, input + input_size, input_ptr->data.f);
+	// Copy the input into the buffer
+	std::copy(input + 0, input + GRAPH_INPUT_SIZE, input_ptr->data.f);
 	TfLiteStatus invoke_status = interpreter.Invoke();
 	if (invoke_status != kTfLiteOk)
 	{
-		xprintf("Invoke failed on input!\n");
 		while (1)
 			;
 	}
-	// //The output of the neural network is in rage [-1:1] for each motor output
+	infer_time = micros() - before_reading;
+	// The output of the neural network is in range [-1:1] for each motor output
 	TfLiteTensor *output_ptr = interpreter.output(0);
-	std::copy(output_ptr->data.f + 0, output_ptr->data.f + output_size, output);
+	std::copy(output_ptr->data.f + 0, output_ptr->data.f + GRAPH_OUTPUT_SIZE, output);
 }
