@@ -143,14 +143,16 @@ EXTRA_LD_FLAGS  :=
 #
 # Default Tool options - can be overridden in {mcu}.mk files.
 #
+TFLM_BUILD_TYPE	=	release
 ifeq ($(DEBUG),GDB)
 OPTIMISE_DEFAULT      := -Og
-
+TFLM_BUILD_TYPE 	  = debug
 LTO_FLAGS             := $(OPTIMISE_DEFAULT)
 DEBUG_FLAGS            = -ggdb3 -DDEBUG
 else
 ifeq ($(DEBUG),INFO)
 DEBUG_FLAGS            = -ggdb3
+TFLM_BUILD_TYPE 	  = release_with_logs
 endif
 OPTIMISATION_BASE     := -flto -fuse-linker-plugin -ffast-math -fmerge-all-constants
 OPTIMISE_DEFAULT      := -O2
@@ -314,7 +316,7 @@ ASFLAGS     = $(ARCH_FLAGS) \
 
 ifeq ($(LD_FLAGS),)
 LD_FLAGS     = -lm \
-			  $(TENSORFLOW_ROOT)/tensorflow/lite/micro/tools/make/gen/cortex_m_generic_$(TARGET_ARCH)+fp_default/lib/libtensorflow-microlite.a \
+			  $(TENSORFLOW_ROOT)/tensorflow/lite/micro/tools/make/gen/cortex_m_generic_$(TARGET_ARCH)+fp_$(TFLM_BUILD_TYPE)/lib/libtensorflow-microlite.a \
               -nostartfiles \
               --specs=nano.specs \
               -lc \
@@ -359,7 +361,7 @@ endif
 tflm_library:
 	echo "Building TFLM Library" && \
 	cd $(TENSORFLOW_ROOT) && \
-	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=$(TARGET_ARCH)+fp TARGET_TOOLCHAIN_ROOT=$(TFTOOLCHAIN) OPTIMIZED_KERNEL_DIR=cmsis_nn BUILD_TYPE=release_with_logs && \
+	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=$(TARGET_ARCH)+fp TARGET_TOOLCHAIN_ROOT=$(TFTOOLCHAIN) OPTIMIZED_KERNEL_DIR=cmsis_nn BUILD_TYPE=$(TFLM_BUILD_TYPE) && \
 	echo "Done"
 
 #
