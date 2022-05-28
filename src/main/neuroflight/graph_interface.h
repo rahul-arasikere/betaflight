@@ -8,7 +8,8 @@
 
 EXTERNC uint32_t infer_time;
 EXTERNC void graphSetup();
-EXTERNC void infer(float *input, float *output, const uint8_t *model_data);
+EXTERNC void infer(float *input, float *output);
+EXTERNC void doModelUpdate();
 
 #undef EXTERNC
 

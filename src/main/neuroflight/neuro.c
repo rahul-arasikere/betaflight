@@ -77,9 +77,7 @@ void neuroInit()
 	memset(previousOutput, 0, sizeof(float) * GRAPH_OUTPUT_SIZE);
 	memset(controlOutput, 0, sizeof(float) * GRAPH_OUTPUT_SIZE);
 	graphSetup();
-	xprintf("aaa");
 	time_since_last_byte = micros();
-	delay(500);
 }
 
 void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
@@ -180,7 +178,7 @@ void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
 	}
 
 	// Evaluate the neural network graph and convert to range [-1,1]->[0,1]
-	infer(graphInput, graphOutput, memory_trick());
+	infer(graphInput, graphOutput);
 	for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 	{
 		float new_output = graphOutput[i];
@@ -252,11 +250,11 @@ void print_block()
 
 void update_nn()
 {
-	uint8_t * model_data = memory_trick();
 	for (unsigned int i = 0; i < block_size(); i++)
 	{
-		model_data[i] = block_at(i);
+		model_bytes[i] = block_at(i);
 	}
+	doModelUpdate();
 }
 
 inline crc_t block_crc()

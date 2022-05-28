@@ -208,6 +208,7 @@ endif
 INCLUDE_DIRS    := $(INCLUDE_DIRS) \
                    $(ROOT)/lib/main/MAVLink \
                    $(ROOT)/lib/main/google/tflite_micro/ \
+                   $(ROOT)/lib/main/google/tflite_micro/tensorflow/lite/micro/cortex_m_generic \
                    $(ROOT)/lib/main/google/tflite_micro/tensorflow/lite/micro/tools/make/downloads/flatbuffers/include \
                    $(ROOT)/lib/main/google/tflite_micro/tensorflow/lite/micro/tools/make/downloads/gemmlowp \
                    $(ROOT)/lib/main/google/tflite_micro/tensorflow/lite/micro/tools/make/downloads/ruy \
@@ -291,6 +292,7 @@ CXXFLAGS     += $(ARCH_FLAGS) \
               -ffunction-sections \
               -fdata-sections \
               -fno-common \
+			  -fno-use-cxa-atexit \
               $(TEMPORARY_FLAGS) \
               $(DEVICE_FLAGS) \
               -D_GNU_SOURCE \
@@ -357,7 +359,7 @@ endif
 tflm_library:
 	echo "Building TFLM Library" && \
 	cd $(TENSORFLOW_ROOT) && \
-	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=$(TARGET_ARCH)+fp TARGET_TOOLCHAIN_ROOT=$(TFTOOLCHAIN) OPTIMIZED_KERNEL_DIR=cmsis_nn && \
+	$(MAKE) -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=$(TARGET_ARCH)+fp TARGET_TOOLCHAIN_ROOT=$(TFTOOLCHAIN) OPTIMIZED_KERNEL_DIR=cmsis_nn BUILD_TYPE=release_with_logs && \
 	echo "Done"
 
 #

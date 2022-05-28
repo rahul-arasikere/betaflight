@@ -1011,8 +1011,7 @@ void init(void)
     xbeeInit();
 #endif
 
-    // initialize the neuroController the last thing because of how neuro controller was initialized
+    // initialize the neuroController 
     neuroInit();
-
     systemState |= SYSTEM_STATE_READY;
 }
