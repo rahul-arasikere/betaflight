@@ -20,14 +20,14 @@ namespace
 {
 	tflite::ErrorReporter *error_reporter = nullptr;
 	const tflite::Model *model = nullptr;
-	tflite::MicroInterpreter *interpreter = nullptr;
+	tflite::RecordingMicroInterpreter *interpreter = nullptr;
 	TfLiteTensor *model_input = nullptr;
 	TfLiteTensor *model_output = nullptr;
 	// Create an area of memory to use for input, output, and other TensorFlow
 	// arrays. You'll need to adjust this by compiling, running, and looking
 	// for errors.
-	constexpr int kTensorArenaSize = 20 * 1024;
-	__attribute__((aligned(16))) uint8_t tensor_arena[kTensorArenaSize];
+	constexpr int kTensorArenaSize = 30 * 1024;
+	alignas(16) uint8_t tensor_arena[kTensorArenaSize];
 } // namespace
 
 void tflite_log_print_callback(const char *str)
@@ -85,7 +85,7 @@ void doModelUpdate()
 							 model->version(), TFLITE_SCHEMA_VERSION);
 		return;
 	}
-	static tflite::MicroInterpreter static_interpreter(model,
+	static tflite::RecordingMicroInterpreter static_interpreter(model,
 													   resolver,
 													   tensor_arena,
 													   kTensorArenaSize,
@@ -97,8 +97,8 @@ void doModelUpdate()
 		TF_LITE_REPORT_ERROR(error_reporter, "AllocateTensors() failed");
 		return;
 	}
+	interpreter->GetMicroAllocator().PrintAllocations();
 	TfLiteTensor *input = interpreter->input(0);
-	error_reporter->Report("Input pointer: %x", *input);
 	if (model_input->type == kTfLiteFloat32)
 		error_reporter->Report("Input dim: %d, size %d\n", input->dims->size, input->bytes);
 	model_output = interpreter->output(0);

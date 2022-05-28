@@ -204,7 +204,7 @@ COMMON_SRC = \
             neuroflight/crc.c \
             neuroflight/graph_interface.cc \
             neuroflight/neuro.c \
-            neuroflight/tflite_model.c \
+            neuroflight/tflite_model.cc \
             neuroflight/trajectory_buffer.c \
 
 COMMON_DEVICE_SRC = \
