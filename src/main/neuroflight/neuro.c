@@ -26,7 +26,7 @@
 #include "neuroflight/neuro.h"
 #include "neuroflight/byte_utils.h"
 #include "neuroflight/crc.h"
-#include "neuroflight/graph_dim.h"
+#include "neuroflight/defines.h"
 #include "neuroflight/graph_interface.h"
 #include "neuroflight/tflite_model.h"
 #include "neuroflight/trajectory_buffer.h"
@@ -37,10 +37,6 @@
 #define MAX_BUFFER_SIZE 30000
 static timeUs_t time_since_last_byte = 0;
 
-typedef uint16_t buffer_size_t;
-#define NUM_SIZE_BYTES (sizeof(buffer_size_t))
-#define NUM_META_BYTES (NUM_SIZE_BYTES + NUM_CRC_BYTES)
-
 uint8_t block_at(unsigned int index);
 uint8_t *block_ptr();
 buffer_size_t expected_block_size();
@@ -48,7 +44,6 @@ crc_t expected_crc();
 buffer_size_t block_size();
 crc_t block_crc();
 void print_block();
-void update_nn();
 crc_t block_crc();
 
 /* An array containing inputs for the neural network
@@ -248,15 +243,6 @@ void print_block()
 	xprintf("\n");
 }
 
-void update_nn()
-{
-	for (unsigned int i = 0; i < block_size(); i++)
-	{
-		model_bytes[i] = block_at(i);
-	}
-	doModelUpdate();
-}
-
 inline crc_t block_crc()
 {
 	return compute_crc(block_ptr(), block_size());
@@ -317,7 +303,7 @@ void neuroController(timeUs_t currentTimeUs)
 
 			trans_state = WAIT_FOR_COMMAND;
 			if (block_crc() == expected_crc())
-				update_nn();
+				update_nn(block_size(), buffer);
 		}
 	}
 	evaluateGraphWithErrorStateDeltaStateAct(currentTimeUs);

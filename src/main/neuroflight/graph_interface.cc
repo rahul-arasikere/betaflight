@@ -5,10 +5,10 @@ extern "C"
 #include "common/utils.h"
 #include "common/maths.h"
 
+#include "neuroflight/defines.h"
+
 #include "io/xbee.h"
 }
-
-#include "neuroflight/graph_dim.h"
 #include "neuroflight/graph_interface.h"
 #include "neuroflight/inference.h"
 #include "neuroflight/tflite_model.h"
@@ -20,7 +20,7 @@ namespace
 {
 	tflite::ErrorReporter *error_reporter = nullptr;
 	const tflite::Model *model = nullptr;
-	tflite::RecordingMicroInterpreter *interpreter = nullptr;
+	tflite::MicroInterpreter *interpreter = nullptr;
 	TfLiteTensor *model_input = nullptr;
 	TfLiteTensor *model_output = nullptr;
 	// Create an area of memory to use for input, output, and other TensorFlow
@@ -51,9 +51,7 @@ void infer(float *input, float *output)
 	for (int i = 0; i < GRAPH_INPUT_SIZE; i++)
 	{
 		model_input->data.f[i] = input[i];
-		error_reporter->Report("copied input %d\n", i);
 	}
-	error_reporter->Report("here\n");
 	TfLiteStatus invoke_status = interpreter->Invoke();
 	if (invoke_status != kTfLiteOk)
 	{
@@ -64,7 +62,6 @@ void infer(float *input, float *output)
 	for (int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 	{
 		output[i] = model_output->data.f[i];
-		error_reporter->Report("copied output %d\n", i);
 	}
 }
 
@@ -85,7 +82,7 @@ void doModelUpdate()
 							 model->version(), TFLITE_SCHEMA_VERSION);
 		return;
 	}
-	static tflite::RecordingMicroInterpreter static_interpreter(model,
+	static tflite::MicroInterpreter static_interpreter(model,
 													   resolver,
 													   tensor_arena,
 													   kTensorArenaSize,
@@ -97,11 +94,15 @@ void doModelUpdate()
 		TF_LITE_REPORT_ERROR(error_reporter, "AllocateTensors() failed");
 		return;
 	}
-	interpreter->GetMicroAllocator().PrintAllocations();
-	TfLiteTensor *input = interpreter->input(0);
-	if (model_input->type == kTfLiteFloat32)
-		error_reporter->Report("Input dim: %d, size %d\n", input->dims->size, input->bytes);
+	model_input = interpreter->input(0);
 	model_output = interpreter->output(0);
-	if (model_output->type == kTfLiteFloat32)
-		error_reporter->Report("Output dim: %d, size %d\n", model_output->dims->size, model_output->bytes);
+}
+
+void update_nn(const uint16_t block_size, const uint8_t *buffer)
+{
+	for (uint16_t i = 0; i < block_size; i++)
+	{
+		model_bytes[i] = buffer[i + NUM_META_BYTES];
+	}
+	doModelUpdate();
 }

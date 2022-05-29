@@ -20,6 +20,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #include "platform.h"
 
@@ -152,33 +153,33 @@ void hard_fault_handler_c(unsigned long *hardfault_args)
         delay(50);
         HAL_UART_Transmit(&huart, (uint8_t *)"-----------------------------------------------------\r\n", 56, 500);
         HAL_UART_Transmit(&huart, (uint8_t *)"fault handler\r\n", 19, 500);
-        len = snprintf(buffer, 128, "lr: 0x%08x\r\n", stacked_lr);
+        len = snprintf(buffer, 128, "lr: 0x%08lx\r\n", stacked_lr);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "r0: 0x%08x\r\n", stacked_r0);
+        len = snprintf(buffer, 128, "r0: 0x%08lx\r\n", stacked_r0);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "r1: 0x%08x\r\n", stacked_r1);
+        len = snprintf(buffer, 128, "r1: 0x%08lx\r\n", stacked_r1);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "r2: 0x%08x\r\n", stacked_r2);
+        len = snprintf(buffer, 128, "r2: 0x%08lx\r\n", stacked_r2);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "r3: 0x%08x\r\n", stacked_r3);
+        len = snprintf(buffer, 128, "r3: 0x%08lx\r\n", stacked_r3);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "r12: 0x%08x\r\n", stacked_r12);
+        len = snprintf(buffer, 128, "r12: 0x%08lx\r\n", stacked_r12);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "ret addr: 0x%08x\r\n", stacked_pc);
+        len = snprintf(buffer, 128, "ret addr: 0x%08lx\r\n", stacked_pc);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "xpsr: 0x%08x\r\n", stacked_psr);
+        len = snprintf(buffer, 128, "xpsr: 0x%08lx\r\n", stacked_psr);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "cfsr: 0x%08x\r\n", _CFSR);
+        len = snprintf(buffer, 128, "cfsr: 0x%08lx\r\n", _CFSR);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "hfsr: 0x%08x\r\n", _HFSR);
+        len = snprintf(buffer, 128, "hfsr: 0x%08lx\r\n", _HFSR);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "dfsr: 0x%08x\r\n", _DFSR);
+        len = snprintf(buffer, 128, "dfsr: 0x%08lx\r\n", _DFSR);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "afsr: 0x%08x\r\n", _AFSR);
+        len = snprintf(buffer, 128, "afsr: 0x%08lx\r\n", _AFSR);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "mmar: 0x%08x\r\n", _MMAR);
+        len = snprintf(buffer, 128, "mmar: 0x%08lx\r\n", _MMAR);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
-        len = snprintf(buffer, 128, "bfar: 0x%08x\r\n", _BFAR);
+        len = snprintf(buffer, 128, "bfar: 0x%08lx\r\n", _BFAR);
         HAL_UART_Transmit(&huart, (uint8_t *)buffer, len, 500);
         LED0_OFF;
         delay(50);

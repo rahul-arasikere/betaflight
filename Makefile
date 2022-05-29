@@ -306,6 +306,17 @@ CXXFLAGS     += $(ARCH_FLAGS) \
               -D'__REVISION__="$(REVISION)"' \
               -save-temps=obj \
               -MMD -MP \
+			  -std=c++11 \
+			  -fno-rtti \
+			  -fno-exceptions \
+			  -fno-threadsafe-statics \
+			  -Werror \
+			  -fno-unwind-tables \
+			  -ffunction-sections \
+			  -fdata-sections \
+			  -fmessage-length=0 \
+			  -DTF_LITE_STATIC_MEMORY \
+			  -DTF_LITE_DISABLE_X86_NEON \
               $(EXTRA_FLAGS)
 
 ASFLAGS     = $(ARCH_FLAGS) \
