@@ -45,7 +45,7 @@ void graphSetup()
 	error_reporter->Report("aaa");
 }
 
-void infer(float *input, float *output)
+FAST_CODE_NOINLINE void infer(float *input, float *output)
 {
 	// Copy the input into the buffer
 	for (int i = 0; i < GRAPH_INPUT_SIZE; i++)

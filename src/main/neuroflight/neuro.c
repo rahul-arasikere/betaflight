@@ -75,7 +75,7 @@ void neuroInit()
 	time_since_last_byte = micros();
 }
 
-void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
+FAST_CODE void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
 {
 	static timeUs_t previousTime;
 	static float previousState[3];
@@ -252,7 +252,7 @@ inline crc_t block_crc()
 
 bool was_armed = true;
 
-void neuroController(timeUs_t currentTimeUs)
+FAST_CODE_NOINLINE void neuroController(timeUs_t currentTimeUs)
 {
 	UNUSED(currentTimeUs);
 	bool is_armed = ARMING_FLAG(ARMED);
