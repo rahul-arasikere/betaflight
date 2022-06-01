@@ -173,7 +173,9 @@ void evaluateGraphWithErrorStateDeltaStateAct(timeUs_t currentTimeUs)
 	}
 
 	// Evaluate the neural network graph and convert to range [-1,1]->[0,1]
+	timeUs_t infer_start_time = micros();
 	infer(graphInput, graphOutput);
+	xprintf("profile: %d\r\n", (micros() - infer_start_time));
 	for (unsigned int i = 0; i < GRAPH_OUTPUT_SIZE; i++)
 	{
 		float new_output = graphOutput[i];
