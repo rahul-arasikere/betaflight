@@ -24,8 +24,6 @@ void xprintf(const char *str, ...)
     size_t len = vsnprintf(xbeeStringBuff, XBEE_STRING_BUFF_LEN, str, arg);
     va_end(arg);
     serialWriteBuf(xbeePort, (const uint8_t *)xbeeStringBuff, (int)len);
-    while (!isSerialTransmitBufferEmpty(xbeePort))
-        ;
 }
 
 uint8_t xbeeGetByte()
